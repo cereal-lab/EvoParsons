@@ -1,0 +1,32 @@
+#!/bin/bash
+#Note: this should be executed in the trunk folder!
+#Like: ./scripts/build-server
+#todo: discuss minor change about moving this to trunk directly 
+
+#javac -cp "lib/*" $(find evoparsons -name "*.java")
+# We avoid build psi and psifx while building the server for now
+javac -cp "lib/*" $(find evoparsons/broker evoparsons/ecj evoparsons/rmishared -name "*.java")
+
+if [ $? != 0 ] 
+then 
+	echo "Take another look to the source..."
+	exit
+fi
+
+#create dir if not exist
+mkdir -p bin 
+#cleanup stage is also kind of optional
+#because we tend to run server inside bin, additional files will be created in this working directory
+#WARN: rebuild cleans them up - TODO: discuss behavior
+find bin ! -path "bin/psi*" -type f -exec rm -f {} +
+
+jar cfm bin/evoparsons.jar ./evoparsons/broker/manifest.mf ./evoparsons/broker/*.class ./evoparsons/broker/rest/*.html ./evoparsons/broker/rest/js/*.js ./evoparsons/broker/rest/css/*.css ./evoparsons/ecj/*.class ./evoparsons/rmishared/*.class
+cp lib/ecj.24.jar bin
+cp lib/jetty-9.4.10.v20180503.jar bin
+cp lib/jetty-util-ajax-9.4.11.v20180605.jar bin
+
+#getting the ECJ config file in our testing folder 
+cp scripts/evoparsons-server bin
+#cleanup if needed
+#rm $(find evoparsons -name "*.class")
+

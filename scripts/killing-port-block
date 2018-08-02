@@ -1,0 +1,6 @@
+#!/bin/bash
+#this is just in case when broker port is blocked. here port is 1240
+#finish this script
+lsof -i tcp:1240
+#TODO
+kill -9 ${returnedportnumber}

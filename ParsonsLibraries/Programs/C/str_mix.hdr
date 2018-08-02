@@ -1,0 +1,15 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Mix the characters from two strings together
+
+[#description#]
+This function modifies the strings passed as parameters. 
+The characters at odd index in each of them are swapped with their counterpart in the other string.
+The two strings need to be same in length
+
+[#source#]

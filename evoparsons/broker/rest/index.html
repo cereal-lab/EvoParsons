@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Evoparsons Puzzles</title>      
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" type="text/css" href="./css/eclipse.css">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="./js/syntaxhighlighter.js"></script>
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="./js/jquery.min.js"></script>
+        <script src="./js/jquery-ui.min.js"></script>
+        <script src="./js/popper.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>          
+        <script src="./js/jquery.ui.touch-punch.min.js"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">      
+        <style>
+            #loginRequired {
+                font-size: 80%;                
+                color: #844;        
+                display: none;        
+            }
+            input.err {
+                background-color: #844;
+            }
+            #puzzleTitle {
+                font-weight: bold;
+                font-size: 120%;
+                line-height: 1.2;
+            }        
+            #puzzleDesc{
+                margin-bottom: 2ex;
+                line-height: 1.2;
+            }
+            .fragment {
+                cursor: pointer;
+                font-size: 90%;
+                line-height: 1.2;
+                -webkit-touch-callout: none; 
+                -webkit-user-select: none; 
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                    -ms-user-select: none;
+                        user-select: none;  
+                position: relative;          
+                background-color: white;                    
+            }
+            .fragment.inAction {
+                padding: 1ex 1em 1ex 1.7em;
+                border: 2px solid black !important;
+                border-radius: 5px;                           
+            }
+            .fragment:first-child {
+                padding: 1ex 1em .5ex 1.7em;
+                border: 1px solid black;
+                border-bottom: 1px dotted #888;
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;                                                       
+            }
+            .fragment:last-child {
+                padding: .5ex 1em 1ex 1.7em;
+                border: 1px solid black;
+                border-top: 1px dotted #888;
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;                                                       
+            }            
+            .fragment:not(:first-child):not(:last-child) {
+                padding: .5ex 1em .5ex 1.7em;
+                border: 1px solid black;
+                border-top: 1px dotted #888;
+                border-bottom: 1px dotted #888;
+            }
+            #taskPane, #trashedList {
+                list-style: none;
+                padding-left: 0;
+            }
+            #trashedList li {
+                margin-bottom: .5ex;
+            }
+            .puzzleContent {
+                margin-top: 2ex;
+                display: none;
+            }    
+            .statsContent {
+                margin-top: 2ex;
+                display: none;
+            }
+            .loginContent {
+                margin-top: 2ex;
+            }     
+            .syntaxhighlighter.fragmnt {
+                margin: 0 !important;
+            }
+            #trashed {
+                display: none;
+            }
+            #trashed .fragment {
+                padding: 1ex 1em 1ex 1em;
+                border: 1px solid black;
+                border-radius: 5px;               
+            }
+            #message {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                display: none;
+            }
+            #wrongMsg, #correctMsg, #giveUpMsg {
+                margin: 0 auto;
+                display: none;
+            }          
+            body .syntaxhighlighter .line {
+                white-space: pre-wrap !important;
+                overflow: hidden !important;
+            }
+            .trashIconHolder {
+                display: none;
+                position: absolute;
+                top:0.4ex;
+                left: 0.3em;
+                z-index: 1100;
+                background-color: rgba(255, 255, 255, 0.7);
+                padding-right: .5em;                
+            }
+            .handIconHolder {
+                display: none;
+                position: absolute;
+                top:0.4ex;
+                right: 0.5em;
+                z-index: 1100;
+                background-color: rgba(255, 255, 255, 0.7);
+                padding-left: .5em;
+            }   
+            #trashed .fragment .trashIconHolder {
+                display: none !important;
+            }
+            /* @media only screen and (min-width : 500px)  {
+                .handIconHolder {
+                    display: none !important;
+                }
+            } */
+            @media only screen and (max-width : 500px)  {
+                .fragment {
+                    font-size: 80%;
+                    padding-left: 1em !important;
+                }
+                .trashIconHolder, .handIconHolder {
+                    font-size: 110%;
+                }               
+            }            
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container">
+                <div class="col col-lg-8 offset-lg-2 justify-content-between" style="padding-left: 5px">
+                    <a class="navbar-brand" href="#"><i class="fas fa-puzzle-piece" style="font-size: 120%;margin-right:.1em"></i></i>&nbsp;Evoparsons Puzzles</a>
+                </div>
+            </div>
+        </nav>
+        <div class="loginContent container">
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <label for="login">User name</label>
+                    <input type="text" id="login" class="form-control" placeholder="Your name" />
+                    <span id="loginRequired">login is required</span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <button class="btn btn-primary" type="button" id="loginButton">Login</button>
+                </div>
+            </div>
+        </div>
+        <div class="statsContent container">
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <span>User name: </span>
+                    <span id="statsUserName"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <span>Puzzles: </span>
+                    <span id="statsPuzzles"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <span>Duration: </span>
+                    <span id="statsSessionDuration"></span>
+                </div>
+            </div> 
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <span>Date: </span>
+                    <span id="statsDate"></span>
+                </div>
+            </div>                                    
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <button class="btn btn-primary" type="button" id="backButton">Back to puzzles</button>
+                </div>
+            </div>
+        </div>            
+        <div class="puzzleContent">       
+            <div class="container">
+                <div class="row">
+                    <div id="puzzleTitle" class='col col-lg-8 offset-lg-2'></div>
+                </div>
+                <div class="row">
+                    <div id="puzzleDesc" class='col col-lg-8 offset-lg-2'></div>
+                </div>
+                <div class="row">
+                    <div class="col col-lg-8 offset-lg-2">
+                        <ul id="taskPane">
+                        </ul>
+                    </div>
+                </div>
+                <div class="row" id="trashed">                    
+                    <div class="col col-lg-8 offset-lg-2">
+                        <div>Trashed:</div>
+                        <ul id="trashedList">
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col col-lg-8 offset-lg-2 form-group">
+                        <button type="button" class="btn btn-primary" id="nextButton">Next</button>
+                        <button type="button" class="btn" id="giveUpButton">GiveUp</button>
+                        <button type="button" class="btn" id="progressButton">My Progress</button>                       
+                    </div>
+                </div>                
+            </div>    
+            <div style="height: 50em;"></div>        
+        </div>  
+        <div id="message">
+            <div class="container" style="padding-top: 1ex;">
+            <div class="row">
+                <div class="alert alert-success col col-lg-8 offset-lg-2" role="alert" id="correctMsg">
+                    <strong>Well done!</strong> You solved it.
+                </div>
+                <div class="alert alert-warning col col-lg-8 offset-lg-2" role="alert" id="giveUpMsg">
+                        <strong>Good luck next time</strong>
+                    </div>                
+                <div class="alert alert-danger col col-lg-8 offset-lg-2" role="alert" id="wrongMsg">
+                    <strong>Oh snap!</strong> Change a few things up and try submitting again.
+                </div>
+            </div>
+            </div>
+        </div>         
+        <script>
+            var service = "/api/student"
+            var studentId = -1;
+            var puzzleId = -1;
+            var sessionId = "";
+            var events = [];
+            var login = "";
+            var attemptId = 0;
+            (function($){            
+                $.fn.shuffle = function() {
+                    var allElems = this.get(),
+                        getRandom = function(max) {
+                            return Math.floor(Math.random() * max);
+                        },
+                        shuffled = $.map(allElems, function(){
+                            var random = getRandom(allElems.length),
+                                randEl = $(allElems[random]).clone(true)[0];
+                            allElems.splice(random, 1);
+                            return randEl;
+                        });
+                    this.each(function(i){
+                        $(this).replaceWith($(shuffled[i]));
+                    });
+                    return $(shuffled);
+                };
+            })(jQuery);
+            $(function () {
+                var windowEvent = null;
+                $(window).blur(function () {
+                    windowEvent =
+                        { timestamp: new Date().getTime(), type:"inactive" }
+                });                
+                $(window).focus(function () {
+                    if (windowEvent !== null)
+                    {
+                        windowEvent.durationMs = new Date().getTime() - windowEvent.timestamp;
+                        events.push(windowEvent);
+                        windowEvent = null;
+                    }
+                });
+                var loginContent = $(".loginContent");
+                var puzzleContent = $(".puzzleContent");
+                var statsContent = $(".statsContent");
+                var puzzleTitle = $("#puzzleTitle");
+                var puzzleDesc = $("#puzzleDesc");
+                var taskPane = $("#taskPane");
+                var trash = $("#trashedList");
+                var trashed = $("#trashed");
+                var userName = $("#userName");
+                var msg = $("#message");
+                var wrongMsg = $("#wrongMsg");
+                var correctMsg = $("#correctMsg");
+                var giveUpMsg = $("#giveUpMsg");
+                //var trashFragment = $("#trashFragment");
+                //var sortableIn = 1;
+                var moveCount = 0;
+                var attemptCount = 0;
+                var puzzleStartTime;
+                var dragEvent = null;
+                function createDragEvent(ui, startedIn) {
+                    var pos = ui.item.data("data-pos");
+                    var res = 
+                        { timestamp: new Date().getTime(),
+                            type: "drag",
+                            fragment: 
+                                {
+                                    type: ((pos === -1) ? "distractor" : "fragment"),
+                                    id: ((pos === -1) ? ui.item.data("data-d-id") : pos)
+                                },
+                            startPosition: ui.item.index(),
+                            startedIn: startedIn,
+                            endedIn: "",
+                            durationMs: 0,
+                            moveIndex: moveCount
+                        };
+                    return res;
+                }
+                taskPane.sortable({
+                    connectWith: "#trashedList",
+                    forcePlaceholderSize: true,
+                    forceHelperSize: true,
+                    opacity: 0.7,       
+                    revert: true,        
+                    cancel: ".trashIconHolder .fa-trash-alt",
+                    handle: ".handIconHolder .fa-hand-paper",
+                    scrollSensitivity: 10,
+                    scrollSpeed: 10,     
+                    start: function (event, ui) {                        
+                        ui.item.addClass("inAction");                      
+                        dragEvent = createDragEvent(ui, "answer");
+                    },
+                    //receive: function(e, ui) { sortableIn = 1; },
+                    //over: function(e, ui) { sortableIn = 1; },
+                    //out: function(e, ui) { sortableIn = 0; },
+                    // beforeStop: function(e, ui) {
+                    //     if (sortableIn == 0) { 
+                    //         ui.item.hide('fast', function () {
+                    //             //trashFragment.appendTo("body");     
+                    //             ui.item.appendTo(trash);
+                    //             autoIndent();
+                    //             ui.item.fadeIn();
+                    //             trashed.fadeIn();
+                    //         });   
+                    //     } 
+                    // },
+                    stop: function (event, ui) {
+                        dragEvent.durationMs = new Date().getTime() - dragEvent.timestamp;
+                        dragEvent.stopPosition = ui.item.index();
+                        dragEvent.endedIn = "answer";
+                        events.push(dragEvent);                                                
+                        if ((dragEvent.startPosition !== dragEvent.stopPosition) || 
+                            (dragEvent.startedIn !== dragEvent.endedIn)) moveCount++;
+                        dragEvent = null;
+                        ui.item.removeClass("inAction");
+                        autoIndent();
+                    }
+                });          
+                trash.sortable({
+                    forcePlaceholderSize: true,
+                    connectWith: "#taskPane",
+                    forceHelperSize: true,
+                    opacity: 0.7,         
+                    revert: true,
+                    cancel: ".trashIconHolder .fa-trash-alt",
+                    handle: ".handIconHolder .fa-hand-paper",
+                    scrollSensitivity: 10,
+                    scrollSpeed: 10,       
+                    start: function (event, ui) {
+                        ui.item.addClass("inAction");
+                        dragEvent = createDragEvent(ui, "trash");
+                    },                    
+                    // beforeStop: function(ev, ui) {                        
+                    //     if ($(ui.placeholder).parent()[0] === this) {
+                    //         //$(this).sortable('cancel');
+                    //         dragEvent.durationMs = new Date().getTime() - dragEvent.timestamp;
+                    //         dragEvent.canceled=1;
+                    //         events.push(dragEvent);
+                    //         dragEvent = null;      
+                    //     }                                                                      
+                    // },
+                    stop: function (event, ui) {     
+                        dragEvent.durationMs = new Date().getTime() - dragEvent.timestamp;
+                        dragEvent.stopPosition = ui.item.index();
+                        dragEvent.endedIn = "trash";
+                        events.push(dragEvent);                                                  
+                        if (dragEvent.startedIn !== "trash") moveCount++;            
+                        dragEvent = null;                              
+                        ui.item.removeClass("inAction");
+                        autoIndent();
+                        if (trash.find(".fragment").length == 0) trashed.fadeOut();
+                    }                                        
+                });        
+                function autoIndent() {
+                    var indent = 0;
+                    var prevLine = null;
+                    taskPane.find(".fragment").each(function () {
+                        $(this).find(".indent").each(function () {
+                            var text = $(this).data("data-orig");
+                            var ind = 0;
+                            if ((prevLine != null) && 
+                                (/^if\s*?\(.*?\)\s*?$/.test(prevLine) ||
+                                 /^while\s*?\(.*?\)\s*?$/.test(prevLine))
+                                 && !text.startsWith("{"))
+                                ind = 1;
+                            // if (!text.startsWith("}"))
+                            //     $(this).animate({"padding-left": 15 * (indent + ind)}, 'slow');                            
+                            var textChars = text.split("");
+                            var closedBraces = 0;
+                            var localIndent = 0;
+                            for (var i = 0; i < textChars.length; i++){
+                                if (textChars[i] === "{") 
+                                {
+                                    localIndent++;
+                                }
+                                else if (textChars[i] === "}"){
+                                    localIndent--;
+                                    closedBraces++;
+                                }
+                            }
+                            $(this).animate({"padding-left": 15 * Math.max(0, indent - closedBraces)}, 'slow'); 
+                            indent = indent + localIndent;                                                          
+                            prevLine = text;
+                        });
+                    });
+                }                
+                // trashFragment.click(function () {                    
+                //     var li = $(this).closest("li");
+                //     li.fadeOut(function () {
+                //         trashFragment.appendTo("body");     
+                //         li.appendTo(trash);
+                //         autoIndent();
+                //         li.fadeIn();
+                //         trashed.fadeIn();
+                //     });                                                                                               
+                // });
+                var hoverEvent = null;
+                function attachHover(fragment) {                   
+                    fragment.click(function () {
+                        if ($(this).is(".inAction")) {
+                            $(this).removeClass("inAction");
+                            $(this).find(".handIconHolder,.trashIconHolder").hide();
+                        } else 
+                        { 
+                            taskPane.find(".inAction").removeClass("inAction");
+                            trash.find(".inAction").removeClass("inAction");
+                            $(this).addClass("inAction");
+                            taskPane.find(".handIconHolder,.trashIconHolder").each(function () { $(this).hide(); });
+                            trash.find(".handIconHolder,.trashIconHolder").each(function () { $(this).hide(); });
+                            $(this).find(".handIconHolder,.trashIconHolder").show();
+                        }
+                    });
+                    fragment.hover(function () {
+                        if (dragEvent === null)
+                        {
+                            var pos = $(this).data("data-pos");
+                            hoverEvent = 
+                                {
+                                    timestamp: new Date().getTime(),
+                                    type: "hover",
+                                    fragment: 
+                                        {
+                                            type: ((pos === -1) ? "distractor" : "fragment"),
+                                            id: ((pos === -1) ? $(this).data("data-d-id") : pos)
+                                        },
+                                    position: $(this).index()                                
+                                }
+                        }
+                        //$(this).find(".iconHolder").show();
+                    }, function () {
+                        if (hoverEvent != null) {
+                            hoverEvent.durationMs = new Date().getTime() - hoverEvent.timestamp;
+                            events.push(hoverEvent);
+                            hoverEvent = null;
+                        }
+                        //$(this).find(".iconHolder").hide();
+                    });                        
+
+                }
+                function buildFragments(puzzle) {
+                    for (var i = 0; i < puzzle.program.length; i++) {
+                        var fragment = $("<li class='fragment'>");
+                        fragment.data("data-pos", i);
+                        fragment.data("data-orig", puzzle.program[i]);
+                        var trashIconHolder = $("<div class='trashIconHolder'>");                        
+                        trashIconHolder.append($('<i class="fas fa-trash-alt">'));
+                        trashIconHolder.appendTo(fragment);
+                        var handIconHolder = $("<div class='handIconHolder'>");
+                        handIconHolder.append($('<i class="fas fa-hand-paper">'));
+                        handIconHolder.appendTo(fragment);
+                        for (var j = 0; j < puzzle.program[i].length; j++) {
+                            var indentContainer = $("<div class='indent'>");
+                            var text = puzzle.program[i][j].replace("}}", "} }");
+                            $('<pre class="brush: java; gutter: false; auto-links: false; class-name: fragmnt">').text(text).appendTo(indentContainer);
+                            indentContainer.data('data-orig', text);
+                            indentContainer.appendTo(fragment);
+                        }
+                        attachHover(fragment);
+                        fragment.appendTo(taskPane);
+                    }
+                    taskPane.data("data-len", puzzle.program.length);
+                    //distractors 
+                    for (var i = 0; i < puzzle.distracters.length; i++) {
+                        var fragment = $("<li class='fragment'>");
+                        var distractedLines = puzzle.distracters[i].line.split("\n");
+                        fragment.data("data-pos", -1);
+                        fragment.data("data-d-id", puzzle.distracters[i].id);
+                        fragment.data("data-orig", distractedLines);
+                        var trashIconHolder = $("<div class='trashIconHolder'>");                        
+                        trashIconHolder.append($('<i class="fas fa-trash-alt">'));
+                        trashIconHolder.appendTo(fragment);
+                        var handIconHolder = $("<div class='handIconHolder'>");
+                        handIconHolder.append($('<i class="fas fa-hand-paper">'));
+                        handIconHolder.appendTo(fragment);
+                        for (var j = 0; j < distractedLines.length; j++) {
+                            var indentContainer = $("<div class='indent'>");
+                            $('<pre class="brush: java; gutter: false; auto-links: false; class-name: fragmnt">').text(distractedLines[j]).appendTo(indentContainer);
+                            indentContainer.data('data-orig', distractedLines[j]);
+                            indentContainer.appendTo(fragment);
+                        }
+                        attachHover(fragment);
+                        fragment.appendTo(taskPane);
+                    }
+                    //shuffle fragments
+                    taskPane.find(".fragment").shuffle();
+                    taskPane.find(".fa-trash-alt").click(function () {
+                        var li = $(this).closest("li");
+                        li.fadeOut(function () { 
+                            li.appendTo(trash);
+                            autoIndent();
+                            li.fadeIn();
+                            trashed.fadeIn();
+                        });                                               
+                    })
+                    SyntaxHighlighter.highlight();
+                    autoIndent();                  
+                }
+                function getPuzzle(studentId) {
+                    $.ajax({
+                        url:service + "/" + studentId + "/puzzle",
+                        type:"GET",
+                        contentType:"application/json",
+                        dataType:"json",
+                        processData: false,
+                        success: function(puzzle){
+                            moveCount = 0;
+                            puzzleId = puzzle.id;
+                            attemptId = 0;
+                            puzzleStartTime = new Date().getTime();
+                            puzzleTitle.text(puzzle.title);
+                            puzzleDesc.text(puzzle.description);
+                            buildFragments(puzzle);
+                            puzzleContent.fadeIn('slow');
+                        }
+                    });  
+                }        
+                function sendEvaluation(studentId, puzzleId, moveCount, gaveUp) {
+                    var puzzleEndTime = new Date().getTime();
+                    var timeInMs = puzzleEndTime - puzzleStartTime;
+                    puzzleContent.fadeOut('slow', function () {
+                        taskPane.empty();
+                        trash.empty();
+                        trashed.hide();    
+                        $.ajax({
+                            url:service + "/" + studentId + "/puzzle/" + puzzleId + "/eval",
+                            type:"POST",
+                            data: JSON.stringify({fitness:moveCount,timeInMs:timeInMs,gaveUp:gaveUp}),
+                            contentType:"application/json",
+                            dataType:"json",
+                            processData: false,
+                            success: function(){   
+                                getPuzzle(studentId);
+                            }
+                        });                                                      
+                    });                                   
+                }
+                $("#loginButton").click(function () {
+                    login = $("#login").val();
+                    if (!login) {
+                        $("#loginRequired").show();
+                        $("#login").addClass("err");
+                    } else {
+                        $.ajax({
+                            url:service,
+                            type:"POST",
+                            data: JSON.stringify({"login": login}),
+                            contentType:"application/json",
+                            dataType:"json",
+                            processData: false,
+                            success: function(data){                                
+                                studentId = data.id;
+                                sessionId = data.sessionId;
+                                $("#statsUserName").text(login + ", " + studentId);
+                                var loginEvent =
+                                    {
+                                        "timestamp": new Date().getTime(),
+                                        "ip": data.ip,
+                                        "type": "login",
+                                        "touchEvents": ('ontouchstart' in document.documentElement),
+                                        "w": $(window).width(),
+                                        "h": $(window).height(),
+                                    };    
+                                events.push(loginEvent);
+                                userName.val(login);
+                                loginContent.fadeOut(function () {
+                                    getPuzzle(studentId);
+                                });                                
+                            }
+                        });                     
+                    }
+                });
+                $("#giveUpButton").click(function () {
+                    giveUpMsg.show();
+                    msg.fadeIn('slow');
+                    setTimeout(function () {
+                        msg.fadeOut(function () {
+                            giveUpMsg.hide();
+                        });                                           
+                    }, 4000);        
+                    sendEvaluation(studentId, puzzleId, moveCount, true);                                                
+                });
+                function sendAttempt(errorsNumber, answer, trash) {
+                    var attempt =
+                        {
+                            timestamp: puzzleStartTime,
+                            programTitle: puzzleTitle.text(),
+                            studentId: studentId,
+                            sessionId: sessionId,
+                            puzzleId: puzzleId,
+                            attemptId: attemptId,
+                            attemptTimeMs: (new Date().getTime() - puzzleStartTime),
+                            errorsNumber: errorsNumber,
+                            moveCount: moveCount,                            
+                            answer: answer,
+                            trash: trash,                            
+                            events: events
+                        };
+                    events = [];
+                    attemptId++;
+                    $.ajax({
+                            url:service + "/" + studentId + "/puzzle/" + puzzleId + "/attempt",
+                            type:"POST",
+                            data: JSON.stringify(attempt),
+                            contentType:"application/json",
+                            dataType:"json",
+                            processData: false
+                        });                      
+                }
+                $("#nextButton").click(function () {
+                    var lineIndex = 0;
+                    var expectedLength = taskPane.data("data-len");
+                    var errorsNumber = 0;
+                    var answer = [];
+                    taskPane.find(".fragment").each(function () {
+                        var pos = $(this).data("data-pos");                  
+                        if (pos !== lineIndex)
+                            errorsNumber++;
+                        if (pos === -1)
+                        {
+                            var dId = $(this).data("data-d-id");
+                            answer.push({type:"distractor", id: dId})
+                        }
+                        else 
+                            answer.push({type:"fragment", id: pos})
+                        lineIndex++;
+                    });
+                    var trashArray = [];
+                    trash.find(".fragment").each(function () {
+                        var pos = $(this).data("data-pos");
+                        if (pos === -1)
+                        {
+                            var dId = $(this).data("data-d-id");
+                            trashArray.push({type:"distractor", id: dId})
+                        }
+                        else 
+                            trashArray.push({type:"fragment", id: pos})                        
+                    });
+                    sendAttempt(errorsNumber, answer, trashArray);
+                    if ((errorsNumber > 0) || (lineIndex !== expectedLength)) {
+                        wrongMsg.show();
+                        msg.fadeIn('slow');
+                        setTimeout(function () {
+                            msg.fadeOut(function () {
+                                wrongMsg.hide();
+                            });                            
+                        }, 4000);
+                    } else {
+                        correctMsg.show();
+                        msg.fadeIn('slow');
+                        setTimeout(function () {
+                            msg.fadeOut(function () {
+                                correctMsg.hide();
+                            });                                           
+                        }, 4000);
+                        sendEvaluation(studentId, puzzleId, moveCount, false);
+                    }
+                });
+
+                $("#progressButton").click(function () {
+                    $.ajax({
+                        url:service + "/" + studentId + "/stats",
+                        type:"GET",
+                        contentType:"application/json",
+                        dataType:"json",
+                        processData: false,
+                        success: function(stats){
+                            $("#statsPuzzles").text(stats.solved + "/" + stats.seen);
+                            var durationSeconds = Math.round(stats.duration / 1000);
+                            var durationMinutes = Math.round(durationSeconds / 60);
+                            $("#statsSessionDuration").text(durationMinutes + " minutes");
+                            $("#statsDate").text(new Date().toString());
+                            puzzleContent.fadeOut('slow', function () {
+                                statsContent.fadeIn();
+                            });                                      
+                        }
+                    });                                                                                            
+                });
+                $("#backButton").click(function () {
+                    statsContent.fadeOut('slow', function () {
+                        puzzleContent.fadeIn();
+                    });  
+                });
+            });
+        </script>
+    </body>
+</html>

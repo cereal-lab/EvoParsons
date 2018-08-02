@@ -1,0 +1,15 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Determine if the second string is a substring of the first string passed as parameter.
+
+[#description#]
+This function returns 1 if the second string is a substring of the first string passed as parameter or 0 otherwise. For example, is_substring ("hi, there", "hi") returns 1 while is_substring("hi there", "he, here") returns 0.
+
+[#source#]
+
+      

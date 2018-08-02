@@ -1,0 +1,14 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Insert an item into a linked list
+
+[#description#]
+The insert(int a, int b) finds first occurence of a in the list then inserts b after a. head is the 
+start of the list. The function assumes that a will always be present in the list
+[#source#]
+

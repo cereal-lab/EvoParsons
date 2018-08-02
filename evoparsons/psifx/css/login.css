@@ -1,0 +1,25 @@
+.root {
+    -fx-spacing:10px;      
+    -fx-padding: 10px 10px 10px 10px;
+    -fx-min-width: 400px;
+    -fx-pref-width: 400px;
+    -fx-max-width: 500px;
+}
+.hbox {
+    -fx-spacing:15px;
+    -fx-padding: 10px 0px 0px 0px;
+    -fx-alignment:center-left;
+}
+.label {
+    /* -fx-font-size: 14pt; */
+    -fx-font-family: "Times New Roman";  
+    /* -fx-text-fill: #2c5b51; */
+    /* -fx-padding: 10px 10px 10px 10px; */
+}
+
+#loginButton {
+    -fx-font-size: 14pt;
+}
+/* .cl {
+    -fx-pref-width: infinity;
+} */

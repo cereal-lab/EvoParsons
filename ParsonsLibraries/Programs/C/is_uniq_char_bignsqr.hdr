@@ -1,0 +1,16 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Determines if a string contains any duplicate character. Sorts the string first, then check for duplicity in the sorted string. 
+
+[#description#]
+This function returns 1 if there is no duplicate character in the string passed as parameter or 0 otherwise. For example, "two birds" will return 1 because there is no duplicate character. On the other hand "tobe-rn---!!--" will return 0 becuase it contains several hyphens and exclamation sign.
+The algorithm works as follows : first the input string is sorted using insertion sort algorithm then the sorted string is checked whether there is any duplicater there. isUniqueV3(s,size) calls insertion sort then returns isUnique(s,size).
+
+
+[#source#]
+

@@ -1,0 +1,15 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Determines if two strings are anagram or not
+
+[#description#]
+This function returns 1 if two strings passed as parameter are anagram or 0 otherwise. We consider strings built only with small letters. For example, "decimate" and "medicate" are anagrams. 
+
+[#source#]
+
+

@@ -1,0 +1,22 @@
+#!/bin/bash
+#Firt obtain sources to fresh folder using download-psi or download-all
+#Executing this script will produce evoparsons-psifx.jar in bin folder in current dir
+#This jar does not have dependencies, but to start it you can use copied evoparsons-psifx bash script
+
+javac $(find evoparsons/psifx -name "*.java") $(find evoparsons/rmishared -name "*.java")
+
+if [ $? != 0 ] 
+then 
+	echo "Take another look at the source..."
+	exit
+fi
+
+#create bin if it does not exist
+mkdir -p bin
+jar cfm bin/evoparsons-psifx.jar ./evoparsons/psifx/manifest.mf ./evoparsons/psifx/*.class ./evoparsons/psifx/models/*.class ./evoparsons/psifx/fxml/*.fxml ./evoparsons/psifx/css/*.css ./evoparsons/rmishared/*.class ./evoparsons/psifx/config.properties
+cp scripts/evoparsons-psifx bin/
+#cp evoparsons/psifx/config.properties bin/
+
+#celanup if needed
+#rm $(find evoparsons/psifx -name "*.class")
+#rm $(find evoparsons/rmishared -name "*.class")

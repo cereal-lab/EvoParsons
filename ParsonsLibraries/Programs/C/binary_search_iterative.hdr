@@ -1,0 +1,14 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Binary Search Algorithm
+
+[#description#]
+This function returns 1 if an item is found in an array of integer, otherwise returns 0.  
+
+[#source#]
+

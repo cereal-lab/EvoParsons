@@ -1,0 +1,15 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+This function counts the number of  charcaters, new line and words in a string. Then it returns their sum, 
+
+[#description#]
+The function word_bs_counter(char* s) counts each of the character, new line and words into s. When counting 
+character newline is also a character, same for tab and blank space. As for example, word_bs_counter("hello\n	there)
+will return 16 because #character =13 (one \n, one \t, one '\0' and ten letters), #newline = 1 and #word = 2.
+
+[#source#]

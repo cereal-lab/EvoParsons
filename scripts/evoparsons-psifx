@@ -1,0 +1,3 @@
+#!/bin/bash
+#this script launches evoparsons psi - server client (execute it inside bin folder after build or whatever) 
+java -jar evoparsons-psifx.jar 

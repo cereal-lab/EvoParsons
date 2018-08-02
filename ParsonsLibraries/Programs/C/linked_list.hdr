@@ -1,0 +1,15 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Create a linked list and Print it. The newly inseted item 
+points to the head of that list.
+
+[#description#]
+create_list creates the linked list and print() function prints the list.   
+new_element() creates a new node and returns it.
+[#source#]
+

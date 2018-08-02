@@ -1,0 +1,3 @@
+#!/bin/bash
+#this script launches evoparsons psi - server client (execute it inside bin folder after build or whatever) 
+java -Dbrokerhost=127.0.0.1 -Dbrokerport=1240 -jar psi.jar 

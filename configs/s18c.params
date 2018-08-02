@@ -1,0 +1,10 @@
+#evoparsons server config
+evoparsons.broker.0=RMI
+evoparsons.broker.0.hostname=evoparsons.csee.usf.edu
+evoparsons.broker.0.port=1243
+evoparsons.outputFolder=./DATA.out
+evoparsons.programs=./ParsonsLibraries/Programs/Java
+evoparsons.transforms=./ParsonsLibraries/Transforms/Java
+evoparsons.ea=preset
+evoparsons.distributionPolicy=cycling
+evoparsons.preset=https://sourceforge.net/p/evotutoring/code/HEAD/tree/trunk/configs/s18c.preset?format=raw

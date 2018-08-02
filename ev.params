@@ -1,0 +1,55 @@
+#evoparsons server config
+evoparsons.broker.0=RMI
+evoparsons.broker.0.hostname=127.0.0.1
+evoparsons.broker.0.port=1240
+evoparsons.broker.1=REST
+evoparsons.broker.1.hostname=127.0.0.1
+evoparsons.broker.1.port=8240
+evoparsons.outputFolder=./DATA.out
+evoparsons.programs=../ParsonsLibraries/Programs/Java
+evoparsons.transforms=../ParsonsLibraries/Transforms/Java
+evoparsons.ea=preset
+evoparsons.distributionPolicy=cycling
+#evoparsons.distributionPolicy=cycling.limit(10).then(dummy)
+evoparsons.preset=file:///home/dvitel/usf/sw/evo/configs/s18c.preset
+evoparsons.evalTries=2
+
+#ecj config
+evalthreads   = 1
+breedthreads  = 1
+jobs          = 50
+quit-on-run-complete    = true
+print-unaccessed-params = true
+seed.0            = 4359
+checkpoint        = true
+checkpoint-modulo = 1
+checkpoint-prefix = ec
+checkpoint-directory = $./DATA.out
+generations 			= 500
+state             = evoparsons.ecj.ParsonsEvolutionState
+init              =	ec.simple.SimpleInitializer
+breed             =	ec.simple.SimpleBreeder
+eval		            = ec.simple.SimpleEvaluator
+eval.style              = round-robin
+eval.problem	        = evoparsons.ecj.EvoParsonsProblem
+finish            = ec.simple.SimpleFinisher
+exch              =	ec.simple.SimpleExchanger
+pop               = ec.Population
+pop.subpops       = 1
+pop.subpop.0 			= ec.Subpopulation
+pop.subpop.0.size		= 2
+pop.subpop.0.species 	= ec.vector.IntegerVectorSpecies
+pop.subpop.0.duplicate-retries                 = 1
+pop.subpop.0.species.genome-size               = 10
+pop.subpop.0.species.fitness 	               = ec.simple.SimpleFitness
+pop.subpop.0.species.ind 		               = ec.vector.IntegerVectorIndividual
+pop.subpop.0.species.pipe                      = evoparsons.ecj.MutatorEvoParsons
+pop.subpop.0.species.pipe.source.0			   = evoparsons.ecj.EverySelection
+pop.subpop.0.species.mutation-prob 		       = 1.0
+
+stat              = ec.simple.SimpleStatistics
+stat.file		  = $./DATA.out/evoParsons.stat
+stat.num-children = 1
+stat.child.0      = evoparsons.ecj.CustomStatistics
+stat.child.0.file = $./DATA.out/customEvoParsons.stat
+stat.child.0.do-subpops = true

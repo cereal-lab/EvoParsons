@@ -1,0 +1,23 @@
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.ProgressBar?>
+
+<VBox id="AnchorPane" 
+    xmlns:fx="http://javafx.com/fxml"
+    fx:controller="evoparsons.psifx.AuthController"
+    stylesheets="@../css/login.css">
+    <Label>Student name:</Label>
+    <TextField fx:id="login" promptText="Enter Username"/>
+    <Label>Puzzle server:</Label>
+    <TextField fx:id="host" promptText="myserver.com" />
+    <Label>Port:</Label>
+    <TextField fx:id="port" promptText="1240" />
+    <HBox styleClass="hbox">      
+        <Button fx:id="loginButton" mnemonicParsing="false" onAction="#handleLoginButtonAction">Login</Button>
+        <ProgressBar fx:id="connectionProgress"/>        
+        <Label fx:id="statusMsg"></Label>         
+    </HBox>      
+</VBox>

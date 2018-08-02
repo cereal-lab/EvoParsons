@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Strings Comparison
+
+[#description#]
+This function returns 0 if the two strings are different or 1 otherwise
+
+[#source#]

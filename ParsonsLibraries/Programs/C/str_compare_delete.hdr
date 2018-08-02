@@ -1,0 +1,14 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+String comparison and delete
+
+[#description#]
+This function compares two strings (s1 and s2) and delete each common letter from s1. For example, compare_and_delete("x1xxb", "x1") returns b and 
+compare_and_delete("x1xxb", "c") returns x1xxb.  
+[#source#]
+

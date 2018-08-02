@@ -1,0 +1,32 @@
+.root {
+    -fx-padding: 10px 10px 10px 10px;
+    -fx-min-width: 500px;
+    -fx-pref-width: 500px;
+    -fx-max-width: 500px;
+}
+
+.label {
+    -fx-padding: 10px 10px 10px 10px;
+    -fx-font-size: 18px;
+    -fx-font-family: "Times New Roman";  
+}
+
+#report {
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+}
+
+.hbox {
+    -fx-spacing:15px;
+    -fx-padding: 10px 0px 0px 0px;
+    -fx-alignment:center;
+    -fx-padding: 10px 10px 10px 20px;
+}
+
+.button {
+    -fx-font-size: 14pt;
+}
+
+.note {
+    -fx-font-size: 14px !important;
+}

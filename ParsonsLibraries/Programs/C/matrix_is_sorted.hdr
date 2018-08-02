@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Is an integer matrix sorted in ascending order?
+
+[#description#]
+This function returns 0 if the integer matrix passed as parameter is sorted in ascending order or 1 otherwise
+
+[#source#]

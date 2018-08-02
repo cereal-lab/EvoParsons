@@ -1,0 +1,14 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Determines if a string contains any duplicate character. The function uses a single loop but requires less extra storage than an array.
+
+[#description#]
+This function returns 1 if there is no duplicate character in the string passed as parameter or 0 otherwise. For example, "two birds" will return 1 because there is no duplicate character. On the other hand "tobe-rn---!!--" will return 0 becuase it contains several hyphens and exclamation sign
+
+[#source#]
+

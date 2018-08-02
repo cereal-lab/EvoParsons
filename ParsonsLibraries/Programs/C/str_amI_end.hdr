@@ -1,0 +1,14 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Finding  a string at the end of another string
+
+[#description#]
+This function returns 1 if the second string is found at the end of the first string or 0 otherwise. For example ami_at_end (s,t,len) where s = "something",
+t = "thing" and len = 6 (the length of t) returns 1 because thing stays at the end of something.
+
+[#source#]

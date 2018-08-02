@@ -1,0 +1,50 @@
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ProgressBar?>
+
+<BorderPane
+  xmlns:fx="http://javafx.com/fxml"
+  fx:controller="evoparsons.psifx.PuzzleController"
+  stylesheets="@../css/puzzle.css">
+  <top>
+    <VBox>
+      <Label fx:id="title" wrapText="true" />
+      <Label fx:id="description" wrapText="true" />
+    </VBox>
+  </top>
+  <center>
+  <SplitPane dividerPositions="0.5">
+    <items>
+      <VBox fx:id="leftPane">                
+        <ListView fx:id="puzzle" />
+      </VBox>
+      <VBox prefHeight="${leftPane.height}">
+        <Label>Answer Window</Label>
+        <ListView fx:id="answer" prefHeight="${0.7*leftPane.height}" />
+        <Label>Trash Window</Label>
+        <ListView fx:id="trash" prefHeight="${0.3*leftPane.height}" />        
+        <HBox styleClass="hbox">
+            <ProgressBar fx:id="connectionProgress" />
+            <Button fx:id="nextButton" mnemonicParsing="false" onAction="#handleSubmitButtonAction" text="Submit" />
+            <Button fx:id="giveUpButton" mnemonicParsing="false" onAction="#handleGiveUpButtonAction" text="GiveUp" />            
+            <Button mnemonicParsing="false" onAction="#handleReportRequest" text="Report" />
+        </HBox>
+      </VBox>
+    </items>
+  </SplitPane>
+  </center>
+  <bottom>
+    <VBox fx:id="feedbackHolder">
+      <ListView fx:id="feedback" />
+    </VBox>
+  </bottom>
+</BorderPane>

@@ -1,0 +1,13 @@
+#!/bin/bash
+#this is for psifx installation only
+#1. Select folder were you want source codes for psifx to be 
+#2. Execute this script in fresh folder - it will brings PSIFX sources 
+#3. Next, you can use ./scripts/build-psifx to build bin folder with psifx executable
+
+mkdir -p evoparsons
+mkdir -p scripts
+svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/evoparsons/psifx evoparsons/psifx
+svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/scripts/  scripts
+svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/evoparsons/rmishared evoparsons/rmishared
+svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/evoparsons/broker evoparsons/broker
+# evoparsons.ParsonsBrokerConfig imported by rmishared.ParsonsBrokerInterfaceForEAs

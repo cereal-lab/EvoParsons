@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Reverse a string
+
+[#description#]
+This function modifies the string passed as parameter so as to reverse the order of the characters in it. It then returns its address.
+
+[#source#]

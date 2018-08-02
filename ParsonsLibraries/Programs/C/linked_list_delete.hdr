@@ -1,0 +1,14 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Delete an item from a linked list
+
+[#description#]
+The delete (int a) function finds the element a into the list and then deletes it.
+The function assumes that a will always be present in the list
+[#source#]
+

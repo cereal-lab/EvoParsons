@@ -1,0 +1,43 @@
+.root {
+    -fx-padding: 10px 10px 10px 10px;
+    -fx-min-width: 500px;
+    -fx-pref-width: 1000px;
+    -fx-max-width: 1000px;
+}
+.hbox {
+    -fx-spacing:15px;
+    -fx-padding: 10px 0px 0px 0px;
+    -fx-alignment:center-right;
+    -fx-padding: 10px 10px 10px 20px;
+}
+.label {
+    /* -fx-font-size: 14pt; */
+    -fx-font-family: "Times New Roman";  
+    /* -fx-text-fill: #2c5b51; */
+    /* -fx-padding: 10px 10px 10px 10px; */
+}
+
+#title {
+    -fx-font-size: 18px;
+    -fx-padding: 0px 20px 10px 20px;
+    -fx-font-weight: bold;
+}
+
+#description {
+    -fx-padding: 0px 20px 20px 20px;
+}
+
+#feedbackHolder {
+    -fx-min-height: 40px;
+    -fx-pref-height: 100px;
+    -fx-max-height: 100px;
+    -fx-padding: 10px 20px 10px 20px;
+}
+
+.button {
+    -fx-font-size: 14pt;
+}
+
+#puzzle {
+    -fx-pref-height: 400px;
+}

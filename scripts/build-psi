@@ -1,0 +1,20 @@
+#!/bin/bash
+#Note: this should be executed in the trunk folder!
+#Like: ./scripts/build-server
+#todo: discuss minor change about moving this to trunk directly 
+
+javac -cp "lib/*" $(find evoparsons/psi evoparsons/rmishared -name "*.java")
+
+if [ $? != 0 ] 
+then 
+	echo "Take another look to the source..."
+	exit
+fi
+
+#create dir if not exist
+mkdir -p bin 
+mkdir -p bin/psi
+
+jar cfm bin/psi/psi.jar ./evoparsons/psi/manifest.mf ./evoparsons/psi/*.class ./evoparsons/rmishared/*.class
+
+cp scripts/evoparsons-psi bin/psi/psi

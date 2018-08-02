@@ -1,0 +1,20 @@
+#!/bin/bash
+#select fresh folder first to store sources, then download
+#it will bring evoparsons-server, psi, psifx and puzzles to folder 
+
+SVNTARGET="https://svn.code.sf.net/p/evotutoring/code/trunk/"
+
+svn checkout "${SVNTARGET}evoparsons/broker" evoparsons/broker >/dev/null
+svn checkout "${SVNTARGET}evoparsons/ecj" evoparsons/ecj >/dev/null
+svn checkout "${SVNTARGET}evoparsons/rmishared" evoparsons/rmishared >/dev/null
+svn checkout "${SVNTARGET}lib" lib >/dev/null
+mkdir scripts
+mkdir docker
+wget "${SVNTARGET}scripts/build-server?format=raw" --content-disposition --no-check-certificate -O ./scripts/build-server >/dev/null
+wget "${SVNTARGET}scripts/evoparsons-server?format=raw" --content-disposition --no-check-certificate -O ./scripts/evoparsons-server >/dev/null
+wget "${SVNTARGET}docker/supervisord.conf?format=raw" --content-disposition --no-check-certificate -O ./docker/supervisord.conf >/dev/null
+#svn checkout "${SVNTARGET}docker" docker >/dev/null
+svn checkout "${SVNTARGET}ParsonsLibraries/Programs/Java" ParsonsLibraries/Programs/Java >/dev/null
+svn checkout "${SVNTARGET}ParsonsLibraries/Transforms/Java" ParsonsLibraries/Transforms/Java >/dev/null
+
+

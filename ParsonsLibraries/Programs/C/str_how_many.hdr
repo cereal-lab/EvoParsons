@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+How many of a given letter are in a string
+
+[#description#]
+This function returns the number of occurences of a character specified in the parameter named letter, in the string parameter named string. 
+
+[#source#]

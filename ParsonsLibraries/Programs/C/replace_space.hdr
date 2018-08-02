@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Replace space by %20
+
+[#description#]
+A function that replace a space in a string by %20 and returns the modified string  
+
+[#source#]

@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Find the minimum itme from a linked list
+
+#description#]
+The function linked_list_minimum() traverses the linked list and return the minimum item
+[#source#]
+

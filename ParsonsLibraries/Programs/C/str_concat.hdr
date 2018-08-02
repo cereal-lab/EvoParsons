@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+String concatenation
+
+[#description#]
+This function str_concat(s,t) copies the string t to the end of s.
+[#source#]
+

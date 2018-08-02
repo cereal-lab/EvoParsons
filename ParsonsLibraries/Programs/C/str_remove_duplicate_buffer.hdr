@@ -1,0 +1,14 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Remove duplicate occurence in String.
+
+[#description#]
+This function removes duplicates from string. It uses additional buffer (eg. array). Example: remove_duplicate_using_buffer("abcabe",6) will 
+return abce  
+[#source#]
+

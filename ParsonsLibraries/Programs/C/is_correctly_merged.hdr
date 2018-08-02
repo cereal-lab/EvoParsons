@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Merging two sorted arrays and determining whether the merge is correct.
+
+[#description#]
+This function merges two alrady sorted sequences and return either 1 or 0 based on the merged sequence. If the merged sequence is ascending then it returns 1 otherwise 0. As for example, is_correctly_merged ([2,8, 12], [3, 9], 3, 2, sorted[5]) will produce sorted[2, 3, 8, 9, 12] and return 1 because sorted[] is ascending but is_correctly_merged ([8, 2, 12], [3, 9], 3, 2, sorted[5]) will produce sorted[3, 8, 2, 9, 12] and return 0 because sorted[] is not ascending.
+[#source#]
+

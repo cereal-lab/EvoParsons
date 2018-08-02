@@ -1,0 +1,11 @@
+#!/bin/bash
+#this is for psi installation only
+#1. Select folder were you want source codes for psi to be 
+#2. Execute this script in fresh folder - it will brings PSI sources 
+#3. Next, you can use ./scripts/build-psi to build bin folder with psi executable
+
+mkdir -p evoparsons
+mkdir -p scripts
+svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/evoparsons/psi evoparsons/psi >/dev/null
+svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/scripts scripts >/dev/null
+svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/evoparsons/rmishared evoparsons/rmishared >/dev/null

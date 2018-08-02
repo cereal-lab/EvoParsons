@@ -1,0 +1,16 @@
+version: '2'
+services:
+  EvoParsonsServer:
+    image: evoparsons_server
+    restart: always
+    ports:
+      - "${BROKER_PORT}:${BROKER_PORT}"
+    environment:
+      - "BROKER_CONFIG=${BROKER_CONFIG}"
+    volumes:
+      - "${DATA_DIR}:/app/DATA.out"
+    networks:
+      default:
+        aliases:
+          - ${BROKER_HOSTNAME}
+

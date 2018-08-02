@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Determines if a string is a palindrome
+
+[#description#]
+This function returns 1 if the string passed as parameter is a palindrome or 0 otherwise. Please note that we will ignore case, punctuation and spaces in determining whether the string is a palindrome. "Dammit, I'm mad!" is a palindrome by this definition.
+
+[#source#]

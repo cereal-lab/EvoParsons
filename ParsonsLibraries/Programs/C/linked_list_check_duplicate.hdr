@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Check the duplicate item in a linked list
+
+#description#]
+The function is_there_duplicate() returns 1 if there is duplicate item in the list, otherwise it returns zero
+[#source#]
+

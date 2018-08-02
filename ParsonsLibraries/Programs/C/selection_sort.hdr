@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Selection Sort Algorithm
+
+[#description#]
+A function that sorts an array of characters using selection sort algorithm and returns the sorted array. 
+
+[#source#]

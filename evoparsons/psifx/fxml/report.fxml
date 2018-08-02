@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.ColumnConstraints?>
+
+<GridPane
+    xmlns="http://javafx.com/javafx/9.0.4" 
+    xmlns:fx="http://javafx.com/fxml/1" 
+    fx:controller="evoparsons.psifx.ReportController"
+    stylesheets="@../css/report.css">
+    <children>
+    <Label fx:id="report" GridPane.rowIndex="0" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="center">
+        REPORT
+    </Label>
+    <Label GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.halignment="right">Student name: </Label>
+    <Label fx:id="login" GridPane.rowIndex="1" GridPane.columnIndex="1"></Label>
+    <Label GridPane.rowIndex="2" GridPane.columnIndex="0" GridPane.halignment="right">Server: </Label>
+    <Label fx:id="server" GridPane.rowIndex="2" GridPane.columnIndex="1"></Label>
+    <Label GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.halignment="right">Duration: </Label>
+    <Label fx:id="duration" GridPane.rowIndex="3" GridPane.columnIndex="1"></Label>        
+    <Label GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.halignment="right">Date: </Label>
+    <Label fx:id="date" GridPane.rowIndex="4" GridPane.columnIndex="1"></Label>
+    <Label GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.halignment="right">Puzzles: </Label>
+    <Label fx:id="puzzles" GridPane.rowIndex="5" GridPane.columnIndex="1"></Label>    
+    <Label styleClass="note" GridPane.rowIndex="6" GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.halignment="center">
+        Note: Please take screenshot of this page.
+    </Label>    
+    <HBox styleClass="hbox" GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.columnSpan="2">
+        <Button mnemonicParsing="false" onAction="#handleDoneButtonAction">Done</Button>
+        <Button mnemonicParsing="false" onAction="#handleBackButtonAction">Back</Button>
+    </HBox>
+    </children>
+    <columnConstraints>
+        <ColumnConstraints hgrow="always" percentWidth="50" />
+        <ColumnConstraints hgrow="always" percentWidth="50" />
+    </columnConstraints>
+</GridPane>

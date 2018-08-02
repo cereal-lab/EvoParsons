@@ -1,0 +1,13 @@
+[#author#]
+EvoParsons Team
+
+[#language#]
+C
+
+[#title#]
+Converting an integer into a string
+
+[#description#]
+A recursive function to convert an integer into a character string. 
+
+[#source#]
