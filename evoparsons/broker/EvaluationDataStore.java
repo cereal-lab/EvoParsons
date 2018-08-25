@@ -237,6 +237,7 @@ public class EvaluationDataStore
 	
 	public ParsonsFitness getFitness(ParsonsEvaluation eval, ParsonsLibrary lib)
 	{	
+		if (eval.gaveUp) return null;
 		PuzzleEvaluation genotypeEvals = 
 			currentGenerationGenotypes.get(eval.puzzleIndex);
 		if (genotypeEvals == null)  // this evaluation is from previous generation

@@ -8,7 +8,7 @@ import java.util.Map;
 import evoparsons.rmishared.ParsonsEvaluation;
 import evoparsons.rmishared.ParsonsPuzzle;
 
-class PuzzleEvaluation implements Serializable {
+public class PuzzleEvaluation implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public final ParsonsGenotype genotype;
 	public final Map<Integer, ParsonsEvaluation> evaluations;	

@@ -1,0 +1,35 @@
+{
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "DataAnalysis": true,
+        "**/*.class": true,
+    },
+    "files.watcherExclude": {
+        "**/.git/objects/**": true,
+        "**/.git/subtree-cache/**": true,
+        "**/node_modules/**": true,
+        "DataAnalysis": true,
+        "**/*.class": true,
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "DataAnalysis": true,
+        "**/*.class": true,        
+    },
+    "java.autobuild.enabled": true,
+    "java.import.exclusions": [
+        "**/node_modules/**",
+        "**/.metadata/**",
+        "**/archetype-resources/**",
+        "**/META-INF/maven/**",
+        "**/ParsonsLibraries/**"
+    ],
+    "java.import.gradle.enabled": false,
+    "java.import.maven.enabled": false,
+    //"java.trace.server": "verbose"
+}

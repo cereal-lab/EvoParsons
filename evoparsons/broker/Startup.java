@@ -32,7 +32,7 @@ public class Startup {
 			System.err.format("Error verifying output folder %s%n", config.getOutputFolder());
 			System.exit(1);
 		}
-		ParsonsLibrary lib = new ParsonsLibrary(log, config);
+		ParsonsLibrary lib = new ParsonsLibrary(log, config.getProgramsFolder(), config.getTransformsFolder());
 		
 		//TODO: use reflection and configuration to configure selection policy
 		//Next policy for epplets

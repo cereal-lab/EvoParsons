@@ -1,4 +1,4 @@
-package evoparsons.distractors;
+package evoparsons.utils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -12,7 +12,6 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import evoparsons.broker.Config;
 import evoparsons.broker.Log;
 import evoparsons.broker.ParsonsLibrary;
 
@@ -42,11 +41,7 @@ public class ProgramsByEffectiveDistractors {
                 }				
 			}
         };
-        Config config = new Config(Log.console) {{
-            programFolder = args[0];
-            transformsFolder = args[1];
-        }};
-        ParsonsLibrary lib = new ParsonsLibrary(Log.console, config);
+        ParsonsLibrary lib = new ParsonsLibrary(Log.console, args[0], args[1]);
 
         class Tuple<A, B> {
             public final A a;

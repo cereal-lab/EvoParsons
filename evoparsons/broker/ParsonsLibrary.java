@@ -35,11 +35,11 @@ public class ParsonsLibrary
 	/**
 	 * Building a new instance
 	 **/
-	public ParsonsLibrary(Log log, Config config)
+	public ParsonsLibrary(Log log, String programsFolder, String transformsFolder)
 	{
 		this.log = log;
 		programStore = 
-			load(config.getProgramsFolder(), 
+			load(programsFolder, 
 				new String[] { Program.LANG, Program.TITLE, Program.DESC, Program.SOURCE },
 				(fileName, groupedLines) -> 
 					new Program(
@@ -56,7 +56,7 @@ public class ParsonsLibrary
 					.mapToObj(i -> String.format("\t%d\t%s", i, programStore.get(i).fileName))
 					.collect(Collectors.joining(System.lineSeparator()))});
 		transformStore = 
-			loadTransforms(config.getTransformsFolder(), 
+			loadTransforms(transformsFolder, 
 				new String[] { Transform.TITLE, Transform.DESC, Transform.SELECT, Transform.TRANSFORM },
 				(fileName, groupedLines) -> 
 					new Transform(

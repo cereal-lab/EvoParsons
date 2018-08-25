@@ -1,0 +1,94 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Startup",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/bin",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.broker.Startup",
+            "projectName": "trunk",
+            "vmArgs": "-Dfile=./ev.params",
+            "args": "-?"
+        },           
+        {
+            "type": "java",
+            "name": "PSI",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.psi.PSI",
+            "projectName": "trunk",
+            "vmArgs": "-Dbrokerport=1240 -Dbrokerhost=127.0.0.1",
+            "args": ""
+        },
+        {
+            "type": "java",
+            "name": "PSIFX",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.psifx.AppPSI",
+            "projectName": "trunk",
+            "args": "",
+        },        
+        {
+            "type": "java",
+            "name": "DistractorToProgramMatrix",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.utils.ProgramsByEffectiveDistractors",
+            "projectName": "trunk",
+            "args": "./ParsonsLibraries/Programs/Java ./ParsonsLibraries/Transforms/Java",
+        },          
+        {
+            "type": "java",
+            "name": "AntlrTest",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.antlr.Test",
+            "projectName": "trunk",
+            "args": "./ParsonsLibraries/Programs/Java ./ParsonsLibraries/Transforms/Java",
+        },                
+        {
+            "type": "java",
+            "name": "BroToCsv",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.utils.BroToCsv",
+            "projectName": "trunk",
+            "args": "/home/dvitel/usf/sw/2018-summer/students.bro /home/dvitel/usf/sw/2018-summer/genotypes.bro",
+        },       
+        {
+            "type": "java",
+            "name": "InteractionMatrix",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.utils.InteractionMatrix",
+            "projectName": "trunk",
+            "args": "/home/dvitel/usf/sw/2018-summer/students.bro /home/dvitel/usf/sw/2018-summer/genotypes.bro",
+        },                          
+        {
+            "type": "java",
+            "name": "Debug (Attach)",
+            "request": "attach",
+            "hostName": "localhost",
+            "port": 0
+        }
+    ]
+}
