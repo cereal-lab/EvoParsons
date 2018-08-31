@@ -1,6 +1,5 @@
 package evoparsons.antlr;
 
-import org.antlr.runtime.Token;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.CommonTreeAdaptor;
 import org.antlr.v4.runtime.CharStream;

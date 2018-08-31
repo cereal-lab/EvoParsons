@@ -147,6 +147,7 @@ public class ParsonsGenotype implements Serializable
 	public boolean equals(Object o) { return (o instanceof ParsonsGenotype) && (((ParsonsGenotype)o).index == index);} 
 
 	public int getIndex() { return index; }
+	public int[] getGenome() { return genome; }
 	public int getPairedIndex() { return pairedIndex; }
 	protected int[] genome;
 	protected int index;	

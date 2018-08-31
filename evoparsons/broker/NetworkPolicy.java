@@ -77,7 +77,7 @@ public interface NetworkPolicy {
             this.broker = broker;
             this.config = config;
         }
-
+        
         private void onNewStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
             String login = "";
             try {
