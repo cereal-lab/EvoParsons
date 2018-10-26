@@ -11,7 +11,8 @@ evoparsons.transforms=../ParsonsLibraries/Transforms/Java
 evoparsons.ea=preset
 evoparsons.distributionPolicy=cycling
 #evoparsons.distributionPolicy=cycling.limit(10).then(dummy)
-evoparsons.preset=file:///home/dvitel/usf/sw/evo/configs/s18c.preset
+#evoparsons.preset=file:///home/dvitel/usf/sw/evo/configs/s18c.preset
+evoparsons.preset=https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/configs/s18c.preset
 evoparsons.evalTries=2
 
 #ecj config

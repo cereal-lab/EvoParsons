@@ -5,7 +5,7 @@ WORKDIR /app/
 
 RUN set -xe \
     && apk add --no-cache wget bash subversion \
-    && wget https://sourceforge.net/p/evotutoring/code/HEAD/tree/trunk/scripts/download-server?format=raw --content-disposition --no-check-certificate \
+    && wget https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/scripts/download-server --content-disposition --no-check-certificate \
     && chmod a+x ./download-server \
     && ./download-server
 
