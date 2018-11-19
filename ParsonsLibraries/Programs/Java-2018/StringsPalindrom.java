@@ -1,0 +1,34 @@
+/*
+[#author#]
+EvoParsons Team
+
+[#language#]
+java
+
+[#title#]
+StringsPalindrom
+
+[#description#]
+In this program, we write a method isPalindrom that returns true if its String parameter is a palindrom.
+A palindrom is a String with the same sequence of characters when read from left to right or backward.
+The main method calls isPalindrom on a series of strings used as tests.
+It displays a message only if one of the tests fails.
+Inside the main, declare first your String array, then your boolean array.
+Implement these method in the following order; main, isPalindrom.
+
+[#source#]
+*/
+public class StringsPalindrom {\\n  public static void main(String[] args){   
+      String [] tests = { "radar", "level", "noon", "not", "neither", "nope" };
+      boolean[] expectedOutcomes = { true, true, true, false, false, false };
+      for(int i = 0 ; i < tests.length ; i++){
+         boolean observedOutcome = isPalindrom(tests[i]);
+         if(observedOutcome != expectedOutcomes[i])
+            System.out.println("Test #" + i + " failed! String was " + tests[i]);\\n} // end of for loop\\n} //end of main method
+   public static boolean isPalindrom(String s){
+      int low = 0, high = s.length() - 1;
+      while (high > low) {
+         if (s.charAt(low) != s.charAt(high))
+            return false;
+         low += 1; high -= 1;
+      } // end of while loop\\n return true;\\n} // end of isPalindrom method\\n} // end of class
