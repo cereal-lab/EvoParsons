@@ -315,7 +315,7 @@ public class PuzzleController implements BiInitializable {
             solvedPuzzleCount++;
             long currentPuzzleDurationMs = currentPuzzleEndTimeMs - currentPuzzleStartTimeMs;
             ParsonsEvaluation eval = 
-                new ParsonsEvaluation(AuthController.studentId, currentPuzzle.id, (double)moves, currentPuzzleDurationMs, false, System.currentTimeMillis());            
+                new ParsonsEvaluation(AuthController.studentId, currentPuzzle.id, moves, currentPuzzleDurationMs, ((double)moves/currentPuzzle.getPhenotypeSize()), false, System.currentTimeMillis());            
             connectionProgress.setVisible(true);
             sendEval(eval, 0);
         } else {
@@ -333,7 +333,7 @@ public class PuzzleController implements BiInitializable {
         long currentPuzzleEndTimeMs = System.currentTimeMillis();
         long currentPuzzleDurationMs = currentPuzzleEndTimeMs - currentPuzzleStartTimeMs;
         ParsonsEvaluation eval = 
-            new ParsonsEvaluation(AuthController.studentId, currentPuzzle.id, (double)moves, currentPuzzleDurationMs, true, System.currentTimeMillis());            
+            new ParsonsEvaluation(AuthController.studentId, currentPuzzle.id, moves, currentPuzzleDurationMs, ((double)moves / currentPuzzle.getPhenotypeSize()), true, System.currentTimeMillis());            
         connectionProgress.setVisible(true);
         sendEval(eval, 0);        
     }

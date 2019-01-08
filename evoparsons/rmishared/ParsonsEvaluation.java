@@ -10,6 +10,7 @@ import java.io.*;
 public class ParsonsEvaluation implements Serializable{
 	private static final long serialVersionUID = 1L;
 	public final int studentId;
+	public final int moves;
 	public final double fitness;
 	public final int puzzleIndex;
 	public final long timeInMs;
@@ -19,10 +20,11 @@ public class ParsonsEvaluation implements Serializable{
 		this.timestamp = timestamp;
 	}
 	
-	public ParsonsEvaluation(int studentId, int puzzleIndex, double fitness, long timeInMs, boolean gaveUp, long timestamp) {
+	public ParsonsEvaluation(int studentId, int puzzleIndex, int moves, long timeInMs, double fitness, boolean gaveUp, long timestamp) {
 		this.studentId = studentId;
 		this.puzzleIndex = puzzleIndex;
-		this.fitness = fitness;
+		this.moves = moves;
+		this.fitness = fitness;//!important - fitness is decided on client - it depends on UI
 		this.timeInMs = timeInMs;
 		this.gaveUp = gaveUp;
 		this.timestamp = timestamp;
@@ -30,6 +32,6 @@ public class ParsonsEvaluation implements Serializable{
 	
 	@Override
 	public String toString() {
-		return String.format("{'studentId':%d,'puzzleId':%d,'fitness':%f,'timeInMs':%d,'gaveUp':%b}", studentId, puzzleIndex, fitness, timeInMs, gaveUp);
+		return String.format("{'studentId':%d,'puzzleId':%d,'moves':%d,'timeInMs':%d,'fitness':%.2f,'gaveUp':%b}", studentId, puzzleIndex, moves, timeInMs, fitness, gaveUp);
 	}
 }

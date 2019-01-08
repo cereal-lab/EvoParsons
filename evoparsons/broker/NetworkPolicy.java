@@ -111,14 +111,15 @@ public interface NetworkPolicy {
             ParsonsEvaluation eval = null;
             try {
                 Map<String, Object> requestJson = (Map<String, Object>)JSON.parse(request.getReader());
-                Object fitnessObj = requestJson.get("fitness");
-                double fitness = 0.0;
-                if (fitnessObj instanceof Long)
-                    fitness = (double)(long)fitnessObj;
-                else fitness = (double)fitnessObj;
+                int moves = (int)requestJson.get("moves");
+                double fitness = (double)requestJson.get("fitness");
+                // double fitness = 0.0;
+                // if (fitnessObj instanceof Long)
+                //     fitness = (double)fitnessObj;
+                // else fitness = (double)fitnessObj;
                 long timeInMs = (long)requestJson.get("timeInMs");
                 boolean gaveUp = (boolean)requestJson.get("gaveUp");                
-                eval = new ParsonsEvaluation(studentId, puzzleId, fitness, timeInMs, gaveUp, System.currentTimeMillis());
+                eval = new ParsonsEvaluation(studentId, puzzleId, moves, timeInMs, fitness, gaveUp, System.currentTimeMillis());
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
                 Map<String, Object> respJson = new HashMap<>();

@@ -200,7 +200,8 @@ public class PSI
 		System.out.println(String.format("%nEvaluation elapsed time: %s", timeFormat.format(elapsed)));
 
 		// sending back evaluation data
-		broker.setParsonsEvaluation(new ParsonsEvaluation(studentId, puzzle.id, (double)attempts, elapsedMillis, giveUp, System.currentTimeMillis()));
+		double fitness = ((double)attempts) / puzzle.getPhenotypeSize();
+		broker.setParsonsEvaluation(new ParsonsEvaluation(studentId, puzzle.id, attempts, elapsedMillis, fitness, giveUp, System.currentTimeMillis()));
 		log("Sent evaluation data and got new puzzle");
 	}
 

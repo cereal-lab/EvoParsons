@@ -108,7 +108,6 @@ public class EvaluationDataStore
 						.sorted(Comparator.comparing(entry -> entry.getKey()))
 						.forEach(genotype -> {	
 							ParsonsPuzzle puzzle = genotype.getValue().genotype.getPuzzle(lib);
-							int phenotypeSize = puzzle.program.size() + puzzle.distracters.size();															
 							if (!genotype.getValue().evaluations.containsKey(student.getValue())) log.print("%10.10s", "");
 							else 
 							{
@@ -116,8 +115,8 @@ public class EvaluationDataStore
 								if (eval.gaveUp)
 									log.print("%10.10s", "gaveUp");
 								else 
-									log.print("%10.10s", String.format("%.1f,%.2f",
-										eval.fitness, eval.fitness / phenotypeSize));
+									log.print("%10.10s", String.format("%d,%d,%.2f",
+										eval.moves, eval.timeInMs / 1000, eval.fitness));
 							}
 						});
 					log.log("");
@@ -189,17 +188,17 @@ public class EvaluationDataStore
 								&& entry.getValue().evaluations.containsKey(studentId)
 								&& !entry.getValue().evaluations.get(studentId).gaveUp)
 							.findAny().isPresent();
-
 					eval =
 						studentHasAlreadySeenPuzzle ?
 							new ParsonsEvaluation(studentId, eval.puzzleIndex, 
+								eval.moves, eval.timeInMs,
 								DoubleStream.concat(DoubleStream.of(eval.fitness),
 									puzzleEval.evaluations.entrySet().stream()
 										.filter(entry -> !entry.getValue().gaveUp)
 										.mapToDouble(entry -> entry.getValue().fitness))
 										.average()
 										.getAsDouble(),							
-								eval.timeInMs, eval.gaveUp, eval.timestamp) : 
+								eval.gaveUp, eval.timestamp) : 
 							eval;
 				}		
 				puzzleEval
@@ -275,12 +274,8 @@ public class EvaluationDataStore
 				.collect(
 					() -> new CommonEvaluations(),
 					(acc, entry) -> {
-						ParsonsPuzzle puzzle = genotypeEvals.genotype.getPuzzle(lib);
-						int phenotypeSize = puzzle.program.size() + puzzle.distracters.size();
-						acc.firstGenotypeEvals.add(round.apply(entry.getValue().fitness / phenotypeSize));
-						puzzle = pairedGenotypeEvals.genotype.getPuzzle(lib);
-						phenotypeSize = puzzle.program.size() + puzzle.distracters.size();
-						acc.secondGenotypeEvals.add(round.apply(pairedGenotypeEvals.evaluations.get(entry.getKey()).fitness / phenotypeSize));
+						acc.firstGenotypeEvals.add(round.apply(entry.getValue().fitness));
+						acc.secondGenotypeEvals.add(round.apply(pairedGenotypeEvals.evaluations.get(entry.getKey()).fitness));
 						acc.students.add(entry.getKey());
 					},
 					(acc1, acc2) -> {}

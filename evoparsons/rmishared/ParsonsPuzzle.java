@@ -30,6 +30,10 @@ public class ParsonsPuzzle implements Serializable
 	public final List<String[]> program;			
 	public final List<AppliedDistracter> distracters;
 
+	public int getPhenotypeSize() {
+		return distracters.size() + program.size();
+	}
+
 	public ParsonsPuzzle(int id, String title, String desc, List<String[]> program, 
 		List<AppliedDistracter> distracters) {
 		this.id = id;
