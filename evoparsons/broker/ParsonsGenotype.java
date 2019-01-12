@@ -128,7 +128,7 @@ public class ParsonsGenotype implements Serializable
 									acc.leftPatterns.remove(distractorId);
 									Matcher match = foundElement.second;
 									String replacement = foundElement.first.getValue().second;
-									acc.distracters.add(new ParsonsPuzzle.AppliedDistracter(distractorId, match.replaceFirst(replacement)));
+									acc.distracters.add(new ParsonsPuzzle.AppliedDistracter(distractorId, Arrays.asList(match.replaceFirst(replacement).split("\\r?\\n"))));
 								});
 					},
 					(acc1, acc2) -> {}

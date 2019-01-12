@@ -3,6 +3,7 @@ package evoparsons.psi;
 import java.rmi.RemoteException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
@@ -84,7 +85,7 @@ public class PSI
 		List<String> correctAnswer = 
 			puzzle.program
 				.stream()
-				.map(lines -> String.join(System.lineSeparator(), lines))
+				.map(lines -> Arrays.asList(lines).stream().collect(Collectors.joining(System.lineSeparator())))
 				.collect(Collectors.toList());
 		//int count = (int)fragments.stream().filter(f -> f.index >= 0).count();
 
@@ -108,7 +109,7 @@ public class PSI
 
 			System.out.format("%n Solution = ");
 			IntStream.range(0, fragments.size())
-				.filter(i -> fragments.get(i).distracter == null)
+				.filter(i -> !fragments.get(i).distracterId.isPresent())
 				.mapToObj(Integer::valueOf)
 				.sorted(Comparator.comparing(i -> fragments.get(i).index))
 				.forEach(i -> System.out.print(i + " "));
@@ -165,7 +166,7 @@ public class PSI
 					List<Integer> guessedDistracters = 
 						guessLines.stream()
 							.filter(i -> (i >= 0) && (i < fragments.size()))
-							.filter(i -> fragments.get(i).distracter != null)
+							.filter(i -> fragments.get(i).distracterId.isPresent())
 							.collect(Collectors.toList());							
 					if (!guessedDistracters.isEmpty())
 					{
@@ -175,7 +176,9 @@ public class PSI
 					}
 					System.out.println();																
 					guessed = 
-						guess.stream().map(f -> f.line).collect(Collectors.toList())
+						guess.stream().map(f -> 
+							f.lines.stream().collect(Collectors.joining(System.lineSeparator())))
+							.collect(Collectors.toList())
 							.equals(correctAnswer);
 					attempts++;
 					if (!guessed)
@@ -222,8 +225,12 @@ public class PSI
 		System.out.println(description);
 
 		int b = 0;
-		for (Fragment fragment: body)		 
-			System.out.println(b++ + "\t" + fragment.line);
+		for (Fragment fragment: body)	
+		{	 
+			System.out.println(b++ + "\t");
+			for (String line: fragment.lines)
+				System.out.println(line);
+		}
 
 	}
 

@@ -1,16 +1,18 @@
 package evoparsons.rmishared;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
 
 
 @SuppressWarnings("serial")
 public class Fragment implements Serializable {
 	final public int index;
-	final public String line;
-	final public ParsonsPuzzle.AppliedDistracter distracter;
-	public Fragment(String line, int index, ParsonsPuzzle.AppliedDistracter distracter) {
-		this.line = line;
+	final public List<String> lines;
+	final public Optional<Integer> distracterId;
+	public Fragment(List<String> lines, int index, Optional<Integer> distracterId) {
+		this.lines = lines;
 		this.index = index;
-		this.distracter = distracter;
+		this.distracterId = distracterId;
 	}
 }

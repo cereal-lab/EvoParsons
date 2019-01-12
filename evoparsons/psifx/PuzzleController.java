@@ -86,7 +86,8 @@ public class PuzzleController implements BiInitializable {
                 description.setText(currentPuzzle.description);
                 puzzle.setItems(
                     FXCollections.observableArrayList(
-                        currentPuzzleFragments.stream().map(f -> f.line)
+                        currentPuzzleFragments.stream().map(f -> 
+                            f.lines.stream().collect(Collectors.joining(System.lineSeparator())))
                             .collect(Collectors.toList())
                         ));
                 answer.setItems(FXCollections.observableArrayList(""));

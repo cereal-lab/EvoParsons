@@ -10,6 +10,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import org.eclipse.jetty.util.resource.Resource;
 import evoparsons.broker.Log.FileLog;
 import evoparsons.rmishared.BrokerClient;
 import evoparsons.rmishared.BrokerInterface;
+import evoparsons.rmishared.Fragment;
 import evoparsons.rmishared.ParsonsEvaluation;
 import evoparsons.rmishared.ParsonsPuzzle;
 import evoparsons.rmishared.Stats;
@@ -106,14 +108,37 @@ public interface NetworkPolicy {
             response.getWriter().print(JSON.toString(respJson));
         }
 
+        private int minMovesForShuffling(List<Integer> fragmentIds)
+        {
+            List<Integer> fragmentsWithoutDistractorIds = fragmentIds.stream().filter(id -> id >= 0).collect(Collectors.toList());
+            int[] lis = new int[fragmentsWithoutDistractorIds.size()];
+            for (int i = 0; i < lis.length; i++) 
+                lis[i] = 1; 
+            for (int i = 1; i < lis.length; i++) 
+                for (int j = 0; j < i; j++) {
+                    int arrI = fragmentsWithoutDistractorIds.get(i);
+                    int arrJ = fragmentsWithoutDistractorIds.get(j);
+                    if (arrI >= arrJ && (lis[i] < (lis[j] + 1))) 
+                        lis[i] = lis[j] + 1; 
+                }
+            int maxLis = Arrays.stream(lis).max().orElse(0);
+            return (fragmentsWithoutDistractorIds.size() - maxLis)
+                + (fragmentIds.size() - fragmentsWithoutDistractorIds.size());
+        }
+
         private void onNewEval(int studentId, int puzzleId, HttpServletRequest request, HttpServletResponse response) throws IOException
         {
             ParsonsEvaluation eval = null;
             try {
                 Map<String, Object> requestJson = (Map<String, Object>)JSON.parse(request.getReader());
-                int moves = (int)requestJson.get("moves");
-                double fitness = (double)requestJson.get("fitness");
-                // double fitness = 0.0;
+                int moves = (int)(long)requestJson.get("moves");
+                //String design = (String)requestJson.get("design");
+                List<Integer> shuffling = 
+                    Arrays.stream((Object[])requestJson.get("shuffling")).map(o -> 
+                        (int)(long)o).collect(Collectors.toList());   
+                int minMoves = minMovesForShuffling(shuffling);             
+                double fitness = ((double)moves)/minMoves;
+                // double fitness = 0.0;                
                 // if (fitnessObj instanceof Long)
                 //     fitness = (double)fitnessObj;
                 // else fitness = (double)fitnessObj;
@@ -229,19 +254,31 @@ public interface NetworkPolicy {
                 //obtaining new puzzle
                 int studentId = Integer.valueOf(matcher.group("studentId"));
                 ParsonsPuzzle puzzle = broker.getParsonsPuzzle(studentId);
+                List<Fragment> fragments = puzzle.buildFragments();
                 Map<String, Object> respJson = new HashMap<>();
                 respJson.put("id", puzzle.id);
                 respJson.put("title", puzzle.title);
                 respJson.put("description", puzzle.description);
-                respJson.put("program", puzzle.program);
-                List<Map<String, Object>> distractersJson = new ArrayList<>();
-                puzzle.distracters.forEach(d -> {
+                //respJson.put("program", puzzle.program);
+                //List<Map<String, Object>> distractersJson = new ArrayList<>();
+                List<Map<String, Object>> fragmentsJson = new ArrayList<>();
+                fragments.forEach(fragment -> {
                     Map<String, Object> dMap = new HashMap<>();
-                    dMap.put("id", d.distracterId);
-                    dMap.put("line", d.distractedLine);
-                    distractersJson.add(dMap);
+                    dMap.put("id", fragment.index);   
+                    dMap.put("lines", fragment.lines);
+                    if (fragment.distracterId.isPresent()) {
+                        dMap.put("distracterId", fragment.distracterId.get());
+                    }
+                    fragmentsJson.add(dMap);
                 });
-                respJson.put("distracters", distractersJson);
+                // puzzle.distracters.forEach(d -> {
+                //     Map<String, Object> dMap = new HashMap<>();
+                //     dMap.put("id", d.distracterId);
+                //     dMap.put("line", d.distractedLine);
+                //     distractersJson.add(dMap);
+                // });
+                //respJson.put("distracters", distractersJson);
+                respJson.put("fragments", fragmentsJson);
                 response.setStatus(HttpServletResponse.SC_OK);
                 response.getWriter().print(JSON.toString(respJson));
                 return;                        

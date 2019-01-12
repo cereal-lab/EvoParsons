@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.Arrays;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -16,10 +18,10 @@ public class ParsonsPuzzle implements Serializable
 	public static class AppliedDistracter implements Serializable {
 		private static final long serialVersionUID = 1L;
 		public final int distracterId;
-		public final String distractedLine;
-		public AppliedDistracter(int distracterId, String distractedLine) {
+		public final List<String> distractedLines;
+		public AppliedDistracter(int distracterId, List<String> distractedLines) {
 			this.distracterId = distracterId;
-			this.distractedLine = distractedLine;
+			this.distractedLines = distractedLines;
 		}
 	}
 	private static final long serialVersionUID = 1L;
@@ -47,18 +49,29 @@ public class ParsonsPuzzle implements Serializable
 	{		
 		List<Fragment> fragments = 
 			new ArrayList<>(IntStream.range(0, program.size())
-				.mapToObj(i -> new Fragment(String.join(System.lineSeparator(), program.get(i)), i, null))
+				.mapToObj(i -> new Fragment(Arrays.asList(program.get(i)), i, Optional.empty()))
 				.collect(Collectors.toList()));
 		
 		List<Fragment> distractors = 
 			distracters.stream()
-				.map(distracter -> new Fragment(distracter.distractedLine, -1, distracter))
+				.map(distracter -> new Fragment(distracter.distractedLines, -1, Optional.of(distracter.distracterId)))
 				.collect(Collectors.toList());
 
 		fragments.addAll(distractors);
 		
 		Collections.shuffle(fragments);
+
+		final List<Fragment> frgm = fragments;
+
+		//workaround
+		if ((distracters.size() == 0) && IntStream.range(0, fragments.size()).allMatch(i -> i == frgm.get(i).index)) {
+			fragments = new ArrayList<>(fragments);
+			Collections.reverse(fragments);
+		}
 		
 		return fragments;
 	}
+
+	
+
 }
