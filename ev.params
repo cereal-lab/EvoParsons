@@ -9,11 +9,19 @@ evoparsons.outputFolder=./DATA.out
 evoparsons.programs=../ParsonsLibraries/Programs/Java
 evoparsons.transforms=../ParsonsLibraries/Transforms/Java
 evoparsons.ea=preset
+#evoparsons.ea=groups
+#evoparsons.ea.1=evo
+#evoparsons.ea.2=reset
 evoparsons.distributionPolicy=cycling
 #evoparsons.distributionPolicy=cycling.limit(10).then(dummy)
 #evoparsons.preset=file:///home/dvitel/usf/sw/evo/configs/s18c.preset
 evoparsons.preset=https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/configs/s18c.preset
 evoparsons.evalTries=2
+evoparsons.studentsFile = students.bro
+evoparsons.studentsStatsFile = studentsStats.bro
+evoparsons.genotypeIndexFile = genotypeIndex.bro
+evoparsons.genotypesFile = genotypes.bro
+evoparsons.genotypeEvolFile = genotypeEvol.bro
 
 #ecj config
 evalthreads   = 1

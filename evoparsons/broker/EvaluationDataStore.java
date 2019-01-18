@@ -17,11 +17,7 @@ import evoparsons.rmishared.ParsonsPuzzle;
 import evoparsons.rmishared.Stats;
 
 public class EvaluationDataStore
-{	
-	private static final String STUDENTS_FILE = "students.bro";
-	private static final String STUDENTS_STATS_FILE = "studentStats.bro";
-	private static final String GENOTYPES_FILE = "genotypes.bro";					
-	
+{		
 	private String outputFolder;
 
 	private Map<String, Integer> students; //TODO: cen we remove it
@@ -30,25 +26,27 @@ public class EvaluationDataStore
 	private Map<Integer, PuzzleEvaluation> currentGenerationGenotypes;
 	private int evalTries; 	
 	private Log log;
+	private Config config;
 
 	public EvaluationDataStore(Log log, Config config)
 	{
 		this.log = log;
+		this.config = config;
 		this.outputFolder = config.getOutputFolder();
 		this.evalTries = config.getEvalTries();
-		students = Utils.<HashMap<String, Integer>>loadFromFile(log, Paths.get(outputFolder, STUDENTS_FILE).toString(), HashMap<String, Integer>::new);
+		students = Utils.<HashMap<String, Integer>>loadFromFile(log, Paths.get(outputFolder, config.getStudentsFile()).toString(), HashMap<String, Integer>::new);
 		if (students.size() == 0)
 			log.log("[EvaluationDataStore] students hash is empty");
 		else 
 		{
-			log.log("[EvaluationDataStore] %d students were restored from %s", students.size(), STUDENTS_FILE);
+			log.log("[EvaluationDataStore] %d students were restored from %s", students.size(), config.getStudentsFile());
 			students.entrySet().stream()
 				.sorted(Comparator.comparing(entry -> entry.getValue()))
 				.forEach(entry -> log.log("\t%8.8s%6d", entry.getKey(), entry.getValue()));
 		}
-		studentStats = Utils.<HashMap<Integer, Stats>>loadFromFile(log, Paths.get(outputFolder, STUDENTS_STATS_FILE).toString(), HashMap<Integer, Stats>::new);
+		studentStats = Utils.<HashMap<Integer, Stats>>loadFromFile(log, Paths.get(outputFolder, config.getStudentsStatsFile()).toString(), HashMap<Integer, Stats>::new);
 		genotypes = 
-			Utils.<Map<Integer, PuzzleEvaluation>>loadFromFile(log, Paths.get(outputFolder, GENOTYPES_FILE).toString(), 
+			Utils.<Map<Integer, PuzzleEvaluation>>loadFromFile(log, Paths.get(outputFolder, config.getGenotypesFile()).toString(), 
 				HashMap<Integer, PuzzleEvaluation>::new);
 		//FIX in timestamp field
 		// genotypes
@@ -63,7 +61,7 @@ public class EvaluationDataStore
 			log.log("[EvaluationDataStore] genotypes hash is empty");
 		else
 		{
-			log.log("[EvaluationDataStore] %d genotypes were restored from %s", genotypes.size(), GENOTYPES_FILE);
+			log.log("[EvaluationDataStore] %d genotypes were restored from %s", genotypes.size(), config.getGenotypesFile());
 		}
 		currentGenerationGenotypes = 
 			genotypes.entrySet().stream()
@@ -299,7 +297,7 @@ public class EvaluationDataStore
 	public void saveStudents()
 	{
 		if (!students.isEmpty())
-			Utils.saveToFile(log, students,  Paths.get(outputFolder, STUDENTS_FILE).toString());
+			Utils.saveToFile(log, students,  Paths.get(outputFolder, config.getStudentsFile()).toString());
 		else
 			log.log("[EvaluationDataStore.saveStudents] Students database is empty!");
 	}
@@ -307,7 +305,7 @@ public class EvaluationDataStore
 	public void saveStudentStats() {
 		if (!studentStats.isEmpty())
 		{				
-			Utils.saveToFile(log, studentStats, Paths.get(outputFolder, STUDENTS_STATS_FILE).toString());
+			Utils.saveToFile(log, studentStats, Paths.get(outputFolder, config.getStudentsStatsFile()).toString());
 		}
 		else
 			log.log("[EvaluationDataStore.saveStudentStats] studentStats database is empty!");		
@@ -317,7 +315,7 @@ public class EvaluationDataStore
 	{
 		if (!genotypes.isEmpty())
 		{				
-			Utils.saveToFile(log, genotypes, Paths.get(outputFolder, GENOTYPES_FILE).toString());
+			Utils.saveToFile(log, genotypes, Paths.get(outputFolder, config.getGenotypesFile()).toString());
 		}
 		else
 			log.log("[EvaluationDataStore.saveGenotypes] Genotypes database is empty!");

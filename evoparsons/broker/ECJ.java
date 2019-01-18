@@ -19,7 +19,6 @@ import ec.util.ParameterDatabase;
 import evoparsons.ecj.ParsonsEvolutionState;
 
 public class ECJ implements EvolutionAlgorithm {    
-    private static final String GENOTYPE_EVOL_FILE = "genotypeEvol.bro";
     ParsonsEvolutionState evolState;
     private Config config;
     private Broker broker;
@@ -112,12 +111,12 @@ public class ECJ implements EvolutionAlgorithm {
 	private BiConsumer<ParsonsGenotype, ParsonsGenotype> createGenotypeEvolutionRecorder() {
         Map<Integer, List<ParsonsGenotype>> genotypeEvolution;
 		genotypeEvolution =
-			Utils.<Map<Integer, List<ParsonsGenotype>>>loadFromFile(log, Paths.get(config.getOutputFolder(), GENOTYPE_EVOL_FILE).toString(), 
+			Utils.<Map<Integer, List<ParsonsGenotype>>>loadFromFile(log, Paths.get(config.getOutputFolder(), config.getGenotypeEvolFile()).toString(), 
 				HashMap<Integer, List<ParsonsGenotype>>::new);
 		if (genotypeEvolution.size() == 0)
 			log.log("[ECJ.createGenotypeEvolutionRecorder] genotype evolution map is empty");
 		else 
-            log.log("[ECJ.createGenotypeEvolutionRecorder] %d evolution chains were srestored from %s", new Object[] { genotypeEvolution.size(), GENOTYPE_EVOL_FILE });				
+            log.log("[ECJ.createGenotypeEvolutionRecorder] %d evolution chains were srestored from %s", new Object[] { genotypeEvolution.size(), config.getGenotypeEvolFile() });				
         
         return 
             (before, after) -> 
@@ -132,7 +131,7 @@ public class ECJ implements EvolutionAlgorithm {
                     genotypeHistory.add(after);
                     genotypeEvolution.put(after.getIndex(), genotypeHistory);
                 }
-                Utils.saveToFile(log, genotypeEvolution, Paths.get(config.getOutputFolder(), GENOTYPE_EVOL_FILE).toString());
+                Utils.saveToFile(log, genotypeEvolution, Paths.get(config.getOutputFolder(), config.getGenotypeEvolFile()).toString());
             };
 	}
 

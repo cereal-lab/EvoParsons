@@ -34,6 +34,11 @@ public class Config {
     protected Log log;
     protected String evolutionAlgorithmName;
     protected String selectionPolicyName;
+    protected String genotypeIndexFile; //GENOTYPE_INDEX_FILE = "genotypeIndex.bro";
+    protected String studentsFile; //STUDENTS_FILE = "students.bro";
+    protected String studentsStatsFile; //STUDENTS_STATS_FILE = "studentStats.bro";
+    protected String genotypesFile; //GENOTYPES_FILE = "genotypes.bro";
+    protected String genotypeEvolFile; //GENOTYPE_EVOL_FILE = "genotypeEvol.bro";
 
     public Config(Log log) {
         this.log = log;
@@ -47,6 +52,11 @@ public class Config {
     public String getConfigFileName() { return configFileName; }
     public String getEvolutionAlgorithmName() { return evolutionAlgorithmName; }
     public String getSelectionPolicyName() { return selectionPolicyName; }
+    public String getGenotypeIndexFile() { return genotypeIndexFile; }
+    public String getStudentsFile() { return studentsFile; }
+    public String getStudentsStatsFile() { return studentsStatsFile; }
+    public String getGenotypesFile() { return genotypesFile; }
+    public String getGenotypeEvolFile() { return genotypeEvolFile; }
     public int getEvalTries() { return evalTries; }
 
     public static Config FromFile(Log log, String url) {
@@ -116,6 +126,11 @@ public class Config {
             this.outputFolder = props.getProperty("evoparsons.outputFolder");
             this.programFolder = props.getProperty("evoparsons.programs");
             this.presetUrl = props.getProperty("evoparsons.preset");
+            this.studentsFile = props.getProperty("evoparsons.studentsFile");
+            this.studentsStatsFile = props.getProperty("evoparsons.studentsStatsFile");
+            this.genotypeIndexFile = props.getProperty("evoparsons.genotypeIndexFile");
+            this.genotypesFile = props.getProperty("evoparsons.genotypesFile");
+            this.genotypeEvolFile = props.getProperty("evoparsons.genotypeEvolFile");
             this.evolutionAlgorithmName = props.getProperty("evoparsons.ea");
             this.selectionPolicyName = props.getProperty("evoparsons.distributionPolicy");
             this.transformsFolder = props.getProperty("evoparsons.transforms");
