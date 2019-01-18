@@ -93,17 +93,17 @@
                 white-space: pre-wrap !important;
                 overflow: hidden !important;
             }
-            .fragment:first-child > div.trashIconHolder {
+            .fragment:first-child > div:first-child {
                 border-top-left-radius: 5px;                                                                    
             }
-            .fragment:first-child > div.handIconHolder {
+            .fragment:first-child > div:last-child {
                 border-top-right-radius: 5px;                                                       
             }
-            .fragment:last-child > div.trashIconHolder {
+            .fragment:last-child > div:first-child {
                 border-bottom-left-radius: 5px;     
                 border-bottom: none;                                                               
             }
-            .fragment:last-child > div.handIconHolder {
+            .fragment:last-child > div:last-child {
                 border-bottom-right-radius: 5px;   
                 border-bottom: none;                                                    
             }
@@ -141,6 +141,19 @@
                 color: white;
                 padding: .5ex;
             }
+            .fragment.hint > div.handIconHolder {
+                background-color:red;
+            }
+            .fragment.phantom > div {
+                cursor: inherit;
+                opacity: 50%;
+            }
+            .fragment.phantom > div.handIconHolder {
+                background-color: #888                
+            }            
+            .fragment.phantom > div.trashIconHolder {
+                background-color: #888
+            }            
             .fragment > div.fragmentLinesHolder {
                 display:table-cell;
                 border-bottom: 1px dotted #888;
@@ -309,7 +322,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                     <div class="col col-lg-8 offset-lg-2 form-group">
                         <button type="button" class="btn btn-primary" id="nextButton">Next</button>
                         <button type="button" class="btn" id="giveUpButton">GiveUp</button>
-                        <button type="button" class="btn" id="progressButton">My Progress</button>                       
+                        <button type="button" class="btn" id="progressButton">My Progress</button>   
+                        <button type="button" class="btn" id="hintButton">Hint</button>
                     </div>
                 </div>                
             </div>    
@@ -416,7 +430,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                     scrollSensitivity: 10,
                     scrollSpeed: 10,     
                     start: function (event, ui) {                        
-                        ui.item.addClass("inAction");                      
+                        ui.item.addClass("inAction");       
+                        ui.item.removeClass("hint");
                         dragEvent = createDragEvent(ui, "answer");
                     },
                     stop: dragStop
@@ -433,6 +448,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                     scrollSpeed: 10,       
                     start: function (event, ui) {
                         ui.item.addClass("inAction");
+                        ui.item.removeClass("hint");
                         dragEvent = createDragEvent(ui, "trash");
                     },                    
                     stop: dragStop                                   
@@ -524,6 +540,78 @@ I freely give my consent to take part in this study.  I understand that by proce
                     });                        
 
                 }
+
+                function hint() {
+                    var fragments = $(".fragment").filter(function () { return $(this).data("data-pos") >= 0; });
+                    fragments.each(function () {
+                        $(this).data("data-lis", 1);
+                    });
+                    for (var i = 1; i < fragments.length; i++) 
+                        for (var j = 0; j < i; j++) {
+                            var fi = fragments.eq(i);
+                            var fipos = fi.data("data-pos");
+                            var filis = fi.data("data-lis");
+                            var fj = fragments.eq(j);
+                            var fjpos = fj.data("data-pos");
+                            var fjlis = fj.data("data-lis");
+                            if (fipos >= fjpos && (filis < (fjlis + 1))) 
+                                fi.data("data-lis", fjlis + 1); 
+                        }
+                    var liss = fragments.map(function () { return $(this).data("data-lis") }).get();
+                    //console.log(liss);
+                    var maxLis = Math.max.apply(null, liss);
+                    //console.log("MaxLis", maxLis);                
+                    var alreadyPlaced = {};
+                    var missingOrder = [];
+                    var prevLis = null;                    
+                    function detectLis(sameLis) {
+                        var selectedLis = sameLis.eq(Math.floor(Math.random()*sameLis.length));
+                        sameLis.not(selectedLis).each(function () {
+                            missingOrder.push($(this));
+                        });
+                        // console.log("Selected pos: ", selectedLis.data("data-pos"), ", lis: ", selectedLis.data("data-lis"));
+                        // sameLis.not(selectedLis).css("background-color", "red")
+                        //     .each(function () {
+                        //         console.log("Filtered pos: ", $(this).data("data-pos"), ", lis: ", $(this).data("data-lis"));
+                        //     });
+                        return selectedLis;
+                    }
+                    while (maxLis > 0) {
+                        var sameLis = fragments.filter(function () { return $(this).data("data-lis") == maxLis });
+                        if (prevLis) {
+                            var prevLisPos = prevLis.data("data-pos");
+                            var discarted = sameLis.filter(function () { return ($(this).data("data-pos") >= prevLisPos) || ($(this).index() >= prevLis.index()); })
+                            discarted.each(function () {
+                                missingOrder.push($(this));
+                            });                            
+                            // discarted.css("background-color", "red")
+                            //     .each(function () {
+                            //         console.log("Discarded pos: ", $(this).data("data-pos"), ", lis: ", $(this).data("data-lis"));
+                            //     });
+                            sameLis = sameLis.filter(function () { return ($(this).data("data-pos") < prevLisPos) && ($(this).index() < prevLis.index()); })
+                            prevLis = detectLis(sameLis);;
+                        } else {
+                            prevLis = detectLis(sameLis);
+                        }
+                        maxLis--;
+                    }
+
+                    var missingOrderOne = null;
+                    //console.log(missingOrder);
+                    for (var i=0; i < missingOrder.length; i++)
+                    {
+                        if (!missingOrderOne || (missingOrder[i].data("data-pos") < missingOrderOne.data("data-pos")))
+                            missingOrderOne = missingOrder[i];
+                    }
+                    //console.log(missingOrderOne);
+                    if (missingOrderOne)
+                    {
+                        missingOrderOne.addClass("hint");
+                        //var phantom1 = missingOrderOne.clone();
+                        //missingOrderOne.data("data-pos"):
+                    }
+                }
+
                 function buildFragments(puzzle) {
                     var programLength = 0;
                     for (var i = 0; i < puzzle.fragments.length; i++) {
@@ -534,9 +622,9 @@ I freely give my consent to take part in this study.  I understand that by proce
                             fragment.data("data-d-id", puzzle.fragments[i].distracterId);
                         else programLength++;
                         fragment.data("data-orig", puzzle.fragments[i].lines);
-                        var trashIconHolder = $("<div class='trashIconHolder'>");                        
-                        trashIconHolder.append($('<i class="fas fa-trash fa-sm">'));
-                        trashIconHolder.appendTo(fragment);
+                        var handIconHolder = $("<div class='handIconHolder'>");
+                        handIconHolder.append($('<i class="far fa-hand-paper fa-sm">'));
+                        handIconHolder.appendTo(fragment);                        
                         var linesHolder = $("<div class='fragmentLinesHolder'>");
                         for (var j = 0; j < puzzle.fragments[i].lines.length; j++) {
                             var indentContainer = $("<div class='indent'>");
@@ -546,15 +634,17 @@ I freely give my consent to take part in this study.  I understand that by proce
                             indentContainer.appendTo(linesHolder);
                         }
                         linesHolder.appendTo(fragment);
-                        var handIconHolder = $("<div class='handIconHolder'>");
-                        handIconHolder.append($('<i class="far fa-hand-paper fa-sm">'));
-                        handIconHolder.appendTo(fragment);
+                        var trashIconHolder = $("<div class='trashIconHolder'>");                        
+                        trashIconHolder.append($('<i class="fas fa-trash fa-sm">'));
+                        //trashIconHolder.append("<span>" + puzzle.fragments[i].id  + "</span>");
+                        trashIconHolder.appendTo(fragment);
                         attachHover(fragment);
                         fragment.appendTo(taskPane);
                     }
                     taskPane.data("data-len", programLength);               
                     taskPane.find(".trashIconHolder").click(function () {
                         var li = $(this).closest("li");
+                        li.removeClass("hint");
                         li.fadeOut(function () { 
                             moveCount++;
                             li.appendTo(trash);
@@ -757,6 +847,9 @@ I freely give my consent to take part in this study.  I understand that by proce
                     statsContent.fadeOut('slow', function () {
                         puzzleContent.fadeIn();
                     });  
+                });
+                $("#hintButton").click(function () {
+                    hint();
                 });
                 /*
                 $("#consent").change(function () {
