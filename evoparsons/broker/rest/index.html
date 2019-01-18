@@ -35,7 +35,6 @@
                 line-height: 1.2;
             }
             .fragment {
-                cursor: pointer;
                 font-size: 90%;
                 line-height: 1.2;
                 -webkit-touch-callout: none; 
@@ -43,38 +42,13 @@
                 -khtml-user-select: none;
                 -moz-user-select: none;
                     -ms-user-select: none;
-                        user-select: none;  
-                position: relative;          
+                        user-select: none;       
                 background-color: white;                    
+                display: table;
+                width: 100%;
             }
             .fragment.inAction {
-                padding: 1ex 1em 1ex 1.7em;
-                border: 2px solid black !important;
-                border-radius: 5px;                           
-            }
-            .fragment:first-child {
-                padding: 1ex 1em .5ex 1.7em;
-                border: 1px solid black;
-                border-bottom: 1px dotted #888;
-                border-top-left-radius: 5px;
-                border-top-right-radius: 5px;                                                       
-            }
-            .fragment:last-child {
-                padding: .5ex 1em 1ex 1.7em;
-                border: 1px solid black;
-                border-top: 1px dotted #888;
-                border-bottom-left-radius: 5px;
-                border-bottom-right-radius: 5px;                                                       
-            }     
-            .fragment:only-child {
-                border: 1px solid black;
-                border-radius: 5px;
-            }
-            .fragment:not(:first-child):not(:last-child) {
-                padding: .5ex 1em .5ex 1.7em;
-                border: 1px solid black;
-                border-top: 1px dotted #888;
-                border-bottom: 1px dotted #888;
+                border: 1px solid black !important;                        
             }
             #taskPane, #trashedList {
                 list-style: none;
@@ -101,7 +75,6 @@
                 display: none;
             }
             #trashed .fragment {
-                padding: 1ex 1em 1ex 1em;
                 border: 1px solid black;
                 border-radius: 5px;               
             }
@@ -120,33 +93,68 @@
                 white-space: pre-wrap !important;
                 overflow: hidden !important;
             }
-            .trashIconHolder {
-                display: none;
-                position: absolute;
-                top:0.4ex;
-                left: 0.3em;
-                z-index: 1100;
-                background-color: rgba(255, 255, 255, 0.7);
-                padding-right: .5em;                
+            .fragment:first-child > div.trashIconHolder {
+                border-top-left-radius: 5px;                                                                    
             }
-            .handIconHolder {
-                display: none;
-                position: absolute;
-                top:0.4ex;
-                right: 0.5em;
-                z-index: 1100;
-                background-color: rgba(255, 255, 255, 0.7);
-                padding-left: .5em;
-            }   
-            #trashed .fragment .trashIconHolder {
+            .fragment:first-child > div.handIconHolder {
+                border-top-right-radius: 5px;                                                       
+            }
+            .fragment:last-child > div.trashIconHolder {
+                border-bottom-left-radius: 5px;     
+                border-bottom: none;                                                               
+            }
+            .fragment:last-child > div.handIconHolder {
+                border-bottom-right-radius: 5px;   
+                border-bottom: none;                                                    
+            }
+            .fragment:first-child > div.fragmentLinesHolder {                                
+                padding: 1ex 1em 1ex 1em;    
+                border-top: 1px dotted #888;
+            }            
+            .fragment:last-child > div.fragmentLinesHolder {
+                padding: 1ex 1em 1ex 1em;                          
+            }     
+            .fragment.inAction > div {
+                border-radius: 0;
+            }
+            .fragment > div.trashIconHolder {
+                cursor: pointer;
+                display:table-cell;
+                font-size: 80%;
+                vertical-align:middle;
+                width: 2em;
+                background-color: #f29393;
+                border-bottom: 1px dotted #888;
+                color: white;
+                text-align: center;
+                padding: .5ex;
+            }            
+            .fragment > div.handIconHolder {
+                cursor: pointer;
+                display:table-cell;
+                font-size: 80%;
+                vertical-align:middle;
+                border-bottom: 1px dotted #888;
+                text-align: center;
+                width: 2em;
+                background-color: #82e2ea;
+                color: white;
+                padding: .5ex;
+            }
+            .fragment > div.fragmentLinesHolder {
+                display:table-cell;
+                border-bottom: 1px dotted #888;
+                padding: 1ex 1em 1ex 1em;
+            }            
+            #trashed .fragment .trashIconHolder i {
                 display: none !important;
+            }
+            #trashed .fragment .trashIconHolder {
+                background-color: white;
             }
 
             .formOfConsent {
                 padding: 1ex 1em;
-            }
-
-            .formOfConsent {
                 font-size: 80%;
             }
 
@@ -154,19 +162,10 @@
                 font-size: initial;
             }
 
-            /* @media only screen and (min-width : 500px)  {
-                .handIconHolder {
-                    display: none !important;
-                }
-            } */
             @media only screen and (max-width : 500px)  {
                 .fragment {
                     font-size: 80%;
-                    padding-left: 1em !important;
                 }
-                .trashIconHolder, .handIconHolder {
-                    font-size: 110%;
-                }               
             }            
         </style>
     </head>
@@ -412,8 +411,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                     forceHelperSize: true,
                     opacity: 0.7,       
                     revert: true,        
-                    cancel: ".trashIconHolder .fa-trash-alt",
-                    handle: ".handIconHolder .fa-hand-paper",
+                    cancel: ".trashIconHolder",
+                    handle: ".handIconHolder",
                     scrollSensitivity: 10,
                     scrollSpeed: 10,     
                     start: function (event, ui) {                        
@@ -428,8 +427,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                     forceHelperSize: true,
                     opacity: 0.7,         
                     revert: true,
-                    cancel: ".trashIconHolder .fa-trash-alt",
-                    handle: ".handIconHolder .fa-hand-paper",
+                    cancel: ".trashIconHolder",
+                    handle: ".handIconHolder",
                     scrollSensitivity: 10,
                     scrollSpeed: 10,       
                     start: function (event, ui) {
@@ -479,24 +478,25 @@ I freely give my consent to take part in this study.  I understand that by proce
                 //         autoIndent();
                 //         li.fadeIn();
                 //         trashed.fadeIn();
-                //     });                                                                                               
+                //     });                                                 fa-hand                                              
                 // });
                 var hoverEvent = null;
-                function attachHover(fragment) {                   
+                function attachHover(fragment) {         
+                    /*          
                     fragment.click(function () {
                         if ($(this).is(".inAction") || $(this).is(":only-child")) {
                             $(this).removeClass("inAction");
                             $(this).find(".handIconHolder,.trashIconHolder").hide();
                         } else 
                         { 
-                            taskPane.find(".inAction").removeClass("inAction");
-                            trash.find(".inAction").removeClass("inAction");
-                            $(this).addClass("inAction");
-                            taskPane.find(".handIconHolder,.trashIconHolder").each(function () { $(this).hide(); });
-                            trash.find(".handIconHolder,.trashIconHolder").each(function () { $(this).hide(); });
-                            $(this).find(".handIconHolder,.trashIconHolder").show();
+                            //taskPane.find(".inAction").removeClass("inAction");
+                            //trash.find(".inAction").removeClass("inAction");
+                            //$(this).addClass("inAction");
+                            //taskPane.find(".handIconHolder,.trashIconHolder").each(function () { $(this).hide(); });
+                            //trash.find(".handIconHolder,.trashIconHolder").each(function () { $(this).hide(); });
+                            //$(this).find(".handIconHolder,.trashIconHolder").show();
                         }
-                    });
+                    });*/
                     fragment.hover(function () {
                         if (dragEvent === null)
                         {
@@ -535,23 +535,25 @@ I freely give my consent to take part in this study.  I understand that by proce
                         else programLength++;
                         fragment.data("data-orig", puzzle.fragments[i].lines);
                         var trashIconHolder = $("<div class='trashIconHolder'>");                        
-                        trashIconHolder.append($('<i class="fas fa-trash-alt">'));
+                        trashIconHolder.append($('<i class="fas fa-trash fa-sm">'));
                         trashIconHolder.appendTo(fragment);
-                        var handIconHolder = $("<div class='handIconHolder'>");
-                        handIconHolder.append($('<i class="fas fa-hand-paper">'));
-                        handIconHolder.appendTo(fragment);
+                        var linesHolder = $("<div class='fragmentLinesHolder'>");
                         for (var j = 0; j < puzzle.fragments[i].lines.length; j++) {
                             var indentContainer = $("<div class='indent'>");
                             var text = puzzle.fragments[i].lines[j].replace("}}", "} }");
                             $('<pre class="brush: java; gutter: false; auto-links: false; class-name: fragmnt">').text(text).appendTo(indentContainer);
                             indentContainer.data('data-orig', text);
-                            indentContainer.appendTo(fragment);
+                            indentContainer.appendTo(linesHolder);
                         }
+                        linesHolder.appendTo(fragment);
+                        var handIconHolder = $("<div class='handIconHolder'>");
+                        handIconHolder.append($('<i class="far fa-hand-paper fa-sm">'));
+                        handIconHolder.appendTo(fragment);
                         attachHover(fragment);
                         fragment.appendTo(taskPane);
                     }
                     taskPane.data("data-len", programLength);               
-                    taskPane.find(".fa-trash-alt").click(function () {
+                    taskPane.find(".trashIconHolder").click(function () {
                         var li = $(this).closest("li");
                         li.fadeOut(function () { 
                             moveCount++;
