@@ -46,7 +46,7 @@ public class ParsonsBroker implements Broker, BrokerUIInterface, BrokerEAInterfa
 	}
 
 	@Override
-	public boolean startFresh() { return evalStore.hasStudents(); }
+	public boolean startFresh() { return !evalStore.hasStudents(); }
 
 	@Override
 	public void setFitnessConsumer(Consumer<ParsonsFitness> consumer) {

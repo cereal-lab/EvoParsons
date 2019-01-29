@@ -16,15 +16,26 @@ import evoparsons.rmishared.ParsonsPuzzle;
 import evoparsons.rmishared.Stats;
 
 public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterface {
+	
+	private static class StudentData {
+		public final BrokerUIInterface ui;
+		public final int id;
+		public final int localId;
+		public StudentData(BrokerUIInterface ui, int id, int localId) {
+			this.ui = ui;
+			this.id = id;
+			this.localId = localId;
+		}
+	}
 	private Map<Broker, HashSet<Integer>> brokers;
 	private Log log;
 	private Library lib;
-	private Map<String, BrokerUIInterface> studentLoginToBroker;
-	private Map<Integer, BrokerUIInterface> studentIdToBroker;
+	private Map<String, StudentData> studentLoginToBroker;
+	private Map<Integer, StudentData> studentIdToBroker;
 
 	public GroupsBroker(Config config, Broker parent) {
 		this.log = config.getLog();
-		this.lib = config.<Library>getInstanceOpt("evoparsons.lib").orElse(null);
+		this.lib = config.<Library>getInstanceOpt("evoparsons.lib", config).orElse(null);
 		List<Broker> brokers = 
 			config.getList("evoparsons.broker.child.")
 				.stream()
@@ -42,42 +53,45 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 	@Override
 	public ParsonsPuzzle getParsonsPuzzle(int studentId) throws RemoteException {
 		synchronized (studentLoginToBroker) {
-			BrokerUIInterface broker = studentIdToBroker.get(studentId);
+			StudentData data = studentIdToBroker.get(studentId);
 			// TODO: check for null if necessary
-			return broker.getParsonsPuzzle(studentId);
+			return data.ui.getParsonsPuzzle(data.localId);
 		}
 	}
 
 	@Override
 	public int getStudentID(String login) throws RemoteException {
 		synchronized (studentLoginToBroker) {
-			BrokerUIInterface broker = studentLoginToBroker.get(login);
-			if (broker == null) {
+			StudentData data = studentLoginToBroker.get(login);
+			if (data == null) {
 				Broker fullBroker = brokers.entrySet().stream().min(Comparator.comparing(entry -> entry.getValue().size()))
 						.map(e -> e.getKey()).orElse(null);
-				broker = fullBroker.getUIInterface();
-				studentLoginToBroker.put(login, broker);
+				BrokerUIInterface broker = fullBroker.getUIInterface();
 				int studentId = broker.getStudentID(login);
-				studentIdToBroker.put(studentId, broker);
-				brokers.get(fullBroker).add(studentId);
-				return studentId;
-			} else
-				return broker.getStudentID(login);
+				data = new StudentData(broker, studentLoginToBroker.size(), studentId);
+				log.log("New student: %s --> %d --> %d", login, data.id, data.localId);
+				studentLoginToBroker.put(login, data);
+				
+				studentIdToBroker.put(data.id, data);
+				brokers.get(fullBroker).add(data.id);
+			}
+			return data.id;
 		}
 	}
 
 	public void setParsonsEvaluation(ParsonsEvaluation eval) throws RemoteException {
 		synchronized (studentLoginToBroker) {
-			BrokerUIInterface broker = this.studentIdToBroker.get(eval.studentId);
-			broker.setParsonsEvaluation(eval);
+			StudentData data = this.studentIdToBroker.get(eval.studentId);
+			eval.studentId = data.localId;
+			data.ui.setParsonsEvaluation(eval);
 		}
 	}
 
 	@Override
 	public Stats getStudentStats(int studentId) throws RemoteException {
 		synchronized (studentLoginToBroker) {
-			BrokerUIInterface broker = this.studentIdToBroker.get(studentId);
-			return broker.getStudentStats(studentId);
+			StudentData data = this.studentIdToBroker.get(studentId);
+			return data.ui.getStudentStats(data.localId);
 		}
 	}
 

@@ -24,9 +24,8 @@ public class ECJStarter implements EAStarter {
         this.log = config.getLog();
         this.broker = broker;
     }
-
-	@Override
-	public void runFresh(String config) {        
+	
+	public void runFreshInternal(String config) {              
         File ecjConfigFile = Paths.get(config).toFile().getAbsoluteFile();
         ParameterDatabase params = null;		
         try {
@@ -48,10 +47,14 @@ public class ECJStarter implements EAStarter {
                 .withGenotypeFactory(new ParsonsGenotypeIndex(this.config))
                 .withBroker(this.broker)
                 .start(EvolutionState.C_STARTED_FRESH);
-	}
+    }
+    
+    @Override
+    public void runFresh(String config) {
+        new Thread(() -> runFreshInternal(config)).start();
+    }
 
-	@Override
-	public void runCheckpoint(String config) {
+	public void runCheckpointInternal(String config) {
         evolState = null;
 
         File[] checkpoints = 
@@ -94,8 +97,13 @@ public class ECJStarter implements EAStarter {
 			    .start(EvolutionState.C_STARTED_FROM_CHECKPOINT);
 		} else {
             log.log("[ECJ.runCheckpoint] Cannot restore from checkpoint. Start fresh.");
-            this.runFresh(config);
+            this.runFreshInternal(config);
         }        
-    }       
+    }     
+    
+    @Override
+    public void runCheckpoint(String config) {
+        new Thread(() -> runCheckpointInternal(config)).start();
+    }
 
 }

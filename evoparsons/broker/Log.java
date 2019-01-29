@@ -4,13 +4,34 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 
-public interface Log {
+public interface Log {    
+    public default Log parentLog() { return null; }
     public void err(String format, Object... params);
     public default void log(String format, Object... params) {
         this.print(format + "%n", params);
     }
     public void print(String format, Object... params);
 
+    public static Log createWrapper(Log log, final String header) {
+        return new Log() {
+            @Override
+            public void err(String format, Object... params) {
+                log.err(header + format, params);
+            }
+            @Override
+            public void log(String format, Object... params) {
+                log.print(header + format + "%n", params);
+            }
+            @Override
+            public Log parentLog() {
+                return log;
+            }
+            @Override
+            public void print(String format, Object... params) {
+                log.print(format, params);
+            }
+        };
+    }
     public static final Log console = 
         new Log() {
             @Override

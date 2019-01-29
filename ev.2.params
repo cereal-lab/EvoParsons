@@ -1,8 +1,9 @@
 #evoparsons server config
+evoparsons.log.header = [ECJ]
 evoparsons.output=./ecj.out
 evoparsons.broker=evoparsons.broker.ParsonsBroker
+evoparsons.broker.distributionPolicy=evoparsons.broker.SelectionPolicy+cycling
 evoparsons.ea=evoparsons.broker.ECJStarter
-evoparsons.distributionPolicy=cycling
 evoparsons.evalTries=2
 evoparsons.studentsFile = ecj.students.bro
 evoparsons.studentsStatsFile = ecj.studentsStats.bro

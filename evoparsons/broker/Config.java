@@ -3,6 +3,7 @@ package evoparsons.broker;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Paths;
@@ -21,19 +22,42 @@ public class Config {
     // 2. constructor
     // 3. factory method
     @SuppressWarnings("unchecked")
-    public <T> T getInstance(String instancePathKey, Object... params) {
+    public <T> T getInstance(String instancePathKey, final Object... params) {
         String instancePath = get(instancePathKey, "");
         String[] parts = instancePath.split("\\+");
         try {
             if (parts.length == 1) {
                 //assuming class name was provided
-                if (params == null) params = new Object[0];
-                Class<?>[] paramClasses = 
-                    Arrays.stream(params).map(p -> p.getClass())
+                Constructor<?> c = 
+                    Arrays.stream(Class.forName(instancePath).getConstructors())
+                        .filter(ctr -> 
+                            {
+                                Class<?>[] ps = ctr.getParameterTypes();
+                                if (ps.length == params.length){
+                                    for (int i=0; i < ps.length; i++)
+                                    {
+                                        Object p = params[i];
+                                        Class<?> pc = p.getClass().equals(Class.class) ? (Class<?>)p : p.getClass();
+                                        if (!ps[i].isAssignableFrom(pc))
+                                            return false;
+                                    }
+                                    return true;
+                                }
+                                return false;
+                            }
+                        ).findFirst().orElse(null);
+                if (c == null) {
+                    log.err("[Config.getInstance] Cannot get instance for %s%nConstructor was not found for given params", instancePath);
+                    System.exit(1);
+                }
+                Object[] realParams =                         
+                    Arrays.stream(params).map(p -> 
+                        p.getClass().equals(Class.class) ? null : p)
                         .collect(Collectors.toList())
-                        .toArray(new Class<?>[0]);
-                return (T)Class.forName(instancePath).getConstructor(paramClasses).newInstance(params);
-
+                        .toArray(new Object[0]);                
+                T res = (T)c.newInstance(realParams);
+                log.log("%s created", instancePath);
+                return res;
             } else {
                 //static field was provided
                 String staticField = parts[parts.length - 1];
@@ -42,16 +66,40 @@ public class Config {
                 try 
                 {
                     Field f = cls.getDeclaredField(staticField);
-                    return (T)f.get(null);
+                    T res = (T)f.get(null);
+                    log.log("%s created", instancePath);
+                    return res;
                 } catch (NoSuchFieldException e)
                 {
-                    if (params == null) params = new Object[0];
-                    Class<?>[] paramClasses = 
-                        Arrays.stream(params).map(p -> p.getClass())
+                    Method m = 
+                        Arrays.stream(cls.getMethods())
+                            .filter(mtd -> 
+                                {
+                                    Class<?>[] ps = mtd.getParameterTypes();
+                                    if (ps.length == params.length){
+                                        for (int i=0; i < ps.length; i++)
+                                        {
+                                            Object p = params[i];
+                                            Class<?> pc = p.getClass().equals(Class.class) ? (Class<?>)p : p.getClass();
+                                            if (!ps[i].isAssignableFrom(pc))
+                                                return false;
+                                        }
+                                        return true;
+                                    }
+                                    return false;    
+                                }).findFirst().orElse(null);
+                    if (m == null) {
+                        log.err("[Config.getInstance] Cannot get instance for %s%Static method was not found for given params", instancePath);
+                        System.exit(1);
+                    }          
+                    Object[] realParams =                         
+                        Arrays.stream(params).map(p -> 
+                            p.getClass().equals(Class.class) ? null : p)
                             .collect(Collectors.toList())
-                            .toArray(new Class<?>[0]);    
-                    Method m = cls.getMethod(staticField, paramClasses);
-                    return (T)m.invoke(null, params);
+                            .toArray(new Object[0]);
+                    T res = (T)m.invoke(null, realParams);
+                    log.log("%s created", instancePath);
+                    return res;
                 }
             }            
         } catch (Exception e) {
@@ -61,18 +109,38 @@ public class Config {
         return null;
     }    
     @SuppressWarnings("unchecked")
-    public <T> Optional<T> getInstanceOpt(String instancePathKey, Object... params) {
+    public <T> Optional<T> getInstanceOpt(String instancePathKey, final Object... params) {
         String instancePath = get(instancePathKey, "");
         String[] parts = instancePath.split("\\+");
         try {
             if (parts.length == 1) {
                 //assuming class name was provided
-                if (params == null) params = new Object[0];
-                Class<?>[] paramClasses = 
-                    Arrays.stream(params).map(p -> p.getClass())
+                Constructor<?> c = 
+                    Arrays.stream(Class.forName(instancePath).getConstructors())
+                        .filter(ctr -> 
+                            {
+                                Class<?>[] ps = ctr.getParameterTypes();
+                                if (ps.length == params.length){
+                                    for (int i=0; i < ps.length; i++)
+                                    {
+                                        Object p = params[i];
+                                        Class<?> pc = p.getClass().equals(Class.class) ? (Class<?>)p : p.getClass();
+                                        if (!ps[i].isAssignableFrom(pc))
+                                            return false;
+                                    }
+                                    return true;
+                                }
+                                return false;
+                            }
+                        ).findFirst().orElse(null);
+                Object[] realParams =                         
+                    Arrays.stream(params).map(p -> 
+                        p.getClass().equals(Class.class) ? null : p)
                         .collect(Collectors.toList())
-                        .toArray(new Class<?>[0]);
-                return Optional.of((T)Class.forName(instancePath).getConstructor(paramClasses).newInstance(params));
+                        .toArray(new Object[0]);                
+                Optional<T> res = Optional.of((T)c.newInstance(realParams));
+                if (res.isPresent()) log.log("%s created", instancePath);
+                return res;
             } else {
                 //static field was provided
                 String staticField = parts[parts.length - 1];
@@ -81,16 +149,36 @@ public class Config {
                 try 
                 {
                     Field f = cls.getDeclaredField(staticField);
-                    return Optional.of((T)f.get(null));
+                    Optional<T> res = Optional.of((T)f.get(null));
+                    if (res.isPresent()) log.log("%s created", instancePath);
+                    return res;    
                 } catch (NoSuchFieldException e)
                 {
-                    if (params == null) params = new Object[0];
-                    Class<?>[] paramClasses = 
-                        Arrays.stream(params).map(p -> p.getClass())
+                    Method m = 
+                        Arrays.stream(cls.getMethods())
+                            .filter(mtd -> 
+                                {
+                                    Class<?>[] ps = mtd.getParameterTypes();
+                                    if (ps.length == params.length){
+                                        for (int i=0; i < ps.length; i++)
+                                        {
+                                            Object p = params[i];
+                                            Class<?> pc = p.getClass().equals(Class.class) ? (Class<?>)p : p.getClass();
+                                            if (!ps[i].isAssignableFrom(pc))
+                                                return false;
+                                        }
+                                        return true;
+                                    }
+                                    return false;    
+                                }).findFirst().orElse(null);
+                    Object[] realParams =                         
+                        Arrays.stream(params).map(p -> 
+                            p.getClass().equals(Class.class) ? null : p)
                             .collect(Collectors.toList())
-                            .toArray(new Class<?>[0]);    
-                    Method m = cls.getMethod(staticField, paramClasses);
-                    return Optional.of((T)m.invoke(null, params));
+                            .toArray(new Object[0]);
+                    Optional<T> res = Optional.of((T)m.invoke(null, realParams));
+                    if (res.isPresent()) log.log("%s created", instancePath);
+                    return res;    
                 }
             }            
         } catch (Exception e) {
@@ -135,9 +223,16 @@ public class Config {
 
     public Log getLog() {
         if (log == null) {
-            if (parent != null) log = parent.getLog();
+            if (parent != null) 
+            {
+                log = parent.getLog();
+                if (log != null)
+                    while (log.parentLog() != null) 
+                        log = log.parentLog();
+            }
             if (log == null) log = Log.console;
-            log = (Log)getInstanceOpt("evoparsons.log").orElse(Log.console);
+            String header = get("evoparsons.log.header", "");
+            log = Log.createWrapper((Log)getInstanceOpt("evoparsons.log").orElse(Log.console), header);
         }
         return log;
     }
@@ -162,14 +257,14 @@ public class Config {
                 if (nameParts.length <= 2)
                 {
                     networkInterfaces.computeIfAbsent(0, (key) -> new Network())
-                        .policyPath = value;
+                        .policyPath = name;
                 }
                 else {
                     try {
                         Network network = 
                             networkInterfaces.computeIfAbsent(Integer.valueOf(nameParts[2]), (key) -> new Network());
                         if (nameParts.length == 3)
-                            network.policyPath = value;
+                            network.policyPath = name;
                         else if (nameParts.length == 4) {
                             if (nameParts[3].equals("hostname"))
                                 network.host = value;
@@ -224,7 +319,10 @@ public class Config {
 
     public static Config FromFile(Config parent, String url) {
         Log log = parent == null ? Log.console : parent.getLog();
-        return new Config(parent).AddFromFile(log, url);
+        Config config = new Config(parent).AddFromFile(log, url);
+        config.getLog(); //validation
+        config.getOutputFolder(); 
+        return config;
     }
 
     public String get(String key, String defaultValue) {
@@ -253,7 +351,7 @@ public class Config {
 
 	public Broker init(Broker parent) {
 
-		Broker broker = this.getInstance("evoparsons.broker", this, parent);
+		Broker broker = this.getInstance("evoparsons.broker", this, parent == null ? Broker.class : parent);
 		this.createNetworkInterfaces().forEach((id, networkConfig) ->
 			networkConfig.createPolicy(this).startInterface(networkConfig, this, broker.getUIInterface()));
 

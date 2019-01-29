@@ -9,7 +9,7 @@ import java.io.*;
  
 public class ParsonsEvaluation implements Serializable{
 	private static final long serialVersionUID = 1L;
-	public final int studentId;
+	public int studentId;
 	public final int moves;
 	public final double fitness;
 	public final int puzzleIndex;

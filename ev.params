@@ -1,5 +1,6 @@
 #evoparsons server config
 evoparsons.log = evoparsons.broker.Log+console
+evoparsons.log.header = [GROUPS]
 evoparsons.output=./DATA.out
 evoparsons.net.0=evoparsons.broker.NetworkPolicy+RMI
 evoparsons.net.0.hostname=127.0.0.1
