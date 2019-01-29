@@ -10,8 +10,10 @@ import java.util.stream.Collectors;
 
 public class ParsonsGenotypeIndex
 {	
+	private static final String DEFAULT_GENOTYPE_INDEX_FILE = "genotypeIndex.bro";
 	private Log log;
 	private Config config;
+	private String genotypeIndexFile;
 	private static class HashRemapper implements Serializable {
 		private static final long serialVersionUID = 1L;
 		private int[] genome;
@@ -45,15 +47,16 @@ public class ParsonsGenotypeIndex
 	{
 		this.log = log;
 		this.config = config;
-		this.outputFolder = config.getOutputFolder();
+		this.outputFolder = config.getOutputFolder(log);
+		genotypeIndexFile = config.get("evoparsons.genotypeIndexFile", DEFAULT_GENOTYPE_INDEX_FILE);
 		genotypeIndexes = 
-			Utils.<Map<HashRemapper, Integer>>loadFromFile(log, Paths.get(outputFolder, config.getGenotypeIndexFile()).toString(), 
+			Utils.<Map<HashRemapper, Integer>>loadFromFile(log, Paths.get(outputFolder, genotypeIndexFile).toString(), 
 				HashMap<HashRemapper, Integer>::new);		
 		if (genotypeIndexes.size() == 0)
 			log.log("[ParsonsGenotypeIndex] genome hash to index map is empty");
 		else 
 		{
-			log.log("[ParsonsGenotypeIndex] %d genomes were indexed. Restored from %s", genotypeIndexes.size(), config.getGenotypeIndexFile());
+			log.log("[ParsonsGenotypeIndex] %d genomes were indexed. Restored from %s", genotypeIndexes.size(), genotypeIndexFile);
 			genotypeIndexes.entrySet().stream()
 				.sorted(Comparator.comparing(entry -> entry.getValue()))
 				.forEach(entry -> 
@@ -76,7 +79,7 @@ public class ParsonsGenotypeIndex
 	}	
 
 	public void save() {
-		Utils.saveToFile(log, genotypeIndexes, Paths.get(outputFolder, config.getGenotypeIndexFile()).toString());
+		Utils.saveToFile(log, genotypeIndexes, Paths.get(outputFolder, genotypeIndexFile).toString());
 	}
 
 	public ParsonsGenotype.Pair createPair(int[] parent, int[] child) {

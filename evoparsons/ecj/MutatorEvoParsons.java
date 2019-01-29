@@ -1,4 +1,5 @@
 package evoparsons.ecj;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -13,10 +14,8 @@ import ec.util.Parameter;
 import ec.vector.IntegerVectorIndividual;
 import ec.vector.IntegerVectorSpecies;
 import ec.vector.VectorDefaults;
-import evoparsons.broker.Broker;
 import evoparsons.broker.Log;
 import evoparsons.broker.ParsonsGenotype;
-import evoparsons.broker.ParsonsGenotypeIndex;
 /*
  * Sending parents and childs puzzle to the broker and wait for game decision
  */
@@ -43,7 +42,7 @@ public class MutatorEvoParsons extends BreedingPipeline
 	        final int subpopulation,
 	        final int thread)
     {
-		Log log = ((ParsonsEvolutionState)state).getEvolutionAlgorithm().getBroker().getLog();
+		Log log = ((ParsonsEvolutionState)state).getLog();
 		log.log("[MutatorEvoParsons.prepareToProduce] GEN %d started", state.generation);
 		genotypePairs = new HashMap<>();
         if (sources[0] == null)  {
@@ -51,7 +50,6 @@ public class MutatorEvoParsons extends BreedingPipeline
             }
         sources[0].prepareToProduce(state,subpopulation,thread);
     }
-
 	
 	public void setup(final EvolutionState state, final Parameter base)	
 	{
@@ -76,9 +74,10 @@ public class MutatorEvoParsons extends BreedingPipeline
 			final EvolutionState state,
 			final int thread)	
 	{	
-		Broker broker = ((ParsonsEvolutionState)state).getEvolutionAlgorithm().getBroker();
-		ParsonsGenotypeIndex genotypeStore = broker.getGenotypeStore();
-		Log log = broker.getLog();
+		ParsonsEvolutionState parsonsState = (ParsonsEvolutionState)state;
+		Log log = parsonsState.getLog();
+		//ParsonsGenotypeIndex genotypeStore = broker.getGenotypeStore();
+		//Log log = broker.getLog();
 
 		int n = sources[0].produce(min,max,start,subpopulation,inds,state,thread);
 
@@ -120,10 +119,9 @@ public class MutatorEvoParsons extends BreedingPipeline
 									child.genome[x] = (child.genome[x] + 1) % valueMax;
 								else 
 									child.genome[x] = (child.genome[x] == 0) ? (valueMax - 1) : (child.genome[x] - 1);	
-							});
-									
+							});									
 					ParsonsGenotype.Pair parentAndChild = 
-						genotypeStore.createPair(parent.genome, child.genome);						
+						parsonsState.getGenotypeFactory().createPair(parent.genome, child.genome);						
 					log.log("Pair: (%d, %d)%n\t%s%n\t%s", 
 						parentAndChild.parent.getIndex(), parentAndChild.child.getIndex(),
 						Arrays.stream(parent.genome).mapToObj(i -> String.format("%3d", i)).collect(Collectors.joining(" ")),
@@ -140,12 +138,13 @@ public class MutatorEvoParsons extends BreedingPipeline
 			final int thread)
 	{		
 		List<ParsonsGenotype> genotypes = 
-			genotypePairs.entrySet().stream().flatMap(pair -> Arrays.asList(pair.getKey().parent, pair.getKey().child).stream()).collect(Collectors.toList());
+			genotypePairs.entrySet().stream().flatMap(pair -> 
+				Arrays.asList(pair.getKey().parent, pair.getKey().child).stream()).collect(Collectors.toList());
 		ParsonsEvolutionState parsonsState = (ParsonsEvolutionState)state;
-		Log log = parsonsState.getEvolutionAlgorithm().getBroker().getLog();
+		Log log = parsonsState.getLog();
 		parsonsState.setParentChildPairs(genotypePairs);
-		parsonsState.getEvolutionAlgorithm().getBroker().setGenotypes(genotypes, state.generation);
-		parsonsState.getEvolutionAlgorithm().getBroker().getGenotypeStore().save();		
+		parsonsState.setGenotypes(genotypes, state.generation);	
+		parsonsState.getGenotypeFactory().save();		
 		log.log("[MutatorEvoParsons.finishProducing] Waiting for evaluated parent and child pair");		
 		((ParsonsEvolutionState)state).waitEvaluation();
 		log.log("[MutatorEvoParsons.finishProducing] GEN %d ended", state.generation);				

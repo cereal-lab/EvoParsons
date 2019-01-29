@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class ParsonsLibrary
+public class ParsonsLibrary implements Library
 {
 	// ---------------------------------------------------------------------------------
 	// PRIVATE methods & attributes to manage programs & transforms
@@ -28,6 +28,8 @@ public class ParsonsLibrary
 	 * This is where we keep all the {@link Program} objects representing the
 	 * programs available in the broker's folder
 	 **/
+	private String programFolder;
+	private String transformFolder;
 	private List<Program> programStore;
 	private List<Transform> transformStore;
 	private Log log;
@@ -35,11 +37,12 @@ public class ParsonsLibrary
 	/**
 	 * Building a new instance
 	 **/
-	public ParsonsLibrary(Log log, String programsFolder, String transformsFolder)
+	public ParsonsLibrary(Log log, Config config)
 	{
 		this.log = log;
+		programFolder = config.get("evoparsons.programs", "");
 		programStore = 
-			load(programsFolder, 
+			load(programFolder, 
 				new String[] { Program.LANG, Program.TITLE, Program.DESC, Program.SOURCE },
 				(fileName, groupedLines) -> 
 					new Program(
@@ -55,8 +58,9 @@ public class ParsonsLibrary
 				IntStream.range(0, programStore.size())
 					.mapToObj(i -> String.format("\t%d\t%s", i, programStore.get(i).fileName))
 					.collect(Collectors.joining(System.lineSeparator()))});
+		transformFolder = config.get("evoparsons.transforms", "");
 		transformStore = 
-			loadTransforms(transformsFolder, 
+			loadTransforms(transformFolder, 
 				new String[] { Transform.TITLE, Transform.DESC, Transform.SELECT, Transform.TRANSFORM },
 				(fileName, groupedLines) -> 
 					new Transform(
@@ -78,23 +82,29 @@ public class ParsonsLibrary
 			});		
 	}
 	
+	@Override
 	public int getProgramCount() { return programStore.size(); }
+	@Override
 	public int getTransformCount() { return transformStore.size(); }
 
+	@Override
 	public Program getProgram(int ProgNum)
 	{
 		//log(String.format("Requesting ProgNum = %d", ProgNum));
 		return programStore.get(ProgNum);
 	}
 
+	@Override
 	public Stream<Program> programStream() {
 		return programStore.stream();
 	}
 
+	@Override
 	public Stream<Transform> transformStream() {
 		return transformStore.stream();
 	}
 
+	@Override
 	public Transform getTransform(int TransNum)
 	{
 		//log(String.format("Requesting TransNum = %d (should be between 0 and %d)", TransNum, transformStore.size()));

@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 import evoparsons.rmishared.BrokerClient;
-import evoparsons.rmishared.BrokerInterface;
+import evoparsons.rmishared.BrokerUIInterface;
 import evoparsons.rmishared.Fragment;
 import evoparsons.rmishared.ParsonsEvaluation;
 import evoparsons.rmishared.ParsonsPuzzle;
@@ -69,7 +69,7 @@ public class PSI
 	}
 
 	private Scanner userInput;
-	private BrokerInterface broker;
+	private BrokerUIInterface broker;
 
 	/**
 	 * Temporary debugging method

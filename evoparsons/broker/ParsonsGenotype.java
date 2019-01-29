@@ -10,7 +10,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import evoparsons.rmishared.ParsonsPuzzle;
 
@@ -55,20 +54,20 @@ public class ParsonsGenotype implements Serializable
 		this.pairedIndex = -1;
 	}
 
-	public ParsonsGenotype(ParsonsGenotypeIndex store, IntStream genes) {
-		this.genome = genes.toArray();
-		this.index = store.remapGenotype(genome);
+	public ParsonsGenotype(int i, int... genome) {
+		this.genome = genome;
+		this.index = i;
 		this.pairedIndex = -1;
 	}	
 
-	public ParsonsPuzzle getPuzzle(ParsonsLibrary lib) {
+	public ParsonsPuzzle getPuzzle(Library lib) {
 		if (puzzle == null) {
 			puzzle = this.buildPuzzle(lib);
 		}
 		return puzzle;
 	}	
 
-	private ParsonsPuzzle buildPuzzle(ParsonsLibrary lib) {
+	private ParsonsPuzzle buildPuzzle(Library lib) {
 
 		Program program = lib.getProgram(genome[0]);
 				

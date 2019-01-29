@@ -12,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import evoparsons.broker.Config;
 import evoparsons.broker.Log;
 import evoparsons.broker.ParsonsLibrary;
 
@@ -41,7 +42,11 @@ public class ProgramsByEffectiveDistractors {
                 }				
 			}
         };
-        ParsonsLibrary lib = new ParsonsLibrary(Log.console, args[0], args[1]);
+        Config config = new Config() {{
+            this.props.put("evoparsons.programs", args[0]);
+            this.props.put("evoparsons.transforms", args[1]);
+        }};
+        ParsonsLibrary lib = new ParsonsLibrary(Log.console, config);
 
         class Tuple<A, B> {
             public final A a;

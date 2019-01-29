@@ -1,0 +1,16 @@
+#evoparsons server config
+evoparsons.output=./preset.out
+evoparsons.broker=evoparsons.broker.ParsonsBroker
+evoparsons.broker.distributionPolicy=cycling
+#evoparsons.broker.distributionPolicy=cycling.limit(10).then(dummy)
+
+#lib is taken from parent
+evoparsons.ea=evoparsons.broker.PresetStarter
+evoparsons.ea.preset=https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/configs/s18c.preset
+#evoparsons.ea.preset=file:///home/dvitel/usf/sw/evo/configs/s18c.preset
+
+evoparsons.studentsFile = preset.students.bro
+evoparsons.studentsStatsFile = preset.studentsStats.bro
+evoparsons.genotypesFile = preset.genotypes.bro
+evoparsons.genotypeEvolFile = preset.genotypeEvol.bro
+

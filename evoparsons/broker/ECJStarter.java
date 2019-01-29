@@ -4,12 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
 import ec.EvolutionState;
 import ec.Evolve;
@@ -18,20 +13,16 @@ import ec.util.Parameter;
 import ec.util.ParameterDatabase;
 import evoparsons.ecj.ParsonsEvolutionState;
 
-public class ECJ implements EvolutionAlgorithm {    
+public class ECJStarter implements EAStarter {    
     ParsonsEvolutionState evolState;
     private Config config;
-    private Broker broker;
-    private Log log;
-    private int programCount;
-    private int transformCount;
+    private BrokerEAInterface broker;
+    public final Log log;
 
-    public ECJ(Log log, Config config, Broker broker, int programCount, int transformCount) {
+    public ECJStarter(Log log, Config config, BrokerEAInterface broker) {
         this.config = config;
-        this.broker = broker;
         this.log = log;
-        this.programCount = programCount;
-        this.transformCount = transformCount;
+        this.broker = broker;
     }
 
 	@Override
@@ -43,18 +34,20 @@ public class ECJ implements EvolutionAlgorithm {
                 new ParameterDatabase(ecjConfigFile, 
                         new String[] { "-file", ecjConfigFile.getCanonicalPath() });
             params.set(new Parameter("pop.subpop.0.species.min-gene"), "0");
-            params.set(new Parameter("pop.subpop.0.species.max-gene"), String.valueOf(transformCount - 1));
+            params.set(new Parameter("pop.subpop.0.species.max-gene"), String.valueOf(broker.getLib().getTransformCount() - 1));
             params.set(new Parameter("pop.subpop.0.species.min-gene.0"), "0");
-            params.set(new Parameter("pop.subpop.0.species.max-gene.0"), String.valueOf(programCount - 1));
+            params.set(new Parameter("pop.subpop.0.species.max-gene.0"), String.valueOf(broker.getLib().getProgramCount() - 1));
         } catch (IOException e) {
             log.err("[ECJ.runFresh] Error starting ECJ (check param file): %s", e.getMessage());
             System.exit(1);
         }
         Output out = Evolve.buildOutput();
-        evolState = (ParsonsEvolutionState)Evolve.initialize(params, 0, out);
-        evolState.setEvolutionAlgorithm(this);
-        evolState.setGenotypeEvolutionRecorder(createGenotypeEvolutionRecorder());
-        evolState.run(EvolutionState.C_STARTED_FRESH);
+        this.evolState = 
+            ((ParsonsEvolutionState)Evolve.initialize(params, 0, out))
+                .withConfig(log, this.config)
+                .withGenotypeFactory(new ParsonsGenotypeIndex(log, this.config))
+                .withBroker(this.broker)
+                .start(EvolutionState.C_STARTED_FRESH);
 	}
 
 	@Override
@@ -62,7 +55,7 @@ public class ECJ implements EvolutionAlgorithm {
         evolState = null;
 
         File[] checkpoints = 
-            Paths.get(this.config.getOutputFolder()).toFile().listFiles((dir, name) -> name.endsWith(".gz"));
+            Paths.get(this.config.getOutputFolder(log)).toFile().listFiles((dir, name) -> name.endsWith(".gz"));
     
         Optional<File> oldestCheckpoint = 						
             Arrays.stream(checkpoints).max((file1, file2) -> 
@@ -94,49 +87,15 @@ public class ECJ implements EvolutionAlgorithm {
         }
 		if (evolState != null)
 		{
-            evolState.setEvolutionAlgorithm(this);
-            evolState.setGenotypeEvolutionRecorder(createGenotypeEvolutionRecorder());
-			evolState.run(EvolutionState.C_STARTED_FROM_CHECKPOINT);
+            evolState
+                .withConfig(log, this.config)
+                .withGenotypeFactory(new ParsonsGenotypeIndex(log, this.config))
+                .withBroker(broker)
+			    .start(EvolutionState.C_STARTED_FROM_CHECKPOINT);
 		} else {
             log.log("[ECJ.runCheckpoint] Cannot restore from checkpoint. Start fresh.");
             this.runFresh(config);
         }        
-    }
-    
-	@Override
-	public void setFitness(ParsonsFitness fitness) {
-		this.evolState.setFitness(fitness);
-    }          
+    }       
 
-	private BiConsumer<ParsonsGenotype, ParsonsGenotype> createGenotypeEvolutionRecorder() {
-        Map<Integer, List<ParsonsGenotype>> genotypeEvolution;
-		genotypeEvolution =
-			Utils.<Map<Integer, List<ParsonsGenotype>>>loadFromFile(log, Paths.get(config.getOutputFolder(), config.getGenotypeEvolFile()).toString(), 
-				HashMap<Integer, List<ParsonsGenotype>>::new);
-		if (genotypeEvolution.size() == 0)
-			log.log("[ECJ.createGenotypeEvolutionRecorder] genotype evolution map is empty");
-		else 
-            log.log("[ECJ.createGenotypeEvolutionRecorder] %d evolution chains were srestored from %s", new Object[] { genotypeEvolution.size(), config.getGenotypeEvolFile() });				
-        
-        return 
-            (before, after) -> 
-            {
-                List<ParsonsGenotype> genotypeHistory = genotypeEvolution.remove(before.getIndex());
-                if (genotypeHistory == null) {
-                    genotypeHistory = new LinkedList<>();
-                    genotypeHistory.add(before);
-                    genotypeHistory.add(after);
-                    genotypeEvolution.put(after.getIndex(), genotypeHistory);
-                } else {
-                    genotypeHistory.add(after);
-                    genotypeEvolution.put(after.getIndex(), genotypeHistory);
-                }
-                Utils.saveToFile(log, genotypeEvolution, Paths.get(config.getOutputFolder(), config.getGenotypeEvolFile()).toString());
-            };
-	}
-
-	@Override
-	public Broker getBroker() {
-		return broker;
-	}    
 }

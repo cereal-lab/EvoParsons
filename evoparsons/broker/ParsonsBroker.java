@@ -5,31 +5,61 @@ import java.rmi.RemoteException;// RMI-related imports
 import java.util.List;
 import java.util.function.Consumer;
 
-import evoparsons.rmishared.BrokerInterface;
+import evoparsons.rmishared.BrokerUIInterface;
 import evoparsons.rmishared.ParsonsEvaluation;
 import evoparsons.rmishared.ParsonsPuzzle;
 import evoparsons.rmishared.Stats;
 
-public class ParsonsBroker implements Broker, BrokerInterface
+public class ParsonsBroker implements Broker, BrokerUIInterface, BrokerEAInterface
 {
-	private ParsonsGenotypeIndex genotypeStore;
 	private EvaluationDataStore evalStore;
-	private ParsonsLibrary lib;
+	private Library lib;
 	private SelectionPolicy selectionPolicy;
 	private Log log;
+	private Config config;
 	private Consumer<ParsonsFitness> fitnessConsumer = 
 		f -> {
 			log.log("[ParsonsBroker.fitnessConsumer] discarding fitness: %s", f.toString());
 		};
 
-	public ParsonsBroker(Log log, ParsonsGenotypeIndex genotypeStore, EvaluationDataStore evalStore, 
-			ParsonsLibrary lib, SelectionPolicy selectionPolicy) {
-		this.genotypeStore = genotypeStore;
-		this.evalStore = evalStore;
-		this.lib = lib;
+	public ParsonsBroker(Log log, Config config, Broker parent) {
+		this.evalStore = new EvaluationDataStore(log, config);
+		this.lib = config.<Library>getInstanceOpt(log, "evoparsons.lib", log, config)
+			.orElseGet(() -> 
+				{
+					if (parent != null)
+					{
+						BrokerEAInterface parentEAInterface = parent.getEAInterface();
+						if (parentEAInterface != null)
+							return parentEAInterface.getLib();
+					}
+					return null;
+				});
+		if (this.lib == null) {
+			log.err("[ParsonsBroker] Config %s. No library was found", config.getConfigFileName());
+			System.exit(1);
+		}
+		this.config = config;
 		this.log = log;
-		this.selectionPolicy = selectionPolicy;
+		this.selectionPolicy = 
+			config.<SelectionPolicy>getInstanceOpt(log, "evoparsons.broker.distributionPolicy").orElse(SelectionPolicy.pairing);
+		
+		// switch (config.getSelectionPolicyName()) {
+		// 	case ("cycling"):
+		// 		selectionPolicy = SelectionPolicy.cycling;
+		// 		break;
+		// 	case ("epplets.pairing"):
+		// 		selectionPolicy = SelectionPolicy.pairing.limit(10).then(SelectionPolicy.dummy);
+		// 		break;
+		// 	case ("epplets.cycling"):
+		// 		selectionPolicy = SelectionPolicy.cycling.limit(10).then(SelectionPolicy.dummy);
+		// 		break;	
+		// 	default: break;		
+		// }
 	}
+
+	@Override
+	public boolean startFresh() { return evalStore.hasStudents(); }
 
 	@Override
 	public void setFitnessConsumer(Consumer<ParsonsFitness> consumer) {
@@ -104,20 +134,25 @@ public class ParsonsBroker implements Broker, BrokerInterface
 	}
 
 	@Override
-	public ParsonsGenotypeIndex getGenotypeStore() {
-		return genotypeStore;
-	}
-
-	@Override
-	public Log getLog() {
-		return log;
-	}
-
-	@Override
 	public Stats getStudentStats(int studentId) throws RemoteException {
 		synchronized (evalStore) {
 			return evalStore.getStudentStats(studentId);
 		}
+	}
+
+	@Override
+	public Library getLib() {
+		return lib;
+	}
+
+	@Override
+	public BrokerUIInterface getUIInterface() {
+		return this;
+	}
+
+	@Override
+	public BrokerEAInterface getEAInterface() {
+		return this;
 	}
 
 }

@@ -1,11 +1,8 @@
 package evoparsons.broker;
 
-import java.util.List;
-import java.util.function.Consumer;
+import evoparsons.rmishared.BrokerUIInterface;
 
 public interface Broker {
-    public void setGenotypes(List<ParsonsGenotype> genotype, int generation);    
-    public ParsonsGenotypeIndex getGenotypeStore();
-    public Log getLog();
-    public void setFitnessConsumer(Consumer<ParsonsFitness> consumer);    
+    public BrokerUIInterface getUIInterface(); 
+    public BrokerEAInterface getEAInterface();
 }

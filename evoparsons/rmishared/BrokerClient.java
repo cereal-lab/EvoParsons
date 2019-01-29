@@ -7,12 +7,12 @@ import java.util.logging.Logger;
 public final class BrokerClient
 {
     public static final String SERVICE_NAME = "ParsonsBroker";
-    public static BrokerInterface connect(String host, int port, Logger logger) {
+    public static BrokerUIInterface connect(String host, int port, Logger logger) {
         logger.info(String.format("[BrokerInterface] Connect to %s:%d", host, port));		
 		try
 		{
 			Registry r = LocateRegistry.getRegistry(host,port);
-			BrokerInterface brokerInterface = (BrokerInterface)r.lookup(SERVICE_NAME);
+			BrokerUIInterface brokerInterface = (BrokerUIInterface)r.lookup(SERVICE_NAME);
 			logger.info(String.format("[BrokerInterface] service %s was found", SERVICE_NAME));
 			return brokerInterface;
 		}
@@ -22,7 +22,7 @@ public final class BrokerClient
 		}
 		return null;
 	}
-	public static BrokerInterface connect(String host, int port) {
+	public static BrokerUIInterface connect(String host, int port) {
 		return connect(host, port, Logger.getGlobal());
 	}
 }

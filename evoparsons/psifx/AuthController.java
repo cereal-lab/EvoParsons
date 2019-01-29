@@ -1,12 +1,11 @@
 package evoparsons.psifx;
 
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
 import evoparsons.psifx.models.Auth;
 import evoparsons.rmishared.BrokerClient;
-import evoparsons.rmishared.BrokerInterface;
+import evoparsons.rmishared.BrokerUIInterface;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -36,7 +35,7 @@ public class AuthController implements BiInitializable {
     private static final int MINPORT = 1000;
     private static final int MAXPORT = 2000;
     public static Auth auth; 
-    public static BrokerInterface broker;
+    public static BrokerUIInterface broker;
     public static int studentId;
     
     @FXML 
@@ -88,9 +87,9 @@ public class AuthController implements BiInitializable {
             return;
         }
         class Tmp {
-            public BrokerInterface b;
+            public BrokerUIInterface b;
             public int studentId;
-            public Tmp(BrokerInterface b, int studentId) {
+            public Tmp(BrokerUIInterface b, int studentId) {
                 this.b = b;
                 this.studentId = studentId;
             }
@@ -98,7 +97,7 @@ public class AuthController implements BiInitializable {
         Task<Tmp> connect = new Task<Tmp>() {
             @Override 
             protected Tmp call() throws Exception {
-                BrokerInterface b = BrokerClient.connect(auth.host, auth.port);
+                BrokerUIInterface b = BrokerClient.connect(auth.host, auth.port);
                 int studentId = b.getStudentID(auth.login);
                 return new Tmp(b, studentId);
             }
