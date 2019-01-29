@@ -118,14 +118,14 @@ docker_container_run() {
     echo "Cannot open url of provided config ${config}"
     return 1
   fi
-  local hosts="$(grep -Eo "evoparsons\.broker.*?\.hostname\s*=\s*(\S*)" <<< "$configContent" | cut -d= -f2 | sort -u | xargs)"
+  local hosts="$(grep -Eo "evoparsons\.net.*?\.hostname\s*=\s*(\S*)" <<< "$configContent" | cut -d= -f2 | sort -u | xargs)"
   if [ "$?" -ne 0 ] || [ -z "$hosts" ]; then
     echo "Cannot find host in ${config}"
     return 1
   else 
     echo "Host was found: $host"    
   fi    
-  local ports="$(grep -Eo "evoparsons\.broker.*?\.port\s*=\s*(\S*)" <<< "$configContent" | cut -d= -f2 | sort -u | xargs)"
+  local ports="$(grep -Eo "evoparsons\.net.*?\.port\s*=\s*(\S*)" <<< "$configContent" | cut -d= -f2 | sort -u | xargs)"
   if [ "$?" -ne 0 ] || [ -z "$ports" ]; then
     echo "Cannot find port in ${config}"
     return 1
