@@ -30,10 +30,10 @@ public class ParsonsEvolutionState extends SimpleEvolutionState {
 	private Map<ParsonsGenotype.Pair, Pair<IntegerVectorIndividual, IntegerVectorIndividual>> parentChildPairs;
 	private String genotypeEvolFile;
 	//TODO: split EvolutionAlgorithm interface
-	public ParsonsEvolutionState withConfig(Log log, Config config) {
-		this.log = log;
+	public ParsonsEvolutionState withConfig(Config config) {
+		this.log = config.getLog();
 		this.config = config;
-		genotypeEvolFile = Paths.get(config.getOutputFolder(log), config.get("evoparsons.genotypeEvolFile", DEFAULT_GENOTYPE_EVOL_FILE)).toString();
+		genotypeEvolFile = Paths.get(config.getOutputFolder(), config.get("evoparsons.genotypeEvolFile", DEFAULT_GENOTYPE_EVOL_FILE)).toString();
 		this.genotypeEvolution =
 			Utils.<Map<ParsonsGenotype, List<ParsonsGenotype>>>loadFromFile(log, genotypeEvolFile, 
 				HashMap<ParsonsGenotype, List<ParsonsGenotype>>::new);

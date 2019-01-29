@@ -21,7 +21,7 @@ public class Config {
     // 2. constructor
     // 3. factory method
     @SuppressWarnings("unchecked")
-    public <T> T getInstance(Log log, String instancePathKey, Object... params) {
+    public <T> T getInstance(String instancePathKey, Object... params) {
         String instancePath = get(instancePathKey, "");
         String[] parts = instancePath.split("\\+");
         try {
@@ -61,7 +61,7 @@ public class Config {
         return null;
     }    
     @SuppressWarnings("unchecked")
-    public <T> Optional<T> getInstanceOpt(Log log, String instancePathKey, Object... params) {
+    public <T> Optional<T> getInstanceOpt(String instancePathKey, Object... params) {
         String instancePath = get(instancePathKey, "");
         String[] parts = instancePath.split("\\+");
         try {
@@ -106,47 +106,43 @@ public class Config {
         public String policyPath;    
         public String host; 
         public int port;   
-        public void validate(Log log, String fileName) {
-            if (this.host == "" || this.host == null) {
-                log.err("[Config.validate] In given config %s parameter hostname is missing", fileName);
-                System.exit(1);
-            }     
-            if (this.port < 1024 && this.port > 65535) {
-                log.err("[Config.validate] In given config %s parameter port is missing or invalid", fileName);
-                System.exit(1);            
-            }
-        }  
-        public NetworkPolicy createPolicy(Config config, Log log) {
-            return config.getInstance(log, policyPath);
+        // public void validate(Log log, String fileName) {
+        //     if (this.host == "" || this.host == null) {
+        //         log.err("[Config.validate] In given config %s parameter hostname is missing", fileName);
+        //         System.exit(1);
+        //     }     
+        //     if (this.port < 1024 && this.port > 65535) {
+        //         log.err("[Config.validate] In given config %s parameter port is missing or invalid", fileName);
+        //         System.exit(1);            
+        //     }
+        // }  
+        public NetworkPolicy createPolicy(Config config) {
+            return config.getInstance(policyPath);
         }
     }
     protected String configFileName;
     protected Properties props = new Properties();
+    protected Log log;
+    protected Config parent;
 
     protected String outputFolder;
-    // protected Map<Integer, Network> networkInterfaces = new HashMap<>();
-    // protected List<Config> children = new ArrayList<>();
-    
-    // protected String programFolder;
-    // protected String transformsFolder;
-    // protected String presetUrl;    
-    // protected int evalTries;
-    // protected Log log;
-    // protected String evolutionAlgorithmName;
-    // protected String selectionPolicyName;
-    // protected String genotypeIndexFile; //GENOTYPE_INDEX_FILE = "genotypeIndex.bro";
-    // protected String studentsFile; //STUDENTS_FILE = "students.bro";
-    // protected String studentsStatsFile; //STUDENTS_STATS_FILE = "studentStats.bro";
-    // protected String genotypesFile; //GENOTYPES_FILE = "genotypes.bro";
-    // protected String genotypeEvolFile; //GENOTYPE_EVOL_FILE = "genotypeEvol.bro";
-    // protected Config parentConfig;
 
-    public Config() {
+    public Config(Config parent) {
         // this.log = log;
         // this.parentConfig = parentConfig;
+        this.parent = parent;
     }
 
-    public Map<Integer, Network> createNetworkInterfaces(Log log) {  
+    public Log getLog() {
+        if (log == null) {
+            if (parent != null) log = parent.getLog();
+            if (log == null) log = Log.console;
+            log = (Log)getInstanceOpt("evoparsons.log").orElse(Log.console);
+        }
+        return log;
+    }
+
+    public Map<Integer, Network> createNetworkInterfaces() {  
         final Map<Integer, Network> networkInterfaces = new HashMap<>();
         ToIntFunction<String> portParser = 
             value -> {
@@ -202,15 +198,21 @@ public class Config {
         });
         return networkInterfaces;
     }
-    public String getOutputFolder(Log log) {         
+    public String getOutputFolder() {         
         if (outputFolder == null) {
             this.outputFolder = props.getProperty("evoparsons.output");
+            boolean fromParent = false;
+            if ((this.outputFolder.equals("") || this.outputFolder == null) && (parent != null))
+            {
+                outputFolder = parent.getOutputFolder();            
+                fromParent = true;
+            }
             if (this.outputFolder.equals("") || this.outputFolder == null) {
                 log.err("[Config.getOutputFolder] In given config %s parameter evoparsons.outputFolder is missing", configFileName);
                 System.exit(1);
             }                   
             try {
-                Paths.get(outputFolder).toFile().mkdir();
+                if (!fromParent) Paths.get(outputFolder).toFile().mkdir();
             } catch (Exception e) {
                 System.err.format("[Config.getOutputFolder] Error verifying output folder %s%n", outputFolder);
                 System.exit(1);
@@ -218,73 +220,22 @@ public class Config {
         }
         return outputFolder; 
     }
-    // public String getProgramsFolder() { return programFolder; }
-    // public String getTransformsFolder() { return transformsFolder; }
-    // public String getPresetUrl() {return presetUrl; }
     public String getConfigFileName() { return configFileName; }
-    // public String getEvolutionAlgorithmName() { return evolutionAlgorithmName; }
-    // public String getSelectionPolicyName() { return selectionPolicyName; }
-    // public String getGenotypeIndexFile() { return genotypeIndexFile; }
-    // public String getStudentsFile() { return studentsFile; }
-    // public String getStudentsStatsFile() { return studentsStatsFile; }
-    // public String getGenotypesFile() { return genotypesFile; }
-    // public String getGenotypeEvolFile() { return genotypeEvolFile; }
-    // public int getEvalTries() { return evalTries; }
 
-    public static Config FromFile(Log log, String url) {
-        return new Config().AddFromFile(log, url);
+    public static Config FromFile(Config parent, String url) {
+        Log log = parent == null ? Log.console : parent.getLog();
+        return new Config(parent).AddFromFile(log, url);
     }
 
     public String get(String key, String defaultValue) {
         return props.getProperty(key, defaultValue);
     }
 
-    // public Optional<Library> getLib(Log log) {
-    //     return getInstanceOpt(log, "evoparsons.lib");
-    // }
-
-    public List<Config> buildChildConfigs() 
-    {
-        return null;
-    }
     public Config AddFromFile(Log log, String fileName) {
         this.configFileName = fileName;
         try (InputStream fileStream = new FileInputStream(this.configFileName))
         {
             props.load(fileStream);
-
-            // this.evolutionAlgorithmName = props.getProperty("evoparsons.ea");
-
-            // if (this.evolutionAlgorithmName.equals("groups"))
-            // {
-            //     //recursivelly read other configs;
-            //     props.forEach((k, v) -> {
-            //         String name = k.toString();
-            //         String value = v.toString();                    
-            //         if (name.startsWith("evoparsons.ea.")) {
-            //             children.add(Config.FromFile(log, value, this).validate());
-            //         }
-            //     });
-            // }
-            
-
-        //     this.outputFolder = props.getProperty("evoparsons.outputFolder");
-        //     this.programFolder = props.getProperty("evoparsons.programs");
-        //     this.presetUrl = props.getProperty("evoparsons.preset");
-        //     this.studentsFile = props.getProperty("evoparsons.studentsFile");
-        //     this.studentsStatsFile = props.getProperty("evoparsons.studentsStatsFile");
-        //     this.genotypeIndexFile = props.getProperty("evoparsons.genotypeIndexFile");
-        //     this.genotypesFile = props.getProperty("evoparsons.genotypesFile");
-        //     this.genotypeEvolFile = props.getProperty("evoparsons.genotypeEvolFile");            
-        //     this.selectionPolicyName = props.getProperty("evoparsons.distributionPolicy");
-        //     this.transformsFolder = props.getProperty("evoparsons.transforms");
-        //     try {
-        //         String evalTries = props.getProperty("evoparsons.evalTries");
-        //         this.evalTries = Integer.parseInt(evalTries);
-        //     } catch (NumberFormatException e) {
-        //         log.log("[Config.LoadFromFile] Using default value for evalTries=2");
-        //         this.evalTries = 2;
-        //     }
         }
         catch (IOException e) {
             log.err("[Config.LoadFromFile] Error reading config %s: %s", fileName, e.getMessage());
@@ -294,53 +245,23 @@ public class Config {
         return this;
     }
 
-    // public Config validate() {
-    //     networkInterfaces.forEach((id, network) -> network.validate(log, this.getConfigFileName()));
-    //     if (this.outputFolder == "" || this.outputFolder == null) {
-    //         log.err("[Config.validate] In given config %s parameter evoparsons.outputFolder is missing", this.getOutputFolder());
-    //         System.exit(1);
-    //     }             
-    //     if (this.programFolder == "" || this.programFolder == null) {
-    //         log.err("[Config.validate] In given config %s parameter evoparsons.programs is missing", this.getConfigFileName());
-    //         System.exit(1);
-    //     }        
-    //     if (this.transformsFolder == "" || this.transformsFolder == null) {
-    //         log.err("[Config.validate] In given config %s parameter evoparsons.transforms is missing", this.getConfigFileName());
-    //         System.exit(1);
-    //     }        
-    //     if (this.evolutionAlgorithmName == null)        {
-    //         log.err("[Config.validate] Evaluation Algorithm was not set in config");
-    //         System.exit(1);
-    //     }
-    //     if (this.evolutionAlgorithmName.equals("preset") && (presetUrl == null))
-    //     {
-    //         log.err("[Config.validate] Preset File name was not set in config");
-    //         System.exit(1);
-    //     }        
-    //     if (this.selectionPolicyName == null)        {
-    //         log.err("[Config.validate] Selection policy was not set in config");
-    //         System.exit(1);
-    //     }        
-    //     return this;
-    // }
-
     public List<String> getList(final String prefix) {
         return props.entrySet().stream().filter(kv -> ((String)kv.getKey()).startsWith(prefix))
                     .map(kv -> (String)kv.getValue())
                     .collect(Collectors.toList());
     }
 
-	public Broker init(Log log, Broker parent) {
+	public Broker init(Broker parent) {
 
-		Broker broker = this.getInstance(log, "evoparsons.broker", log, this, parent);
-		this.createNetworkInterfaces(log).forEach((id, networkConfig) ->
-			networkConfig.createPolicy(this, log).startInterface(log, networkConfig, this, broker.getUIInterface()));
+		Broker broker = this.getInstance("evoparsons.broker", this, parent);
+		this.createNetworkInterfaces().forEach((id, networkConfig) ->
+			networkConfig.createPolicy(this).startInterface(networkConfig, this, broker.getUIInterface()));
 
         BrokerEAInterface brokerEAInterface = broker.getEAInterface();
         EAStarter eaStarter = null;
         if (brokerEAInterface != null)
         {
-            eaStarter = this.<EAStarter>getInstanceOpt(log, "evoparsons.ea", log, this, brokerEAInterface).orElse(null);
+            eaStarter = this.<EAStarter>getInstanceOpt("evoparsons.ea", this, brokerEAInterface).orElse(null);
             if (eaStarter != null) {
                 if (brokerEAInterface.startFresh()) 
                     eaStarter.runFresh(this.getConfigFileName());

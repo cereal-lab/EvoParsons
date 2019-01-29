@@ -19,9 +19,9 @@ public class ECJStarter implements EAStarter {
     private BrokerEAInterface broker;
     public final Log log;
 
-    public ECJStarter(Log log, Config config, BrokerEAInterface broker) {
+    public ECJStarter(Config config, BrokerEAInterface broker) {
         this.config = config;
-        this.log = log;
+        this.log = config.getLog();
         this.broker = broker;
     }
 
@@ -44,8 +44,8 @@ public class ECJStarter implements EAStarter {
         Output out = Evolve.buildOutput();
         this.evolState = 
             ((ParsonsEvolutionState)Evolve.initialize(params, 0, out))
-                .withConfig(log, this.config)
-                .withGenotypeFactory(new ParsonsGenotypeIndex(log, this.config))
+                .withConfig(this.config)
+                .withGenotypeFactory(new ParsonsGenotypeIndex(this.config))
                 .withBroker(this.broker)
                 .start(EvolutionState.C_STARTED_FRESH);
 	}
@@ -55,7 +55,7 @@ public class ECJStarter implements EAStarter {
         evolState = null;
 
         File[] checkpoints = 
-            Paths.get(this.config.getOutputFolder(log)).toFile().listFiles((dir, name) -> name.endsWith(".gz"));
+            Paths.get(this.config.getOutputFolder()).toFile().listFiles((dir, name) -> name.endsWith(".gz"));
     
         Optional<File> oldestCheckpoint = 						
             Arrays.stream(checkpoints).max((file1, file2) -> 
@@ -88,8 +88,8 @@ public class ECJStarter implements EAStarter {
 		if (evolState != null)
 		{
             evolState
-                .withConfig(log, this.config)
-                .withGenotypeFactory(new ParsonsGenotypeIndex(log, this.config))
+                .withConfig(this.config)
+                .withGenotypeFactory(new ParsonsGenotypeIndex(this.config))
                 .withBroker(broker)
 			    .start(EvolutionState.C_STARTED_FROM_CHECKPOINT);
 		} else {

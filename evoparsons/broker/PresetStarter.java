@@ -14,9 +14,9 @@ public class PresetStarter implements EAStarter {
     private BrokerEAInterface broker;
     private Log log;
 
-    public PresetStarter(Log log, Config config, BrokerEAInterface broker) {
+    public PresetStarter(Config config, BrokerEAInterface broker) {
         this.broker = broker;
-        this.log = log;
+        this.log = config.getLog();
         genotypes = new ArrayList<>();
         presetUrl = config.get("evoparsons.ea.preset", "");
         try(InputStream stream = new URL(presetUrl).openStream();

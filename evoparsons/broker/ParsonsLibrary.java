@@ -37,9 +37,9 @@ public class ParsonsLibrary implements Library
 	/**
 	 * Building a new instance
 	 **/
-	public ParsonsLibrary(Log log, Config config)
+	public ParsonsLibrary(Config config)
 	{
-		this.log = log;
+		this.log = config.getLog();
 		programFolder = config.get("evoparsons.programs", "");
 		programStore = 
 			load(programFolder, 

@@ -34,11 +34,11 @@ public class EvaluationDataStore
 	private Log log;
 	private Config config;
 
-	public EvaluationDataStore(Log log, Config config)
+	public EvaluationDataStore(Config config)
 	{
-		this.log = log;
+		this.log = config.getLog();
 		this.config = config;
-		this.outputFolder = config.getOutputFolder(log);
+		this.outputFolder = config.getOutputFolder();
 		try {
 			String evalTries = config.get("evoparsons.evalTries", "");
 			this.evalTries = Integer.parseInt(evalTries);
@@ -120,7 +120,6 @@ public class EvaluationDataStore
 					genotypes.entrySet().stream()
 						.sorted(Comparator.comparing(entry -> entry.getKey()))
 						.forEach(genotype -> {	
-							ParsonsPuzzle puzzle = genotype.getValue().genotype.getPuzzle(lib);
 							if (!genotype.getValue().evaluations.containsKey(student.getValue())) log.print("%10.10s", "");
 							else 
 							{

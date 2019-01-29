@@ -43,11 +43,11 @@ public class ParsonsGenotypeIndex
 	}		
 	private Map<HashRemapper, Integer> genotypeIndexes;
 	private String outputFolder;
-	public ParsonsGenotypeIndex(Log log, Config config)
+	public ParsonsGenotypeIndex(Config config)
 	{
-		this.log = log;
+		this.log = config.getLog();
 		this.config = config;
-		this.outputFolder = config.getOutputFolder(log);
+		this.outputFolder = config.getOutputFolder();
 		genotypeIndexFile = config.get("evoparsons.genotypeIndexFile", DEFAULT_GENOTYPE_INDEX_FILE);
 		genotypeIndexes = 
 			Utils.<Map<HashRemapper, Integer>>loadFromFile(log, Paths.get(outputFolder, genotypeIndexFile).toString(), 

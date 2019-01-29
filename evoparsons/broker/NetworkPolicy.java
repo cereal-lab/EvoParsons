@@ -44,10 +44,11 @@ import evoparsons.rmishared.ParsonsPuzzle;
 import evoparsons.rmishared.Stats;
 
 public interface NetworkPolicy {
-    void startInterface(Log log, Config.Network networkConfig, Config config, BrokerUIInterface broker);
+    void startInterface(Config.Network networkConfig, Config config, BrokerUIInterface broker);
 
     public static NetworkPolicy RMI = 
-        (log, networkConfig, config, broker) -> {
+        (networkConfig, config, broker) -> {
+            Log log = config.getLog();
             System.setProperty("java.rmi.server.hostname", networkConfig.host);	
             try {
                 Registry registry;
@@ -76,10 +77,10 @@ public interface NetworkPolicy {
         BrokerUIInterface broker;
         Config config;
         Log log;
-        public StudentServlet(Log log, Config config, BrokerUIInterface broker) {
+        public StudentServlet(Config config, BrokerUIInterface broker) {
             this.broker = broker;
             this.config = config;
-            this.log = log;
+            this.log = config.getLog();
         }
         
         private void onNewStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -171,7 +172,7 @@ public interface NetworkPolicy {
                     stats.attemptsPerPuzzle.getOrDefault(puzzleId, 0);
                     stats.attemptsPerPuzzle.put(puzzleId, attemptId + 1);
             }
-            File file = Paths.get(config.getOutputFolder(log), "data", String.valueOf(studentId), String.valueOf(puzzleId), "attempts", String.format("%d.json", attemptId)).toFile().getAbsoluteFile();
+            File file = Paths.get(config.getOutputFolder(), "data", String.valueOf(studentId), String.valueOf(puzzleId), "attempts", String.format("%d.json", attemptId)).toFile().getAbsoluteFile();
             file.getParentFile().mkdirs();
             try (FileWriter writer = new FileWriter(file)) {
                 String text = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
@@ -366,10 +367,11 @@ public interface NetworkPolicy {
     }         
 
     public static NetworkPolicy REST = 
-        (log, networkConfig, config, broker) -> {
+        (networkConfig, config, broker) -> {
+            final Log log = config.getLog();
             new Thread(() -> 
 			{
-				try (FileLog fileLog = Log.file(Paths.get(config.getOutputFolder(log), "web.log").toString())) {				
+				try (FileLog fileLog = Log.file(Paths.get(config.getOutputFolder(), "web.log").toString())) {				
 					org.eclipse.jetty.util.log.Log.setLog(new Logger(){
 						@Override public void debug(Throwable arg0) { }
 						@Override public void debug(String arg0, Object... arg1) {	}
@@ -424,7 +426,7 @@ public interface NetworkPolicy {
                         new URL(NetworkPolicy.class.getResource("rest/index.html"), ".").toExternalForm();
                     log.log("[REST] WebUI content by path: %s", staticContentPath);                                                    
 					apiHandler.setBaseResource(Resource.newResource(staticContentPath));
-                    apiHandler.addServlet(new ServletHolder(new StudentServlet(log, config, broker)), "/api/student/*");
+                    apiHandler.addServlet(new ServletHolder(new StudentServlet(config, broker)), "/api/student/*");
                     apiHandler.addServlet(DefaultServlet.class, "/*");
                     apiHandler.setWelcomeFiles(new String[] { "index.html" });  
                     handlers.addHandler(apiHandler);                  

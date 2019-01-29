@@ -18,19 +18,19 @@ import evoparsons.rmishared.ParsonsPuzzle;
 
 public class InteractionMatrix {
     public static void main(String[] args) {
-        Config config = new Config() {{
+        Config config = new Config(null) {{
             outputFolder = args[0];
             this.props.put("evoparsons.programs", args[1]);
             this.props.put("evoparsons.transforms", args[2]);
         }};
         Log log = Log.console;
 		Map<Integer, PuzzleEvaluation> genotypes = 
-			Utils.<Map<Integer, PuzzleEvaluation>>loadFromFile(log, Paths.get(config.getOutputFolder(log), "genotypes.bro").toString(), 
+			Utils.<Map<Integer, PuzzleEvaluation>>loadFromFile(log, Paths.get(config.getOutputFolder(), "genotypes.bro").toString(), 
                 HashMap<Integer, PuzzleEvaluation>::new);    
                 
-        HashMap<String, Integer> students = Utils.<HashMap<String, Integer>>loadFromFile(log, Paths.get(config.getOutputFolder(log), "students.bro").toString(), HashMap<String, Integer>::new);                
+        HashMap<String, Integer> students = Utils.<HashMap<String, Integer>>loadFromFile(log, Paths.get(config.getOutputFolder(), "students.bro").toString(), HashMap<String, Integer>::new);                
                 
-        ParsonsLibrary lib = new ParsonsLibrary(Log.console, config);
+        ParsonsLibrary lib = new ParsonsLibrary(config);
 
 
 		Map<Integer, PuzzleEvaluation> currentGenerationGenotypes = 

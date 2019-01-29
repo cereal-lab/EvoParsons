@@ -22,9 +22,9 @@ public class ParsonsBroker implements Broker, BrokerUIInterface, BrokerEAInterfa
 			log.log("[ParsonsBroker.fitnessConsumer] discarding fitness: %s", f.toString());
 		};
 
-	public ParsonsBroker(Log log, Config config, Broker parent) {
-		this.evalStore = new EvaluationDataStore(log, config);
-		this.lib = config.<Library>getInstanceOpt(log, "evoparsons.lib", log, config)
+	public ParsonsBroker(Config config, Broker parent) {
+		this.evalStore = new EvaluationDataStore(config);
+		this.lib = config.<Library>getInstanceOpt("evoparsons.lib", config)
 			.orElseGet(() -> 
 				{
 					if (parent != null)
@@ -40,22 +40,9 @@ public class ParsonsBroker implements Broker, BrokerUIInterface, BrokerEAInterfa
 			System.exit(1);
 		}
 		this.config = config;
-		this.log = log;
+		this.log = config.getLog();
 		this.selectionPolicy = 
-			config.<SelectionPolicy>getInstanceOpt(log, "evoparsons.broker.distributionPolicy").orElse(SelectionPolicy.pairing);
-		
-		// switch (config.getSelectionPolicyName()) {
-		// 	case ("cycling"):
-		// 		selectionPolicy = SelectionPolicy.cycling;
-		// 		break;
-		// 	case ("epplets.pairing"):
-		// 		selectionPolicy = SelectionPolicy.pairing.limit(10).then(SelectionPolicy.dummy);
-		// 		break;
-		// 	case ("epplets.cycling"):
-		// 		selectionPolicy = SelectionPolicy.cycling.limit(10).then(SelectionPolicy.dummy);
-		// 		break;	
-		// 	default: break;		
-		// }
+			config.<SelectionPolicy>getInstanceOpt("evoparsons.broker.distributionPolicy").orElse(SelectionPolicy.pairing);		
 	}
 
 	@Override

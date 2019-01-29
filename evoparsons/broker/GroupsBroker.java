@@ -22,13 +22,13 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 	private Map<String, BrokerUIInterface> studentLoginToBroker;
 	private Map<Integer, BrokerUIInterface> studentIdToBroker;
 
-	public GroupsBroker(Log log, Config config, Broker parent) {
-		this.log = log;
-		this.lib = config.<Library>getInstanceOpt(log, "evoparsons.lib").orElse(null);
+	public GroupsBroker(Config config, Broker parent) {
+		this.log = config.getLog();
+		this.lib = config.<Library>getInstanceOpt("evoparsons.lib").orElse(null);
 		List<Broker> brokers = 
 			config.getList("evoparsons.broker.child.")
 				.stream()
-				.map(cf -> Config.FromFile(log, cf).init(log, this))
+				.map(cf -> Config.FromFile(config, cf).init(this))
 				.collect(Collectors.toList());
 		if (brokers.size() == 0) {
 			log.err("[GroupsBroker] evoparsons.broker.child was not specified");
