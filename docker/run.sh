@@ -92,7 +92,7 @@ docker_container_build() {
     TargetRepository="https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/docker/"
     for TargetFile in "docker-compose.yml" "Dockerfile" "supervisord.conf"
     do
-	    curl -fsSL ${TargetRepository}${TargetFile}?format=raw -o ${TargetFile}
+	    curl -fsSL ${TargetRepository}${TargetFile} -o ${TargetFile}
     done
     
     docker build --no-cache -t evoparsons_server -f Dockerfile .
