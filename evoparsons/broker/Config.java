@@ -1,12 +1,18 @@
 package evoparsons.broker;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -319,7 +325,7 @@ public class Config {
 
     public static Config FromFile(Config parent, String url) {
         Log log = parent == null ? Log.console : parent.getLog();
-        Config config = new Config(parent).AddFromFile(log, url);
+        Config config = new Config(parent).AddFromFile(log, url, true);
         config.getLog(); //validation
         config.getOutputFolder(); 
         return config;
@@ -329,16 +335,35 @@ public class Config {
         return props.getProperty(key, defaultValue);
     }
 
-    public Config AddFromFile(Log log, String fileName) {
+    public Config AddFromFile(Log log, String fileName, boolean tryUrl) {
         this.configFileName = fileName;
         try (InputStream fileStream = new FileInputStream(this.configFileName))
         {
             props.load(fileStream);
         }
         catch (IOException e) {
-            log.err("[Config.LoadFromFile] Error reading config %s: %s", fileName, e.getMessage());
-            e.printStackTrace();
-            System.exit(1);
+            if (tryUrl)
+            {
+                try {
+                URL url = new URL(configFileName);
+                try(InputStream stream = url.openStream()) {
+                    String urlPath = url.getPath();
+                    String urlFileName= urlPath.substring(urlPath.lastIndexOf('/') + 1);
+                    Path filePath = Paths.get(parent == null ? "." : parent.getOutputFolder(), urlFileName); 
+                    Files.copy(stream, filePath, StandardCopyOption.REPLACE_EXISTING);
+                    AddFromFile(log, filePath.toString(), false);
+                }
+                } catch (Exception e2) {
+                    log.err("[Config.LoadFromUrl] Error reading config %s: %s", fileName, e2.getMessage());
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+            }
+            else {
+                log.err("[Config.LoadFromFile] Error reading config %s: %s", fileName, e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
         }
         return this;
     }
