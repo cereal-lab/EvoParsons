@@ -6,8 +6,8 @@
 
 mkdir -p evoparsons
 mkdir -p scripts
-svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/evoparsons/psifx evoparsons/psifx
-svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/scripts/  scripts
-svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/evoparsons/rmishared evoparsons/rmishared
-svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/evoparsons/broker evoparsons/broker
+svn checkout https://github.com/cereal-lab/EvoParsons/trunk/evoparsons/psifx evoparsons/psifx
+svn checkout https://github.com/cereal-lab/EvoParsons/trunk/scripts/  scripts
+svn checkout https://github.com/cereal-lab/EvoParsons/trunk/evoparsons/rmishared evoparsons/rmishared
+svn checkout https://github.com/cereal-lab/EvoParsons/trunk/evoparsons/broker evoparsons/broker
 # evoparsons.ParsonsBrokerConfig imported by rmishared.ParsonsBrokerInterfaceForEAs

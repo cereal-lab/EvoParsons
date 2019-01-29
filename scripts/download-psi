@@ -6,6 +6,6 @@
 
 mkdir -p evoparsons
 mkdir -p scripts
-svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/evoparsons/psi evoparsons/psi >/dev/null
-svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/scripts scripts >/dev/null
-svn checkout https://svn.code.sf.net/p/evotutoring/code/trunk/evoparsons/rmishared evoparsons/rmishared >/dev/null
+svn checkout https://github.com/cereal-lab/EvoParsons/trunk/evoparsons/psi evoparsons/psi >/dev/null
+svn checkout https://github.com/cereal-lab/EvoParsons/trunk/scripts scripts >/dev/null
+svn checkout https://github.com/cereal-lab/EvoParsons/trunk/evoparsons/rmishared evoparsons/rmishared >/dev/null

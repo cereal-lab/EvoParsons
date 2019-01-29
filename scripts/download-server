@@ -2,7 +2,7 @@
 #select fresh folder first to store sources, then download
 #it will bring evoparsons-server, psi, psifx and puzzles to folder 
 
-SVNTARGET="https://svn.code.sf.net/p/evotutoring/code/trunk/"
+SVNTARGET="https://github.com/cereal-lab/EvoParsons/trunk/"
 
 svn checkout "${SVNTARGET}evoparsons/broker" evoparsons/broker >/dev/null
 svn checkout "${SVNTARGET}evoparsons/ecj" evoparsons/ecj >/dev/null
