@@ -17,12 +17,14 @@ public class ParsonsBroker implements Broker, BrokerUIInterface, BrokerEAInterfa
 	private SelectionPolicy selectionPolicy;
 	private Log log;
 	private Config config;
+	private String name;
 	private Consumer<ParsonsFitness> fitnessConsumer = 
 		f -> {
 			log.log("[ParsonsBroker.fitnessConsumer] discarding fitness: %s", f.toString());
 		};
 
 	public ParsonsBroker(Config config, Broker parent) {
+		this.name = config.get("evoparsons.broker.name", "ParsonsBroker");
 		this.evalStore = new EvaluationDataStore(config);
 		this.lib = config.<Library>getInstanceOpt("evoparsons.lib", config)
 			.orElseGet(() -> 
@@ -140,6 +142,11 @@ public class ParsonsBroker implements Broker, BrokerUIInterface, BrokerEAInterfa
 	@Override
 	public BrokerEAInterface getEAInterface() {
 		return this;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 
 }

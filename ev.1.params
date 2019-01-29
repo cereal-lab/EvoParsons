@@ -1,6 +1,7 @@
 #evoparsons server config
 evoparsons.log.header = [PRESET]
 evoparsons.output=./preset.out
+evoparsons.broker.name = PRESET
 evoparsons.broker=evoparsons.broker.ParsonsBroker
 evoparsons.broker.distributionPolicy=evoparsons.broker.SelectionPolicy+cycling
 #evoparsons.broker.distributionPolicy=cycling.limit(10).then(dummy)

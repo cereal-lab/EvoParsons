@@ -1,6 +1,7 @@
 #Spring 19 ECJ config
 evoparsons.log.header = [ECJ]
 evoparsons.output=./ecj.out
+evoparsons.broker.name = ECJ
 evoparsons.broker=evoparsons.broker.ParsonsBroker
 evoparsons.broker.distributionPolicy=evoparsons.broker.SelectionPolicy+pairing
 evoparsons.ea=evoparsons.broker.ECJStarter
