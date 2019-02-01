@@ -27,7 +27,6 @@ WORKDIR /app/
 COPY --from=Builder /app/docker/supervisord.conf /etc/
 COPY --from=Builder /app/bin/*.jar /app/
 COPY --from=Builder /app/scripts/evoparsons-server /app/
-COPY --from=Builder /app/ParsonsLibraries /app/ParsonsLibraries
 
 RUN chmod a+x /app/evoparsons-server
 
