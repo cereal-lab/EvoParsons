@@ -112,7 +112,7 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 		Broker fullBroker = brokers.get(selectedBrokerName);
 		BrokerUIInterface broker = fullBroker.getUIInterface();
 		int localId = broker.getStudentID(login);
-		StudentData data = new StudentData(selectedBrokerName, brokerStudents.size(), localId);
+		StudentData data = new StudentData(selectedBrokerName, studentIdToBroker.size(), localId);
 		log.log("New student: %s --> %d --> %d [%s]", login, data.id, data.localId, selectedBrokerName);
 		loginToStudentId.put(login, data.id);			
 		studentIdToBroker.put(data.id, data);

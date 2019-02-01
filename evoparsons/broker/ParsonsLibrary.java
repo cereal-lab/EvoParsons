@@ -147,7 +147,7 @@ public class ParsonsLibrary implements Library
 		{
 		return
 			Arrays.stream( new File(folder).listFiles())
-				//.filter(f -> f.isFile() && f.getName().endsWith(".java"))
+				.filter(f -> f.isFile())
 				.sorted(Comparator.comparing(f -> f.getName()))
 				.map(file -> {		
 					try {													
