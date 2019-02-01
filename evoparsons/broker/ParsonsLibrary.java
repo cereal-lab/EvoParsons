@@ -1,9 +1,14 @@
 package evoparsons.broker;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -28,8 +33,8 @@ public class ParsonsLibrary implements Library
 	 * This is where we keep all the {@link Program} objects representing the
 	 * programs available in the broker's folder
 	 **/
-	private String programFolder;
-	private String transformFolder;
+	private Path programFolder;
+	private Path transformFolder;
 	private List<Program> programStore;
 	private List<Transform> transformStore;
 	private Log log;
@@ -39,10 +44,17 @@ public class ParsonsLibrary implements Library
 	 **/
 	public ParsonsLibrary(Config config)
 	{
-		this.log = config.getLog();
-		programFolder = config.get("evoparsons.programs", "");
+		String outputFolder = config.getOutputFolder();
+		programFolder = Paths.get(outputFolder, "Programs");
+		transformFolder = Paths.get(outputFolder, "Transforms");
+		this.log = config.getLog();		
+		if (Files.notExists(programFolder))
+		{
+			String url = config.get("evoparsons.programs", "");
+			Utils.downloadFolderFromGithub(url, programFolder.toString(), log);
+		}
 		programStore = 
-			load(programFolder, 
+			load(programFolder.toString(), 
 				new String[] { Program.LANG, Program.TITLE, Program.DESC, Program.SOURCE },
 				(fileName, groupedLines) -> 
 					new Program(
@@ -58,9 +70,13 @@ public class ParsonsLibrary implements Library
 				IntStream.range(0, programStore.size())
 					.mapToObj(i -> String.format("\t%d\t%s", i, programStore.get(i).fileName))
 					.collect(Collectors.joining(System.lineSeparator()))});
-		transformFolder = config.get("evoparsons.transforms", "");
+		if (Files.notExists(transformFolder))
+		{
+			String url = config.get("evoparsons.transforms", "");
+			Utils.downloadFolderFromGithub(url, transformFolder.toString(), log);
+		}
 		transformStore = 
-			loadTransforms(transformFolder, 
+			loadTransforms(transformFolder.toString(), 
 				new String[] { Transform.TITLE, Transform.DESC, Transform.SELECT, Transform.TRANSFORM },
 				(fileName, groupedLines) -> 
 					new Transform(
@@ -131,7 +147,7 @@ public class ParsonsLibrary implements Library
 		{
 		return
 			Arrays.stream( new File(folder).listFiles())
-				.filter(f -> f.isFile() && f.getName().endsWith(".bro"))
+				//.filter(f -> f.isFile() && f.getName().endsWith(".java"))
 				.sorted(Comparator.comparing(f -> f.getName()))
 				.map(file -> {		
 					try {													
@@ -148,7 +164,7 @@ public class ParsonsLibrary implements Library
 										acc.sectionIndex = acc.sectionIndex + 1;										
 									} else {
 										String trimmedLine = line.trim();
-										if (!trimmedLine.isEmpty()) acc.lines.add(trimmedLine);
+										if (!trimmedLine.isEmpty() && !trimmedLine.equals("*/")) acc.lines.add(trimmedLine);
 									}
 								},
 								(acc1, acc2) -> {})

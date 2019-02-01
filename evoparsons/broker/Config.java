@@ -110,6 +110,7 @@ public class Config {
             }            
         } catch (Exception e) {
             log.err("[Config.getInstance] Cannot get instance for %s%nError: %s%n", instancePath, e.toString());
+            e.printStackTrace();
             System.exit(1);
         }
         return null;

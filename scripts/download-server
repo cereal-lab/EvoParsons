@@ -14,7 +14,4 @@ wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/scripts/bui
 wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/scripts/evoparsons-server" --content-disposition --no-check-certificate -O ./scripts/evoparsons-server >/dev/null
 wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/docker/supervisord.conf" --content-disposition --no-check-certificate -O ./docker/supervisord.conf >/dev/null
 #svn checkout "${SVNTARGET}docker" docker >/dev/null
-svn checkout "${SVNTARGET}ParsonsLibraries/Programs/Java" ParsonsLibraries/Programs/Java >/dev/null
-svn checkout "${SVNTARGET}ParsonsLibraries/Transforms/Java" ParsonsLibraries/Transforms/Java >/dev/null
-
 

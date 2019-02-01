@@ -1,6 +1,6 @@
 #evoparsons server config
 evoparsons.log.header = [ECJ]
-evoparsons.output=./ecj.out
+evoparsons.output=./DATA.out/ecj.out
 evoparsons.broker.name = ECJ
 evoparsons.broker=evoparsons.broker.ParsonsBroker
 evoparsons.broker.distributionPolicy=evoparsons.broker.SelectionPolicy+cycling

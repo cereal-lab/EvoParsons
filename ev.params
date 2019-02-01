@@ -13,5 +13,5 @@ evoparsons.broker=evoparsons.broker.GroupsBroker
 evoparsons.broker.child.1=./ev.1.params
 evoparsons.broker.child.2=./ev.2.params
 evoparsons.lib=evoparsons.broker.ParsonsLibrary
-evoparsons.programs=../ParsonsLibraries/Programs/Java
-evoparsons.transforms=../ParsonsLibraries/Transforms/Java
+evoparsons.programs=https://github.com/cereal-lab/EvoParsons/trunk/ParsonsLibraries/Programs/Java
+evoparsons.transforms=https://github.com/cereal-lab/EvoParsons/trunk/ParsonsLibraries/Transforms/Java
