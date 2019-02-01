@@ -19,7 +19,7 @@ RUN set -xe \
 FROM openjdk:8-jre-alpine
 
 # We use supervisord to run multiple programs in a single container.
-RUN apk add --no-cache supervisor bash svn
+RUN apk add --no-cache supervisor bash subversion
 
 WORKDIR /app/
 
