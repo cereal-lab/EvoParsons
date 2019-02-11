@@ -23,7 +23,7 @@ public class PresetStarter implements EAStarter {
             Scanner s = new Scanner(stream)) {
             while (s.hasNext())
             {
-                String line = s.next();
+                String line = s.nextLine();
                 genotypes
                     .add(new ParsonsGenotype(genotypes.size(), 
                     Arrays.stream(line.split(","))
