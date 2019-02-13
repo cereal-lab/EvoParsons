@@ -19,22 +19,13 @@ Implement these method in the following order; main, search, getRandomArray, asS
 [#source#]
 */
 import java.util.Scanner; \\npublic class ArraysReverse {\\n   public static void main(String[] args){
-      int[] myArray = getRandomArray(10);
-      System.out.println("Before\t" + asString(myArray));
-      reverse(myArray);
-      System.out.println("After \t" + asString(myArray));
-   } //end of main method
+      \\nint[] myArray = getRandomArray(10);  \\nSystem.out.println("Before\t" + asString(myArray));  \\nreverse(myArray);  \\nSystem.out.println("After \t" + asString(myArray));  \\n} //end of main method
    public static void reverse(int[] array){
       for(int i=0 ; i < array.length / 2 ; i++){
-         int tmp = array[i]; 
+         int tmp = array[i];
          array[i] = array[array.length - 1 - i];
          array[array.length - 1 - i] = tmp;
-      }
-   } // end of search method
+      }  \\n} // end of search method
    public static int[] getRandomArray(int size){
-      int[] data = new int[size];
-      for(int i = 0 ; i < data.length ; )
-         data[i++] = (int)(Math.random()*10+1);
-      return data;
-   } // end of getRandomArray method
+      \\nint[] data = new int[size];  \\nfor(int i = 0 ; i < data.length ; )  \\ndata[i++] = (int)(Math.random()*10+1);  \\nreturn data;  \\n} // end of getRandomArray method
    public static String asString(int[] a){\\nString result = "";\\nfor(int i=0; i < a.length; i++)\\n  result = result + a[i]+ " ";\\nreturn result;\\n} // end of asString method\\n} // end of class

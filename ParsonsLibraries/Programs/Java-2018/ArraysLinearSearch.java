@@ -19,16 +19,10 @@ Implement these method in the following order; main, search, getRandomArray, asS
 
 [#source#]
 */
-import java.util.Scanner; \\npublic class ArraysLinearSearch {\\n public static void main(String[] args){
-      int size = 10;
-      int[] data = getRandomArray(size);
-      int indexRandom = getRandomInt(size);
-      int indexFound = search(data, data[indexRandom]);
-      if(indexFound == -1)
-         System.out.println("Value was not found");
-      else if(data[indexFound] == data[indexRandom])
-         System.out.println("It worked!!!");
-   } //end of main method
+import java.util.Scanner; \\npublic class ArraysLinearSearch {
+   public static void main(String[] args){  \\nint size = 10;  \\nint[] data = getRandomArray(size);  
+      int indexRandom = getRandomInt(size);  \\nint indexFound = search(data, data[indexRandom]);
+      if(indexFound == -1)  \\nSystem.out.println("Value was not found");  \\nelse if(data[indexFound] == data[indexRandom])  \\nSystem.out.println("It worked!!!");  \\n} //end of main method
    public static int search(int[] array, int value){
       for(int i=0 ; i < array.length ; i++)
          if(array[i] == value) return i;
