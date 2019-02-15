@@ -10,14 +10,13 @@ Binary Search - Iterative
 [#description#]
 This program searches an item ('element') in an array of integer number ('values') using binary search.
 The program has three functions: getData, binarySearch and main.
-Function getData populates the array with SIZE (5) integers.
+Function getData populates the array with SIZE, where SIZE = 5.
 binarySearch looks for the item in the array. If the element is found, binarySearch returns it.
 ,otherwise it returns -1. element is an integer randomly generated in the range of 0 and SIZE (excluded)
-main function calls getData to populate  array and then print appropriate
-message based on if the item is found  or not.
+main function calls getData to populate  the array of integer numbers and then prints
+messages if the item is found  or not.
 You need to implement the functions in the order of main, getData and binarySearch.
-Please note that this program expects that the user will populate the array either
-in ascending order.
+Please note that this program expects that the user will input the array in ascending order.
 
 [#source#]
 */

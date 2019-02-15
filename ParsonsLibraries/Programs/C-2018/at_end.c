@@ -8,12 +8,13 @@ C
 AtEnd
 
 [#description#]
-This program implements if the second string is at the end of first string.
-Function ami_at_end takes first_string and second_string as first and second
+This program implements if the second_string can be found at the end of first_string.
+Function ami_at_end takes first_string and second_string as its first and second
 parameter respectively. It checks if second_string is at the end of first_string.
 If so, it returns 1. Otherwise, ami_at_end returns -1.
-Function get_length calculates the length of a string and returns it.
-Inside, ami_at_end, first_string is traversed to the end, then  second_string.
+Inside, ami_at_end, first_string is traversed to the end first, then  second_string.
+Function get_length calculates the length of a given string and returns the length
+to its caller.
 You should implement the functions in the following order; main,
 get_length and ami_at_end.
 

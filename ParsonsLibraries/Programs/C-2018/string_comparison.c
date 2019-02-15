@@ -9,7 +9,7 @@ String Comparison
 
 [#description#]
 This program compares two strings for equality. Two strings are equal if they
-contain same character in  same positions.
+contain same character in the same position.
 Function get_length calculates length of a string.
 Function str_cmp first checks if the length of the two strings are equal. If their
 length are  different then it returns -1. Else, it checks both strings character
@@ -29,8 +29,7 @@ int str_cmp(const char* s1, const char* s2){
     return -1;
   else{
     while( *s1 && *s2)
-      if(*s1++ != *s2++)
-	       return -1;
+      if(*s1++ != *s2++) return -1;
   } //end of else inside str_cmp
   return 1;
 }//end of str_cmp

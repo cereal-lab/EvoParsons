@@ -5,14 +5,14 @@ EvoParsons Team
 C
 
 [#title#]
-Product of largest and the second largest element
+Multiplication of largest and the second largest element
 
 [#description#]
-This program find the maximum and second maximum elements in an array. Then it simply prints
-the product of those two numbers. maximum takes an array of integers and returns maximum
+This program finds the maximum and second maximum elements in an array. Then it simply prints
+the multiplication of those two numbers. Function maximum takes an array of integers and returns maximum
 element of that array. get_second_max takes array of integers and the maximum element.
 Then it creates another array of integers where the maximum of original array is excluded.
-get_second_max calls maximum to get the second largest number. Please implement the functions
+get_second_max calls maximum to get the second largest element. Please implement the functions
 in the following order; main, get_second_max, maximum
 
 [#source#]

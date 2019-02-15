@@ -10,9 +10,10 @@ Anagram
 [#description#]
 This program checks if two strings are anagram. Please note that the strings
 contain only small alphabet letters. Function is_anagram counts the frequency
-of letters of string separately and store them in two separate array of integers.
-Then it checks if the the frequency of each character in one string is equal to
-that of other string. The program returns 1 if the strings are anagram, -1 otherwise.
+of character in the given strings and stores them in two separate array of integers.
+is_anagram calculates the frequency of first_string first then second_string.
+After that, it checks if the the frequency of each character in one array is equal to
+that of other array. The program returns 1 if the strings are anagram, -1 otherwise.
 Please implement main, then is_anagram.
 
 

@@ -8,14 +8,13 @@ C
 Stack - Array Implementation
 
 [#description#]
-The  code snippet implements push, pop and display operation of stack.
-This is an array based Implementation of the stack.
+This is an array based implementation of the stack.
+The  code snippet implements two stack operations; push and pop.
 Push function inserts an item at the top of the stack. It prints
-"Stack overflow error", if an attempt is taken to push in a full stack.
+"Stack overflow error", if an attempt is taken to push an element into a full stack.
 Pop returns the top element from stack and decreases top value by one.
 Any attempt to pop an element from an empty stack causes "Stack underflow error."
-Function display prints the elements of the stack starting from top. The program implements
-the functions in the following order: push, pop and display.
+The program implements the functions in the following order: push, pop.
 
 [#source#]
 
@@ -36,4 +35,3 @@ int pop() {
     } //end of if inside pop
 	else return stack[top--];
 } //end of pop
-void display() {  \\nint i, *p = stack;  \\nfor (i = top; i >= 0; i--)  \\nprintf("%d \n", *(stack + i));  \\n}

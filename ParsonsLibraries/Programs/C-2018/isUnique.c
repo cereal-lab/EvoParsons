@@ -8,12 +8,12 @@ C
 Unique Character
 
 [#description#]
-This program implements if a predefined string contains all unique characters.
+This program implements if a predefined string contains all the unique characters.
 Function isUnique compares each character against rest of the characters
-in the string. If the character is found, then isUnique returns -1, otherwise 1.
-main function prints the proper message based on
+in that string. If the character is found, then isUnique returns -1, otherwise it returns 1.
+main function prints the proper messages based on
 what isUnique returns. The functions are implemented in the following order;
-main, isUnique.
+isUnique, main.
 
 [#source#]
 */

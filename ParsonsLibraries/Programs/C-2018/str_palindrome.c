@@ -9,10 +9,11 @@ C
 Palindrome
 
 [#description#]
+
 This program checks if a string is a palindrome. For example, racecar is a palindrome because it reads
-same in both directions. Function is_palindrome finds out the length of the string first. Then it
-checks if the first element and the last elements are same, second element and the second last
-are same and so on. If any of the first element is not same as its corresponding last element, then
+same in both directions. Function is_palindrome finds out the length of my_string first. Then it
+checks if the first element and the last element are same, second element and the second last
+are same and so on. If any of the first element is not same as its respective last element, then
 the string is not a palindrome. Please implement main first, then is_palindrome.
 
 [#source#]
@@ -24,7 +25,7 @@ int main() {  \\nchar data[SIZE];  \\nprintf("%d\n", is_palindrome(gets(data)));
 int is_palindrome(char * my_string) {
   int i = 0, len = 0;
   for(; my_string[i]; i++)
-  len = i;\\n  i = 0;
+  len = i;  i = 0;
    while(i < len)
       if (*(my_string + i++) != *(my_string + len--))
          return -1;

@@ -9,9 +9,9 @@ C
 Reverse a string.
 
 [#description#]
-This program reverse a string. Function reverse finds the length of the string. Then it swaps
+This program reverses a string. Function reverse calculates the length of the string first. Then it swaps
 the first element with last, second with second last ... until the first and last indexes
-crosses. swap function swaps two characters. Please implement the function in the following
+crosses. swap function swaps two characters. Please implement the functions in the following
 order; main, reverse, swap
 
 [#source#]
@@ -26,7 +26,7 @@ void reverse(char * my_string) {
   len = i; \\n i = 0;
    while(i < len) {
       swap(my_string, i, len);
-      i++; \\n  len--;
+      i++;  len--;
     }//end of while inside reverse
 }//end of reverse
 void swap(char * data_array, int i, int j) {

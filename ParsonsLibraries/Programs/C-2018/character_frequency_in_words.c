@@ -7,8 +7,8 @@ Character Frequency
 
 [#description#]
 This program implements the frequency of a given letter in
-any string. Function frequency computes the count
-of the "letter" in the "string" and returns it. read_string_input reads
+any given string. Function frequency computes the count
+of the "letter" in that "string" and returns it. read_string_input reads
 string input from user. Please implement the functions in the following
 order; main, read_string_input and frequency.
 

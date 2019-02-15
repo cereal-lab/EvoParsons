@@ -9,12 +9,12 @@ Set Implementation
 
 [#description#]
 This program checks if an element is already available in a set of elements
-using hash index. The index of an element is determined by taking the
-remainder when that element is divided by SIZE of the set (x % SIZE). This
-produces hashed_index of the element. Function create_set checks if there is
-any element already in that hashed_index. If so, it prints a message "Collision".
-otherwise, the element is placed in that position. Please implement main
-first then create_set.
+using hash index. The hash index of an element is determined by taking the
+remainder when that element is modulo divided by SIZE of the set (x % SIZE). In this program,
+we set SIZE = 10. However, the modulo operation produces hashed_index of the element. Function create_set checks if there is
+any element already in that hashed_index. If so, it then simply prints a message "Collision".
+Otherwise, the element is placed in that position. Please implement main
+first, then create_set.
 
 
 [#source#]
