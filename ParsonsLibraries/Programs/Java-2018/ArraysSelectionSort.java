@@ -9,7 +9,7 @@ java
 ArraysSelectionSort
 
 [#description#]
-This program starts by generating an array of random int values. 
+This program starts by generating an array of random integer values.
 It then sorts the array in ascending order using the selection sort algorithmm and finally displays it.
 Selection sort uses two nested loops.
 The outer loop looks at every element of the array but the last one.
@@ -22,21 +22,16 @@ Implement these method in the following order; main, sort, asString, getRandomAr
 
 [#source#]
 */
-import java.util.Scanner; \\npublic class ArraysSelectionSort {   
+import java.util.Scanner; \\npublic class ArraysSelectionSort {
 	public static void main(String[] args){\\n   int[] myArray = getRandomArray(10);\\n   System.out.println("Before\t" + asString(myArray));\\n  sort(myArray);\\n  System.out.println("After \t" + asString(myArray));\\n} //end of main method
    public static void sort(int[] array){
-      for(int key=0 ; key < array.length-1 ; key++){
+      for(int key = 0 ; key < array.length - 1 ; key++){
          int smallest = array[key];
-         for(int i = key+1 ; i < array.length ; i++){
+         for(int i = key + 1 ; i < array.length ; i++){
             if(array[key] > array[i]){
-               int tmp = array[key]; 
+               int tmp = array[key];
                array[key] = array[i];
                array[i] = tmp;
             } // end of if statement\\n } // end of inner for loop \\n } // end of outer for loop\\n } // end of sort method
-   public static String asString(int[] a){
-      String result = "";
-      for(int i=0; i < a.length; i++)
-         result = result + a[i]+ " ";
-      return result;
-   } // end of asString method
+   public static String asString(int[] a){ \\n String result = ""; \\n for(int i=0; i < a.length; i++) \\n result = result + a[i]+ " "; \\n return result; \\n } // end of asString method
    public static int[] getRandomArray(int size){\\nint[] data = new int[size];\\nfor(int i = 0 ; i < data.length ; )\\n  data[i++] = (int)(Math.random()*10+1);\\nreturn data;\\n} // end of getRandomArray method\\n} // end of class

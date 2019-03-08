@@ -9,8 +9,8 @@ java
 NumbersListPrimes
 
 [#description#]
-This program prompts the user to enter an integer value (n) and then proceeds to display the first n prime numbers, five per line.
-The method getIntFromUser creates a new Scanner and, reads an int value from the user, then returns it.
+This program prompts the user to enter an integer value(n) and then proceeds to display the first n prime numbers, five per line.
+The method getIntFromUser creates a new Scanner and, reads an integer value from the user, then returns it.
 Implement these method in the following order; main, displayPrimes, isPrime, getIntFromUser.
 
 [#source#]
@@ -24,10 +24,5 @@ import java.util.Scanner;\\npublic class NumbersListPrimes{
             System.out.print(number + "\t");
             if(++primesFound % primesPerLine == 0)
                System.out.println();\\n} // end of if statement\\nnumber++;\\n} // end of while loop\\n} // end of displayPrimes method
-   public static boolean isPrime(int value){
-      for (int divisor = value/2; divisor > 1 ; divisor--)
-         if(value % divisor == 0)
-            return false;
-      return true;
-   } // end of isPrimemethod
+   public static boolean isPrime(int value){ \\n for (int divisor = value/2; divisor > 1 ; divisor--) \\n if(value % divisor == 0) \\n return false; \\n return true; \\n } // end of isPrime method
    public static int getIntFromUser(){\\nScanner s = new Scanner(System.in);\\nreturn s.nextInt();\\n} // end of getIntFromUser method\\n} // end of class

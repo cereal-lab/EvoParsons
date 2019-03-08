@@ -9,8 +9,7 @@ public void foo();
 }
 
 
-FragmentSelection=^(\s*)(?!.*?(System|\/\/|return|=))(.*)(\(\s*\))(.*)$
-
+FragmentSelection=^(\s*)(?!.*?(for|while|if|else|System|\/\/|return|=))(.*)(\(\s*.*\))(\s*\\\\n\s*\{)$
 
 
 

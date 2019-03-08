@@ -17,16 +17,13 @@ Implement these method in the following order; main, removeExtraSpaces.
 
 [#source#]
 */
-public class StringsRemoveExtraSpaces {\\n  public static void main(String[] args){   
+public class StringsRemoveExtraSpaces {\\n  public static void main(String[] args){
       String[] inputs = { "   something", "something  ", "some     thing"};\\nString[] outputs = {" something", "something ", "some thing"};
-      for(int i = 0 ; i < inputs.length ; i++){
-         String result = removeExtraSpaces(inputs[i]);
-         if(result.compareTo(outputs[i]) != 0)
-            System.out.println("Test #" + i + " failed, result was " + result);
-      } // end of for loop \\n} //end of main method
+      for(int i = 0 ; i < inputs.length ; i++){ \\n String result = removeExtraSpaces(inputs[i]);
+         if(result.compareTo(outputs[i]) != 0) \\n System.out.println("Test #" + i + " failed, result was " + result); \\n } // end of for loop \\n} //end of main method
    public static String removeExtraSpaces(String s){
-      String result = ""; 
+      String result = "";
       for(int index = 0; index < s.length()-1 ; index++){
          if(!((s.charAt(index) == ' ')&&(s.charAt(index+1) == ' ')))
-            result += s.charAt(index);         
+            result += s.charAt(index);
        } // end of while loop\\n result += s.charAt(s.length()-1);\\nreturn result;\\n} // end of removeExtraSpaces method\\n} // end of class

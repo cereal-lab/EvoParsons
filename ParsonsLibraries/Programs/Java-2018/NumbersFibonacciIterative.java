@@ -17,17 +17,12 @@ Implement these method in the following order; main, fibonaccci, getIntFromUser.
 
 [#source#]
 */
-import java.util.Scanner;\\npublic class NumbersFibonacciIterative{
-   public static void main(String[] args){   
-      System.out.println("Which Fibonacci number do you want me to display?");
-      int n = getIntFromUser();
-      System.out.println("Fib(" + n + ") = " + fibonacci(n));      
-   } //end of main method
+import java.util.Scanner;\\npublic class NumbersFibonacciIterative{ \\n public static void main(String[] args){ \\n System.out.println("Which Fibonacci number do you want me to display?"); \\n int n = getIntFromUser(); \\n System.out.println("Fib(" + n + ") = " + fibonacci(n));  \\n } //end of main method
    public static long fibonacci(int value){
       int current = 1, previous = 0, counter = 1;
       while(counter++ < value){
-         int next = current + previous; 
-         previous = current; 
+         int next = current + previous;
+         previous = current;
          current = next;
       }
       return current;

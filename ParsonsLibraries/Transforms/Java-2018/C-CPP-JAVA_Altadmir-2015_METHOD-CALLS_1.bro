@@ -7,6 +7,6 @@ Description = Altadmir, 2015- SIGCSE, “37 Million Compilations: Investigating 
 For example: myObject.toString();
 
 
-FragmentSelection=^(\s*)(?!.*?(printf|\/\/))(.*?)(=)(.*)(\(.*\)\s*;\s*)$
+FragmentSelection=^(\s*)(?!.*?(System|while|for|public|static|printf|\/\/))(.*?)(=)(.*)(\(.*\)\s*;\s*)$
 
 Transform=$5$6
