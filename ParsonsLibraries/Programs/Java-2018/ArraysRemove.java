@@ -17,6 +17,7 @@ All other values are from the array passed as parameter.
 The method asString returns a string representing the contents of an array passed as parameter.
 The method getRandomInt uses (Math.random()*max) to generate the elements of an array randomly between [0..max).
 The method getRandomArray uses the above to generate a random array which size is specified as parameter.
+We assume that getRandomArray will return an array where every element is unique.
 Implement these method in the following order; main, remove, asString, getRandomInt, getRandomArray.
 
 [#source#]

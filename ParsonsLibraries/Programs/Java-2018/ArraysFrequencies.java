@@ -10,11 +10,11 @@ ArraysFrequencies
 
 [#description#]
 
-This program starts by generating a large random array of numbers between 0 and 9, inclusive.
+This program starts by generating a large random array of numbers between 0 and 10, inclusive.
 It then computes how many times each possible digit occurs and display the mode of the array.
 The mode is defined as the element that appears the most frequently.
 If several elements appear the most with the same number of occurences, only one of them is identified.
-The method getRandomArray uses (Math.random()*max) to generate the elements of an array randomly between [0..max].
+The method getRandomArray uses (Math.random()*max + 1) to generate the elements of an array randomly between [0..max].
 Implement these method in the following order; main, computeFrequencies, getRandomArray.
 
 [#source#]
@@ -30,4 +30,4 @@ public class ArraysFrequencies {
       for(int i=0 ; i < array.length ; i++)
          result[array[i]]++;
       return result; \\n} // end of computeFrequencies method
-   public static int[] getRandomArray(int size, int maxRandomValue){ \\n int[] data = new int[size]; \\n for(int i = 0 ; i < data.length ; ) \\n data[i++] = (int)(Math.random()*maxRandomValue); \\n return data; \\n } // end of getRandomArray method \\n } // end of class
+   public static int[] getRandomArray(int size, int maxRandomValue){ \\n int[] data = new int[size]; \\n for(int i = 0 ; i < data.length ; ) \\n data[i++] = (int)(Math.random()*maxRandomValue + 1); \\n return data; \\n } // end of getRandomArray method \\n } // end of class

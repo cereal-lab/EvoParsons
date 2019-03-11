@@ -14,9 +14,8 @@ It then picks one element from it and uses the search method to find back its in
 We then verify the index corresponds to the element we picked.
 The method search uses a simple linear search algorithm that looks at every element in the array passed as parameter
 and returns its index if it matches the value also passed as parameter.
-The method asString returns a String representing the contents of an array passed as parameter.
 The method getRandomArray uses (Math.random()*10+1) to generate the elements of an array randomly between [1..10].
-Implement these method in the following order; main, search, getRandomArray, asString, getRandomInt.
+Implement these method in the following order; main, search, getRandomArray, getRandomInt.
 
 [#source#]
 */
@@ -33,5 +32,4 @@ import java.util.Scanner; \\npublic class ArraysLinearSearch {
       for(int i = 0 ; i < data.length ; )
          data[i++] = getRandomInt(10);
       return data; \\n } // end of getRandomArray method
-   public static String asString(int[] a){\\nString result = "";\\nfor(int i=0; i < a.length; i++)\\n  result = result + a[i]+ " ";\\nreturn result;\\n} // end of asString method
    public static int getRandomInt(int max){\\n   return (int)(Math.random()*max+1);\\n} // end of getRandomInt method\\n} // end of class
