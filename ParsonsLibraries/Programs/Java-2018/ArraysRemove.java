@@ -23,7 +23,7 @@ Implement these method in the following order; main, remove, asString, getRandom
 [#source#]
 */
 import java.util.Scanner; \\npublic class ArraysRemove {\\n  public static void main(String[] args){
-      \\nint arraySize = 10, deletionIndex = getRandomInt(arraySize);  \\nint[] myArray = getRandomArray(arraySize);  \\nSystem.out.println("Removing element at index " + deletionIndex + " from array " + asString(myArray));\\nSystem.out.println("Result is new array " + asString(remove(myArray, deletionIndex)));\\n} //end of main method
+      int arraySize = 10, deletionIndex = getRandomInt(arraySize);  \\nint[] myArray = getRandomArray(arraySize);  \\nSystem.out.println("Removing element at index " + deletionIndex + " from array " + asString(myArray));\\nSystem.out.println("Result is new array " + asString(remove(myArray, deletionIndex)));\\n} //end of main method
    public static int[] remove(int[] array, int index){
       int[] result1 = new int[array.length-1];
       for(int n = 0; n < result1.length ; n++)

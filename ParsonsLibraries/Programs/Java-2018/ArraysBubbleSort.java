@@ -28,7 +28,7 @@ import java.util.Scanner; \\n public class ArraysBubbleSort { \\n public static 
                int tmp = array[i];
                array[i] = array[i+1];
                array[i+1] = tmp; didWeSwap = true;
-            \\n} // end of if statement  \\n} while(didWeSwap);  \\n} // end of sort method
+             } // end of if statement  \\n} while(didWeSwap);  \\n} // end of sort method
    public static String asString(int[] a){ \\n String result = ""; \\n for(int i=0; i < a.length; i++) \\n result = result + a[i]+ " "; \\n return result; \\n } // end of asString method
    public static int[] getRandomArray(int size) \\n {
       int[] data = new int[size];
