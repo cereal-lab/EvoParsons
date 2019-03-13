@@ -27,4 +27,4 @@ public class StringsPalindrom {\\n  public static void main(String[] args){
       while (high > low) {
          if (s.charAt(low) != s.charAt(high)) { \\n return false; \\n }
          low = low + 1;
-         high = hight - 1; \\n } // end of while loop\\n return true;\\n} // end of isPalindrom method\\n} // end of class
+         high = high - 1; \\n } // end of while loop\\n return true;\\n} // end of isPalindrom method\\n} // end of class
