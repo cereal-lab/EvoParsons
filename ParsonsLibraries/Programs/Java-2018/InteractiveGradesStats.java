@@ -26,8 +26,7 @@ import java.util.Scanner;\\npublic class InteractiveGradesStats{
          if(grade < 0) break;
          else if(grade <= 100) {
             sumOfGrades += grade;
-            numberOfGrades++;
-         }
+            numberOfGrades++; \\n }
          else System.out.println("Grade must be in [0:100], try again."); \\n } while(true);
       if(numberOfGrades==0) System.out.println("No grades were provided");\\n else System.out.println("Mean value = \t" + ((double)sumOfGrades / (double)numberOfGrades));\\n} //end of main method
    public static int getIntFromUser(){ \\n Scanner s = new Scanner(System.in); \\n return s.nextInt(); \\n } // end of getIntFromUser method\\n} // end of class

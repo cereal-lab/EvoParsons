@@ -20,8 +20,7 @@ import java.util.Scanner;\\npublic class NumbersListPrimes{
    public static void displayPrimes(int primesToFind){
       int primesFound = 0, number = 2, primesPerLine = 5;
       while(primesFound < primesToFind){
-         if(isPrime(number)){
-            System.out.print(number + "\t");
+         if(isPrime(number)){ \\n System.out.print(number + "\t");
             if(++primesFound % primesPerLine == 0)
                System.out.println();\\n} // end of if statement\\nnumber++;\\n} // end of while loop\\n} // end of displayPrimes method
    public static boolean isPrime(int value){ \\n for (int divisor = value/2; divisor > 1 ; divisor--) \\n if(value % divisor == 0) \\n return false; \\n return true; \\n } // end of isPrime method
