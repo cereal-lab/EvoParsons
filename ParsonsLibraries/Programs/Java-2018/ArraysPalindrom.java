@@ -16,7 +16,8 @@ Implement these method in the following order; main, isPalindrom.
 
 [#source#]
 */
-public class ArraysPalindrom {\\n   public static void main(String[] args){\\n int[] test1 = {1,2,3,4,5}, test2 = {1,2,3,2,1};  \\n if(!isPalindrom(test1)) { \\n System.out.println("Test #1 failed!"); \\n } \\n if(!isPalindrom(test2)) { \\n System.out.println("Test #2 failed!"); \\n}  \\n} //end of main method
+public class ArraysPalindrom {\\n   public static void main(String[] args){
+   int[] test1 = {1,2,3,4,5}, test2 = {1,2,3,2,1};  \\n if(!isPalindrom(test1)) { \\n System.out.println("Test #1 failed!"); \\n } \\n if(!isPalindrom(test2)) { \\n System.out.println("Test #2 failed!"); \\n}  \\n} //end of main method
    public static boolean isPalindrom(int[] a){
       int low = 0, high = a.length - 1;
       while (high > low) {

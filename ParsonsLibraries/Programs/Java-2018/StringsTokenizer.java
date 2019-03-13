@@ -20,7 +20,6 @@ public class StringsTokenizer {\\n   public static void main(String[] args){   \
    public static void tokenize(String s){
       int index = 0, howmany = 0, len = s.length();
       do{ \\n String word=""; \\n while((index < len) && (s.charAt(index) == ' ')) \\n index++;
-         while((index < len) && (s.charAt(index) != ' '))
-            word += s.charAt(index++);
+         while((index < len) && (s.charAt(index) != ' ')) { \\n word += s.charAt(index++); \\n }
          System.out.println("Word # " + ++howmany + " = " + word);
       }while(index < len); \\n } // end of tokenize method \\n} //end of class

@@ -23,8 +23,8 @@ import java.util.Scanner; \\npublic class InteractiveAdditionQuiz {
          int n1 = getRandomInt(), n2 = getRandomInt();
          System.out.println(n1 + " + " + n2 + " = ");
          int answer = getIntFromUser();
-         if(answer == (n1 + n2)) System.out.println("Correct Answer (" + (++wins) + " time(s) so far)");
-         else System.out.println("Incorrect Answer"); \\n } // end of while loop
+         if(answer == (n1 + n2)) { \\n System.out.println("Correct Answer (" + (++wins) + " time(s) so far)"); \\n }
+         else { \\n System.out.println("Incorrect Answer");  \\n } \\n } // end of while loop
       System.out.println("Congratulations, you provided " + required + " correct answers.");\\n} //end of main method
    public static int getRandomInt(){\\n return (int)(Math.random()*10+1);\\n} // end of getRandomInt method
    public static int getIntFromUser(){ \\n Scanner s = new Scanner(System.in); \\n return s.nextInt(); \\n } // end of getIntFromUser method\\n} // end of class

@@ -22,7 +22,7 @@ Implement these method in the following order; main, search, getRandomArray, get
 import java.util.Scanner; \\npublic class ArraysLinearSearch {
    public static void main(String[] args){  \\nint size = 10;  \\nint[] data = getRandomArray(size);
       int indexRandom = getRandomInt(size);  \\nint indexFound = search(data, data[indexRandom]);
-      if(indexFound == -1) { \\nSystem.out.println("Value was not found"); \\n } \\n else if(data[indexFound] == data[indexRandom]) { \\n System.out.println("It worked!!!"); \\n } \\ n } //end of main method
+      if(indexFound == -1) { \\nSystem.out.println("Value was not found"); \\n } \\n else if(data[indexFound] == data[indexRandom]) { \\n System.out.println("It worked!!!"); \\n } \\n } //end of main method
    public static int search(int[] array, int value){
       for(int i=0 ; i < array.length ; i++)
          if(array[i] == value) return i;
