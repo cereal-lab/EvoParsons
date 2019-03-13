@@ -21,7 +21,7 @@ import java.util.Scanner;\\npublic class NumbersListPrimes{
       int primesFound = 0, number = 2, primesPerLine = 5;
       while(primesFound < primesToFind){
          if(isPrime(number)){ \\n System.out.print(number + "\t");
-            if(++primesFound % primesPerLine == 0) { \\n System.out.println(); \\n } \\n} // end of if statement
+            if(++primesFound % primesPerLine == 0) { \\n System.out.println(); \\n } \\n} // end of outer if statement
          number++; \\n} // end of while loop \\n} // end of displayPrimes method
   public static boolean isPrime(int value){
       for (int divisor = value/2; divisor > 1 ; divisor--) { \\n if(value % divisor == 0) { \\n return false;  \\n }//end of if statement \\n }//end of for loop

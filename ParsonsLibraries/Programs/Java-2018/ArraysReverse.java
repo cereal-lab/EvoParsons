@@ -25,5 +25,5 @@ import java.util.Scanner; \\npublic class ArraysReverse {\\n   public static voi
          array[i] = array[array.length - 1 - i];
          array[array.length - 1 - i] = tmp;
       } \\n } // end of reverse method
-   public static int[] getRandomArray(int size){ \\n  int[] data = new int[size];  \\nfor(int i = 0 ; i < data.length ; )  \\ndata[i++] = (int)(Math.random()*10+1);  \\nreturn data;  \\n} // end of getRandomArray method
-   public static String asString(int[] a){\\nString result = "";\\nfor(int i=0; i < a.length; i++)\\n  result = result + a[i]+ " ";\\nreturn result;\\n} // end of asString method\\n} // end of class
+   public static int[] getRandomArray(int size){ \\n  int[] data = new int[size];  \\nfor(int i = 0 ; i < data.length ; ) { \\n data[i++] = (int)(Math.random()*10+1); \\n } \\n return data;  \\n} // end of getRandomArray method
+   public static String asString(int[] a){\\nString result = "";\\nfor(int i=0; i < a.length; i++){ \\n  result = result + a[i]+ " "; \\n } \\n return result;\\n} // end of asString method\\n} // end of class

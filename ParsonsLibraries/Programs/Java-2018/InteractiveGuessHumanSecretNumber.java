@@ -26,8 +26,8 @@ import java.util.Scanner;\\npublic class InteractiveGuessHumanSecretNumber{
       do{
          int guess = getRandomInt(lowerBound, upperBound); \\n System.out.println("For my attempt # " + ++attempts + ", I am guessing " + guess); \\n System.out.println("Is this guess too low (1), too high (2), or right (any other value)?");
          feedback = getIntFromUser();
-         if(feedback == 1) lowerBound = guess + 1;
-         else if(feedback ==2) upperBound = guess - 1;
+         if(feedback == 1) { \\n lowerBound = guess + 1; \\n }
+         else if(feedback ==2) { \\n upperBound = guess - 1; \\n }
          else break;
       } while((feedback == 1) || (feedback == 2));
       System.out.println("I guessed in " + attempts + " attempts");\\n} //end of main method

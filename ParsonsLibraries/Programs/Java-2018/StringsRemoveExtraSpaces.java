@@ -25,4 +25,4 @@ public class StringsRemoveExtraSpaces {\\n  public static void main(String[] arg
       String result = "";
       for(int index = 0; index < s.length()-1 ; index++){
          if(!((s.charAt(index) == ' ')&&(s.charAt(index+1) == ' '))) { \\n result += s.charAt(index); \\n }
-       } // end of while loop\\n result += s.charAt(s.length()-1);\\nreturn result;\\n} // end of removeExtraSpaces method\\n} // end of class
+       } // end of for loop\\n result += s.charAt(s.length()-1);\\nreturn result;\\n} // end of removeExtraSpaces method\\n} // end of class

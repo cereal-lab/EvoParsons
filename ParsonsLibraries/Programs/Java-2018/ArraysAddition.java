@@ -23,12 +23,12 @@ import java.util.Scanner; \\npublic class ArraysAddition { \\n public static voi
       System.out.println("Their sum = " +res); \\n }
    public static int[] addVectors(int[] v1, int[] v2) \\n {
       int[] sum = new int[v1.length];
-      for(int i = v1.length - 1 ; i >= 0 ; i--)
-         sum[i] = v1[i] + v2[i];
+      for(int i = v1.length - 1 ; i >= 0 ; i--) { \\n sum[i] = v1[i] + v2[i]; \\n }
       return sum; \\n } // end of addVectors method
    public static int[] getRandomArray(int size){ \\n int[] data = new int[size]; \\n for(int i = 0 ; i < data.length ; ) { \\n data[i++] = (int)(Math.random()*10+1); \\n } \\n return data; \\n}
    public static String asString(int[] a){
       String result = "";
-      for(int i = 0; i < a.length; i++) { \\n result = result + a[i]+ " "; \\n }
+      for(int i = 0; i < a.length; i++)
+      { \\n result = result + a[i]+ " "; \\n } //end of for loop
       return result;
    } // end of asString method \\n } // end of class

@@ -26,7 +26,7 @@ import java.util.Scanner;\\npublic class InteractivePickSomeSticksGame{
    public static int player(int id, int remaining){
       int taken;
       if(remaining==0){ // This player lost \\n System.out.println("Player " + (3-id) + " won the game!"); \\n taken = 0;\\n }
-      else if(remaining <= 10) { // This player has a winning move \\n System.out.println("Player " + id + " won the game!"); \\n taken = remaining; \\n }
+      else if(remaining <= 10) { // This player has a winning move \\n System.out.println("Player " + id + " won the game!"); \\n taken = remaining; \\n } //end of else if statement
       else { // we pick a random number of sticks in [1..10] \\n taken = getRandomInt(10); \\n System.out.println("Player # " + id + " takes " + taken + " sticks");\\n } // end of if-else-if statement
       return taken; \\n } // end of player method
    public static int getRandomInt(int max){\\nreturn (int)(Math.random()*max+1);\\n} // end of getRandomInt method\\n} // end of class

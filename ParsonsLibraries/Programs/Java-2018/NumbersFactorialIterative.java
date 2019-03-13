@@ -18,10 +18,10 @@ Implement these method in the following order; main, factorial, getIntFromUser.
 [#source#]
 */
 import java.util.Scanner;\\npublic class NumbersFactorialIterative{
-   public static void main(String[] args){   \\nSystem.out.println("Enter an int value:");\\nint n = getIntFromUser();\\nSystem.out.println("Fact(" + n + ") = " + factorial(n));      \\n} //end of main method
+   public static void main(String[] args){   \\nSystem.out.println("Enter an int value:");\\nint n = getIntFromUser();\\nSystem.out.println("Fact(" + n + ") = " + factorial(n));\\n} //end of main method
    public static long factorial(int value){
       int result = 1;
-      while(value > 1) {\\n result = result * value--; \\n }
-      return result;
-   } // end of factorial method
+      while(value > 1) {\\n result = result * value;
+        value = value - 1;
+      }//end of while loop insed factorial method \\n return result; \\n } // end of factorial method
    public static int getIntFromUser(){ \\n Scanner s = new Scanner(System.in); \\n return s.nextInt(); \\n } // end of getIntFromUser method\\n} // end of class

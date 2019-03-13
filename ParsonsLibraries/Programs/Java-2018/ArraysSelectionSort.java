@@ -34,4 +34,4 @@ import java.util.Scanner; \\npublic class ArraysSelectionSort {
                array[i] = tmp;
             } // end of if statement\\n } // end of inner for loop \\n } // end of outer for loop\\n } // end of sort method
    public static String asString(int[] a){ \\n String result = ""; \\n for(int i=0; i < a.length; i++) { \\n result = result + a[i]+ " "; \\n } \\n return result; \\n } // end of asString method
-   public static int[] getRandomArray(int size){\\nint[] data = new int[size];\\nfor(int i = 0 ; i < data.length ; )\\n  data[i++] = (int)(Math.random()*10+1);\\nreturn data;\\n} // end of getRandomArray method\\n} // end of class
+   public static int[] getRandomArray(int size){\\nint[] data = new int[size];\\nfor(int i = 0 ; i < data.length ; ){ \\n  data[i++] = (int)(Math.random()*10+1);\\n }\\nreturn data;\\n} // end of getRandomArray method\\n} // end of class

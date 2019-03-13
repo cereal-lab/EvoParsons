@@ -21,12 +21,13 @@ Implement these method in the following order; main, getIntFromUser, getRandomIn
 */
 import java.util.Scanner;\\npublic class InteractiveGuessComputerSecretNumber{
    public static void main(String[] args){
-      int guess, attempts = 0, secret = getRandomInt(50);
+      int guess, sectret, attempts = 0;
+      secret = getRandomInt(50);
       do{
          System.out.println("Enter your guess for attempt #" + ++attempts);
          guess = getIntFromUser();
-         if(guess > secret) System.out.println("Too big");
-         else if(guess < secret) System.out.println("Too small");
+         if(guess > secret) { \\n System.out.println("Too big"); \\n }
+         else if(guess < secret) { \\n System.out.println("Too small"); \\n }
       } while(guess != secret);
       System.out.println("You guessed in " + attempts + " attempts");\\n} //end of main method
    public static int getIntFromUser(){ \\n Scanner s = new Scanner(System.in); \\n return s.nextInt(); \\n } // end of getIntFromUser method

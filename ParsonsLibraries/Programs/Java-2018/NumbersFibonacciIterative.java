@@ -24,7 +24,5 @@ import java.util.Scanner;\\npublic class NumbersFibonacciIterative{ \\n public s
          int next = current + previous;
          previous = current;
          current = next;
-      }
-      return current;
-   } // end of fibonacci method
+      } \\n return current; \\n } // end of fibonacci method
    public static int getIntFromUser(){\\nScanner s = new Scanner(System.in);\\nreturn s.nextInt();\\n} // end of getIntFromUser method\\n} // end of class

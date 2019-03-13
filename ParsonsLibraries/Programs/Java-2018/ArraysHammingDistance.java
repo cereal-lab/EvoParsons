@@ -21,7 +21,8 @@ Implement these method in the following order; main, hamming, asString, getRando
 */
 public class ArraysHammingDistance { \\n public static void main(String[] args){   \\n  int[] array1 = getRandomArray(5), array2 = getRandomArray(5); \\n  System.out.println("Hamming between " + asString(array1) + " and " + asString(array2) + " is " + hamming(array1,array2));\\n } //end of main method
    public static int hamming(int[] a1, int[] a2){ \\n int distance = 0;
-      for(int i=0 ; i < a1.length ; i++) { \\n distance += (a1[i] == a2[i])? 0 : 1; \\n }
+      for(int i=0 ; i < a1.length ; i++) {
+      distance += (a1[i] == a2[i])? 0 : 1; \\n } //end of for loop inside hamming method
       return distance; \\n } // end of hamming method
    public static String asString(int[] a){ \\n String result = "";
       for(int i=0; i < a.length; i++) { \\n result = result + a[i]+ " "; \\n }
