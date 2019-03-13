@@ -24,12 +24,10 @@ import java.util.Scanner; \\npublic class ArraysLinearSearch {
       int indexRandom = getRandomInt(size);  \\nint indexFound = search(data, data[indexRandom]);
       if(indexFound == -1) { \\nSystem.out.println("Value was not found"); \\n } \\n else if(data[indexFound] == data[indexRandom]) { \\n System.out.println("It worked!!!"); \\n } \\n } //end of main method
    public static int search(int[] array, int value){
-      for(int i=0 ; i < array.length ; i++)
-         if(array[i] == value) return i;
+      for(int i=0 ; i < array.length ; i++) { \\n if(array[i] == value) return i; \\n }
       return -1; \\n } // end of search method
    public static int[] getRandomArray(int size){
       int[] data = new int[size];
-      for(int i = 0 ; i < data.length ; )
-         data[i++] = getRandomInt(10);
+      for(int i = 0 ; i < data.length ; ) { \\n data[i++] = getRandomInt(10); \\n }
       return data; \\n } // end of getRandomArray method
    public static int getRandomInt(int max){\\n   return (int)(Math.random()*max+1);\\n} // end of getRandomInt method\\n} // end of class

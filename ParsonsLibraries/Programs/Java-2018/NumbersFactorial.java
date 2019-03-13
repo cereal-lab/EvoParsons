@@ -19,7 +19,7 @@ Implement these method in the following order; main, factorial, getIntFromUser.
 */
 import java.util.Scanner;\\npublic class NumbersFactorial{ \\n public static void main(String[] args){ \\n System.out.println("Enter an int value:"); \\n int n = getIntFromUser(); \\n System.out.println("Fact(" + n + ") = " + factorial(n));  \\n } //end of main method
    public static long factorial(int value){
-      if(value >= 1) return factorial(value-1) * value;
-      else return 1;
+      if(value >= 1) {  \\n return factorial(value-1) * value; \\n }
+      else { \\n return 1; \\n }
    } // end of factorial method
    public static int getIntFromUser(){ \\nScanner s = new Scanner(System.in);\\nreturn s.nextInt();\\n} // end of getIntFromUser method\\n} // end of class

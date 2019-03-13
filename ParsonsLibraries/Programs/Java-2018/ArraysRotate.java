@@ -19,15 +19,13 @@ Implement these method in the following order; main, getRandomArray, asString, r
 [#source#]
 */
 import java.util.Scanner; \\npublic class ArraysRotate {\\n   public static void main(String[] args){ \\n int[] data = getRandomArray(5); \\n System.out.println("Before rotation:\t" + asString(data));\\nrotateLeft(data);\\nSystem.out.println("After rotation:\t" + asString(data));\\n} //end of main method
-   public static int[] getRandomArray(int size){\\nint[] data = new int[size];\\nfor(int i = 0 ; i < data.length ; )\\n  data[i++] = (int)(Math.random()*10+1);\\nreturn data;\\n} // end of getRandomArray method
+   public static int[] getRandomArray(int size){\\nint[] data = new int[size];\\nfor(int i = 0 ; i < data.length ; ){ \\n  data[i++] = (int)(Math.random()*10+1);\\n }\\nreturn data;\\n} // end of getRandomArray method
    public static String asString(int[] a){
       String result = "";
-      for(int i = 0; i < a.length; i++)
-         result = result + a[i]+ " ";
+      for(int i = 0; i < a.length; i++) { \\n result = result + a[i]+ " "; \\n }
       return result; \\n } // end of asString method
    public static void rotateLeft(int[] array){
       int temp = array[0];
-      for (int j = 1; j < array.length; j++)
-         array[j - 1] = array[j];
+      for (int j = 1; j < array.length; j++) { \\n array[j - 1] = array[j]; \\n }
       array[array.length - 1] = temp;
    } // end of rotateLeft method \\n } // end of class

@@ -21,13 +21,9 @@ Implement these method in the following order; main, interleave, asString, getRa
 */
 import java.util.Scanner; \\npublic class ArraysInterleave {\\n   public static void main(String[] args){ \\n int size = 5;\\n  int[] array1 = getRandomArray(size), array2 = getRandomArray(size);\\n   System.out.println("Array #1\t" + asString(array1));\\n   System.out.println("Array #2\t" + asString(array2));\\n   System.out.println("Interleaved array \t" + asString(interleave(array1, array2)));\\n } //end of main method
    public static int[] interleave(int[] a1, int[] a2){  \\n int[]  a3 = new int[a1.length + a2.length]; \\n int indexA3 = 0, indexA1 = 0, indexA2 = 0;
-      while(indexA3 < a3.length){
-         a3[indexA3++] = a1[indexA1++];
-         a3[indexA3++] = a2[indexA2++];
-      } // end of while loop \\n return a3; \\n } // end of interleave method
+      while(indexA3 < a3.length){ \\n a3[indexA3++] = a1[indexA1++]; \\n a3[indexA3++] = a2[indexA2++]; \\n } // end of while loop \\n return a3; \\n } // end of interleave method
    public static String asString(int[] a){
       String result = "";
-      for(int i=0; i < a.length; i++)
-         result = result + a[i]+ " ";
+      for(int i=0; i < a.length; i++) { \\n result = result + a[i]+ " "; \\n }
       return result; \\n } // end of asString method
-   public static int[] getRandomArray(int size){\\n   int[] data = new int[size]; \\n   for(int i = 0 ; i < data.length ; ) \\n   data[i++] = (int)(Math.random()*10+1); \\n   return data; \\n } // end of getRandomArray method \\n} // end of class
+   public static int[] getRandomArray(int size){\\n   int[] data = new int[size]; \\n   for(int i = 0 ; i < data.length ; ){ \\n   data[i++] = (int)(Math.random()*10+1);\\n } \\n   return data; \\n } // end of getRandomArray method \\n} // end of class

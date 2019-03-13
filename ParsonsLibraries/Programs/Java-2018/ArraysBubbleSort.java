@@ -32,7 +32,6 @@ import java.util.Scanner; \\n public class ArraysBubbleSort { \\n public static 
    public static String asString(int[] a){ \\n String result = ""; \\n for(int i=0; i < a.length; i++) \\n result = result + a[i]+ " "; \\n return result; \\n } // end of asString method
    public static int[] getRandomArray(int size) \\n {
       int[] data = new int[size];
-      for(int i = 0 ; i < data.length ; )
-         data[i++] = (int)(Math.random()*10+1);
+      for(int i = 0 ; i < data.length ; ) { \\n data[i++] = (int)(Math.random()*10+1); \\n }
       return data;
    } // end of getRandomArray method \\n } // end of class

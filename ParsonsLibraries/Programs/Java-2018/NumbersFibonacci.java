@@ -19,7 +19,7 @@ Implement these method in the following order; main, fibonaccci, getIntFromUser.
 */
 import java.util.Scanner;\\npublic class NumbersFibonacci{ \\n public static void main(String[] args){ \\n System.out.println("Which Fibonacci number do you want me to display?"); \\n int n = getIntFromUser(); \\n System.out.println("Fib(" + n + ") = " + fibonacci(n)); \\n } //end of main method
    public static long fibonacci(int value){
-      if((value==1)||(value==2)) return 1;
-      else return fibonacci(value-1) + fibonacci(value-2);
+      if((value==1)||(value==2)){ \\n return 1; \\n }
+      else { \\n return fibonacci(value-1) + fibonacci(value-2); \\n }
    } // end of fibonacci method
    public static int getIntFromUser(){ \\n Scanner s = new Scanner(System.in); \\n return s.nextInt(); \\n } // end of getIntFromUser method\\n} // end of class

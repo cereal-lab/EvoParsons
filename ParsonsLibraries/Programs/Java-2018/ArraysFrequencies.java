@@ -21,13 +21,10 @@ Implement these method in the following order; main, computeFrequencies, getRand
 */
 public class ArraysFrequencies {
    public static void main(String[] args){  \\nint maxRandomValueInArray = 10, numberElementsInArray = 100;  \\nint[] data = getRandomArray(numberElementsInArray, maxRandomValueInArray);  \\nint[] frequencies = computeFrequencies(data, maxRandomValueInArray);
-      for(int i = 0 ; i < frequencies.length ; i++)
-         System.out.println("Digit " + i + " appeared " + frequencies[i] + " times"); \\n} //end of main method
+      for(int i = 0 ; i < frequencies.length ; i++) { \\n System.out.println("Digit " + i + " appeared " + frequencies[i] + " times"); \\n } \\n } //end of main method
    public static int[] computeFrequencies(int[] array, int maxValue){
       int[] result = new int[maxValue];
-      for(int i=result.length - 1 ; i >= 0 ; i--)
-         result[i] = 0;
-      for(int i=0 ; i < array.length ; i++)
-         result[array[i]]++;
+      for(int i=result.length - 1 ; i >= 0 ; i--){ \\n result[i] = 0; \\n }
+      for(int i=0 ; i < array.length ; i++) { \\n result[array[i]]++; \\n }
       return result; \\n} // end of computeFrequencies method
-   public static int[] getRandomArray(int size, int maxRandomValue){ \\n int[] data = new int[size]; \\n for(int i = 0 ; i < data.length ; ) \\n data[i++] = (int)(Math.random()*maxRandomValue + 1); \\n return data; \\n } // end of getRandomArray method \\n } // end of class
+   public static int[] getRandomArray(int size, int maxRandomValue){ \\n int[] data = new int[size]; \\n for(int i = 0 ; i < data.length ; ) { \\n data[i++] = (int)(Math.random()*maxRandomValue + 1); \\n } \\n return data; \\n } // end of getRandomArray method \\n } // end of class

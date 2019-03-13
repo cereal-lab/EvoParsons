@@ -26,10 +26,9 @@ import java.util.Scanner; \\npublic class ArraysAddition { \\n public static voi
       for(int i = v1.length - 1 ; i >= 0 ; i--)
          sum[i] = v1[i] + v2[i];
       return sum; \\n } // end of addVectors method
-   public static int[] getRandomArray(int size){ \\n int[] data = new int[size]; \\n for(int i = 0 ; i < data.length ; ) \\n data[i++] = (int)(Math.random()*10+1); \\n return data; \\n}
+   public static int[] getRandomArray(int size){ \\n int[] data = new int[size]; \\n for(int i = 0 ; i < data.length ; ) { \\n data[i++] = (int)(Math.random()*10+1); \\n } \\n return data; \\n}
    public static String asString(int[] a){
       String result = "";
-      for(int i = 0; i < a.length; i++)
-         result = result + a[i]+ " ";
+      for(int i = 0; i < a.length; i++) { \\n result = result + a[i]+ " "; \\n }
       return result;
    } // end of asString method \\n } // end of class

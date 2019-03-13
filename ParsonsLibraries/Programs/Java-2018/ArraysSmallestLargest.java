@@ -23,4 +23,4 @@ import java.util.Scanner; \\npublic class ArraysSmallestLargest { \\n public sta
          if(array[i] > largestValue) { \\n largestValue = array[i]; \\n }
          else if(array[i] < smallest) { \\n smallest = array[i]; \\n }
       System.out.println("Largest is " + largest + ", smallest is " + smallest);\\n} // end of displaylargestSmallest method
-   public static int[] getRandomArray(int size){\\nint[] data = new int[size];\\nfor(int i = 0 ; i < data.length ; )\\n  data[i++] = (int)(Math.random()*max+1);\\nreturn data;\\n} // end of getRandomArray method\\n} // end of class
+   public static int[] getRandomArray(int size){\\nint[] data = new int[size];\\nfor(int i = 0 ; i < data.length ; ){ \\n  data[i++] = (int)(Math.random()*max+1);\\n } \\nreturn data;\\n} // end of getRandomArray method\\n} // end of class

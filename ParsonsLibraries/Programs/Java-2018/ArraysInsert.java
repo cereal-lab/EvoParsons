@@ -25,11 +25,8 @@ public class ArraysInsert {\\n public static void main(String[] args){
    int arraySize = 10, insertionValue = getRandomInt(10), insertionIndex = getRandomInt(arraySize);  \\nint[] myArray = getRandomArray(arraySize);  \\nSystem.out.println("Inserting " + insertionValue + " at index " + insertionIndex);  \\nSystem.out.println("Before \t"  + asString(myArray));  \\nSystem.out.println("After \t" + asString(insert(myArray, insertionValue, insertionIndex)));  \\n} //end of main method
    public static int[] insert(int[] array, int value, int index)\\n {
       int[] result = new int[array.length+1];
-      for(int n = 0; n < result.length ; n++)
-         if(n < index) result[n] = array[n];
-         else if(n == index) result[n] = value;
-         else result[n] = array[n-1];
+      for(int n = 0; n < result.length ; n++) { \\n if(n < index) result[n] = array[n]; \\n else if(n == index) result[n] = value; \\n else result[n] = array[n-1]; \\n }
       return result; \\n} // end of insert method
    public static String asString(int[] a){\\nString result = ""; \\nfor(int i=0; i < a.length; i++)\\n   result = result + a[i]+ " ";\\nreturn result;\\n} // end of asString method
    public static int getRandomInt(int max){\\nreturn (int)(Math.random()*max);\\n} // end of getRandomInt method
-   public static int[] getRandomArray(int size){ \\nint[] data = new int[size]; \\nfor(int i = 0 ; i < data.length ; ) \\n   data[i++] = getRandomInt(10);\\n return data; \\n} // end of getRandomArray method \\n} // end of class
+   public static int[] getRandomArray(int size){ \\nint[] data = new int[size]; \\nfor(int i = 0 ; i < data.length ; ) { \\n   data[i++] = getRandomInt(10);\\n return data; \\n } \\n} // end of getRandomArray method \\n} // end of class

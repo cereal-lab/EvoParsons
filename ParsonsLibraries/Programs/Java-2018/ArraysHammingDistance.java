@@ -21,11 +21,9 @@ Implement these method in the following order; main, hamming, asString, getRando
 */
 public class ArraysHammingDistance { \\n public static void main(String[] args){   \\n  int[] array1 = getRandomArray(5), array2 = getRandomArray(5); \\n  System.out.println("Hamming between " + asString(array1) + " and " + asString(array2) + " is " + hamming(array1,array2));\\n } //end of main method
    public static int hamming(int[] a1, int[] a2){ \\n int distance = 0;
-      for(int i=0 ; i < a1.length ; i++)
-         distance += (a1[i] == a2[i])? 0 : 1;
+      for(int i=0 ; i < a1.length ; i++) { \\n distance += (a1[i] == a2[i])? 0 : 1; \\n }
       return distance; \\n } // end of hamming method
    public static String asString(int[] a){ \\n String result = "";
-      for(int i=0; i < a.length; i++)
-         result = result + a[i]+ " ";
+      for(int i=0; i < a.length; i++) { \\n result = result + a[i]+ " "; \\n }
       return result;  \\n } // end of asString method
-   public static int[] getRandomArray(int size){ \\n int[] data = new int[size]; \\n for(int i = 0 ; i < data.length ; ) \\n   data[i++] = (int)(Math.random()*10+1); \\n return data; \\n } // end of getRandomArray method \\n } // end of class
+   public static int[] getRandomArray(int size){ \\n int[] data = new int[size]; \\n for(int i = 0 ; i < data.length ; ) { \\n   data[i++] = (int)(Math.random()*10+1);\\n } \\n return data; \\n } // end of getRandomArray method \\n } // end of class
