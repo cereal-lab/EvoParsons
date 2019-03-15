@@ -26,5 +26,5 @@ int maximum(int * data) {
   int i = 1, max = *data;
   for (; i < SIZE; i++) {
     if (data[i] > max) {
-       max = data[i]; } //end of if statement \\n } //end of for loop
+       max = data[i]; \\n} //end of if statement \\n } //end of for loop
   return max; \\n } //end of maximum

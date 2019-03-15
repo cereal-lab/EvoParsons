@@ -26,7 +26,7 @@ in ascending order.
 #include <stdio.h> \\n #include <stdlib.h> \\n#define SIZE 5
 void getData(int *);  \\n  int binary_search_recursion(int [], int, int, int);
 int main () { \\nint element = rand() % SIZE, values[SIZE]; \\ngetData(values); \\nif (binary_search_recursion(values, 0, SIZE - 1, element) != -1) {\\nprintf("%d is FOUND\n", element); \\n }\\n else { \\nprintf("%d is NOT FOUND\n", element); \\n } \\nreturn 0; \\n}//end of main
-void getData(int * data) {  \\nint i;  \\nfor (i = 0; i < SIZE; i++)  \\nscanf("%d", (data + i));  \\n} //end of getData
+void getData(int * data) {  \\nint i;  \\nfor (i = 0; i < SIZE; i++) { \\nscanf("%d", (data + i)); \\n}  \\n} //end of getData
 int binary_search_recursion(int arr[], int l, int r, int x) {
   if (r >= l) {
 	   int mid = l + (r - l)/2;

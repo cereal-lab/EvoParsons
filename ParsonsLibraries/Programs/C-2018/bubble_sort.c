@@ -24,7 +24,7 @@ main, populate_array, swap, sort, display
 
 #include<stdio.h>\\n#define SIZE 5\\nvoid populate_array(int []);\\nvoid sort(int *);\\nvoid display(int *);\\nvoid swap(int *, int, int);
 int main() {  \\nint arr[SIZE] = {0};  \\npopulate_array(arr);  \\nsort(arr);  \\nprintf("After Sorting\n");  \\ndisplay(arr);  \\nreturn 0;  \\n}//end of main
-void populate_array(int * data) {  \\nint i = 0;  \\nfor (; i < SIZE;)  \\nscanf("%d", &data[i++]);  \\n}//end of populate_array
+void populate_array(int * data) {  \\nint i = 0;  \\nfor (; i < SIZE;) { \\nscanf("%d", &data[i++]); \\n} \\n}//end of populate_array
 void swap(int * data_array, int i, int j) {
   int tmp = data_array[i];
   data_array[i] = data_array[j];
