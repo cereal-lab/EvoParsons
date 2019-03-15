@@ -23,16 +23,13 @@ Please note that this program expects that the user will input the array in asce
 
 #include <stdio.h> \\n #include <stdlib.h> \\n #define SIZE 5
 void getData(int *, int); \\n int binarySearch(const int *, int , int);
-int main () { \\n int element = rand() % SIZE; \\n int values[SIZE]; \\n getData(values, SIZE); \\n if (binarySearch(values, element, SIZE) != -1) \\n printf("%d is FOUND\n", element);  \\n else  \\n printf("%d is NOT FOUND\n", element); \\n return 0; \\n }//end of main
+int main () { \\n int element = rand() % SIZE; \\n int values[SIZE]; \\n getData(values, SIZE); \\n if (binarySearch(values, element, SIZE) != -1) {\\n printf("%d is FOUND\n", element); \\n}  \\n else  {\\n printf("%d is NOT FOUND\n", element); \\n } \\n return 0; \\n }//end of main
 void getData(int * data, int len) { \\n int i; \\n  for (i = 0; i < len; i++) \\n scanf("%d", (data + i)); \\n } //end of getData
 int binarySearch(const int * data, int x, int len) {
   int l = 0, r = len - 1;
   while (l <= r) {
     int m = l + (r-l)/2;
-    if (*(data + m) == x)
-        return data[m];
-    else if ( *(data + m) < x)
-        l = m + 1;
-    else
-         r = m - 1;
+    if (*(data + m) == x) { \\n return data[m]; \\n }
+    else if ( *(data + m) < x) { \\n l = m + 1; \\n }
+    else { \\n r = m - 1; \\n }
   } //end of while loop \\n return -1;\\n}//end of binarySearch

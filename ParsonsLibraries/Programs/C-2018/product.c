@@ -21,11 +21,10 @@ in the following order; main, get_second_max, maximum
 
 #include<stdio.h> \\n#define SIZE 5\\nint maximum (int * );\\nint get_second_max(int *, int);
 int main() {  \\nint data[SIZE] = {-20, -30, 100, 1, 2};  \\nint first_max = maximum(data);  \\nint second_max = get_second_max(data, first_max);  \\nprintf("%d\n", first_max*second_max);  \\nreturn 0;  \\n}//end of main
-int  get_second_max(int * actual_data, int max) {  \\nint i = 0, j = 0;  \\nstatic int r_data[SIZE - 1];  \\nwhile(i < SIZE) {  \\nif (actual_data[i] != max)  \\nr_data[j++] = actual_data[i];  \\ni++;  \\n}//end of while insed get_second_max  \\nreturn maximum(r_data);  \\n}//end of get_second_max
+int  get_second_max(int * actual_data, int max) {  \\nint i = 0, j = 0;  \\nstatic int r_data[SIZE - 1];  \\nwhile(i < SIZE) {  \\nif (actual_data[i] != max) {  \\nr_data[j++] = actual_data[i]; \\n}  \\ni++;  \\n}//end of while insed get_second_max  \\nreturn maximum(r_data);  \\n}//end of get_second_max
 int maximum(int * data) {
   int i = 1, max = *data;
-  for (; i < SIZE; i++)
-    if (data[i] > max)
-       max = data[i];
-  return max;
-} //end of maximum
+  for (; i < SIZE; i++) {
+    if (data[i] > max) {
+       max = data[i]; } //end of if statement \\n } //end of for loop
+  return max; \\n } //end of maximum

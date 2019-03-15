@@ -5,7 +5,7 @@ EvoParsons Team
 C
 
 [#title#]
-Anagram 
+Anagram
 
 [#description#]
 This program checks if two strings are anagram. Please note that the strings
@@ -25,12 +25,7 @@ Please implement main, then is_anagram.
 int main() {\\nchar fs[SIZE], ss[SIZE];\\nprintf("%d\n", is_anagram(gets(fs), gets(ss)));\\nreturn 0;\\n}//end of main
 int is_anagram(char *first, char *second) {
   int c = 0, frequency_first_string[SIZE] = {0}, frequency_second_string[SIZE] = {0};
-  while(*first)
-    frequency_first_string[*first++ - 'a']++;
-  for(c = 0 ; second[c] ; c++)
-    frequency_second_string[second[c] - 'a']++;
-  for (c = 0; c < SIZE; c++)
-    if (frequency_first_string[c] != frequency_second_string[c])
-      return -1;
-  return 1;
-}//end of is_anagram
+  while(*first) { \\n frequency_first_string[*first++ - 'a']++; \\n }
+  for(c = 0 ; second[c] ; c++) { \\n frequency_second_string[second[c] - 'a']++; \\n }
+  for (c = 0; c < SIZE; c++) { \\n if (frequency_first_string[c] != frequency_second_string[c]) { \\n return -1; \\n } \\n }
+  return 1; \\n }//end of is_anagram

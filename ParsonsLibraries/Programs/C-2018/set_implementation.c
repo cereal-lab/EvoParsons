@@ -26,9 +26,5 @@ void create_set(int * data) {
     while (i++ < SIZE) {
       scanf("%d", &x);
       hashed_index = x % SIZE;
-      if (data[hashed_index] == 0)
-         data[hashed_index] = x;
-      else
-         printf("Collision\n");
-    }//end of while inside create_set
-  }//end of create_set
+      if (data[hashed_index] == 0) { \\n data[hashed_index] = x; \\n }
+      else { \\n printf("Collision\n"); \\n } \\n }//end of while inside create_set   \\n }//end of create_set

@@ -8,8 +8,7 @@ Description = Altadmir, 2015- SIGCSE, “37 Million Compilations: Investigating 
 For example: myObject.foo(int x, String s);
 For function call with one arguments:
 
-FragmentSelection=^^(\s*)(?!.*?(printf|\/\/|int|char|float|double|long))(.*\(\s*)(\w+\s*\)\s*;)$
+FragmentSelection=^(\s*)(?!.*?(printf|\/\/|int|char|float|double|long))(.*)(\(s*)(\w+)(\s*\).*)$
 
 
-
-Transform=$1$2$3 int $4
+Transform=$1$2$3$4 int $5$6

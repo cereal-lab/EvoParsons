@@ -26,8 +26,6 @@ int is_palindrome(char * my_string) {
   int i = 0, len = 0;
   for(; my_string[i]; i++)
   len = i;  i = 0;
-   while(i < len)
-      if (*(my_string + i++) != *(my_string + len--))
-         return -1;
-  return 1;
-}//end of is_palindrome
+   while(i < len) {
+      if (*(my_string + i++) != *(my_string + len--)) { \\n return -1; \\n } \\n }
+  return 1; \\n }//end of is_palindrome

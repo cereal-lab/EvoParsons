@@ -26,11 +26,9 @@ get_length and ami_at_end.
 int main() {  \\n char fs[SIZE], ss[SIZE]; \\n printf("%d\n", ami_at_end(gets(fs), gets(ss)));  \\n return 0; \\n } //end of main
 int get_length(const char *s) { \\n int i = 0; \\n for (; s[i] != '\0'; i++); \\n return i; \\n } //end of get_length
 int ami_at_end(const char *first_string, const char *second_string){
-    while(*first_string!='\0')
-      ++first_string;
+    while(*first_string!='\0') { \\n ++first_string; \\n }
     --first_string;
-    while(*second_string!='\0')
-        ++second_string;
+    while(*second_string!='\0') { \\n ++second_string; \\n }
     --second_string;
     int len = get_length(second_string); \\n while(len > 0) {
         if(*second_string == *first_string) { \\n  --first_string; \\n --second_string; \\n  --len; \\n }

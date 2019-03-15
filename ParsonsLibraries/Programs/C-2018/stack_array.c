@@ -22,16 +22,8 @@ The program implements the functions in the following order: push, pop.
 
 #include <stdio.h>\\n#include<stdlib.h>\\n#define SIZE 10\\nint stack[SIZE];\\nint top = -1;
 void push(int item) {
-	if(top == SIZE - 1) {
-		printf("ERROR: Stack Overflow\n");
-        exit(0);
-    } //end of if inside push
-	else stack[++top] = item;
-} //end of push
+	if(top == SIZE - 1) {\\n printf("ERROR: Stack Overflow\n"); \\n exit(0); \\n } //end of if inside push
+	else stack[++top] = item; \\n } //end of push
 int pop() {
-	if(-1 == top) {
-		printf("ERROR: Stack Underflow\n");
-        exit(0);
-    } //end of if inside pop
-	else return stack[top--];
-} //end of pop
+	if(-1 == top) { \\n printf("ERROR: Stack Underflow\n"); \\n exit(0); \\n } //end of if inside pop
+	else return stack[top--]; \\n } //end of pop

@@ -22,10 +22,10 @@ isUnique, main.
 int isUnique(const char *str) {
   int i = 0, length = 0, j = 0;
   for (; str[length]; length++);
-  for(; i < length - 1; i++)
-    for (j = i + 1; j < length; j++)
-      if (*(str + i)== *(str + j))
+  for(; i < length - 1; i++) {
+    for (j = i + 1; j < length; j++) {
+      if (*(str + i)== *(str + j)) {
         return -1;
-  return 1;
-} //end of isUnique
-int main() {  \\nchar *s = "racecar";  \\nif (isUnique(s) == 1)  \\nprintf("All the characters in string %s are Unique\n", s);  \\nelse  \\nprintf("All the characters in string %s are not unique\n", s);  \\nreturn 0;  \\n} //end of main
+      } //end of if  \\n } //end of inner for loop  \\n } //end of outer for loop
+  return 1; \\n } //end of isUnique
+int main() {  \\nchar *s = "racecar";  \\nif (isUnique(s) == 1) { \\nprintf("All the characters in string %s are Unique\n", s); \\n} \\nelse  {\\nprintf("All the characters in string %s are not unique\n", s); \\n} \\nreturn 0;  \\n} //end of main

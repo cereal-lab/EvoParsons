@@ -25,11 +25,7 @@ functions in the following order; main, get_length, str_cmp.
 int main() {  \\nchar s1[SIZE], s2[SIZE];  \\nprintf("%d\n", str_cmp(gets(s1), gets(s2)));  \\nreturn 0;  \\n} //end of main
 int get_length(const char *s) {  \\nint i = 0;  \\nfor (; s[i] != '\0'; i++);  \\nreturn i;  \\n} //end of get_length
 int str_cmp(const char* s1, const char* s2){
-  if(get_length(s1) != get_length(s2))
-    return -1;
+  if(get_length(s1) != get_length(s2)) { \\n return -1; \\n }
   else{
-    while( *s1 && *s2)
-      if(*s1++ != *s2++) return -1;
-  } //end of else inside str_cmp
-  return 1;
-}//end of str_cmp
+    while( *s1 && *s2) { \\n if(*s1++ != *s2++) return -1; \\n } \\n } //end of else inside str_cmp
+  return 1; \\n }//end of str_cmp

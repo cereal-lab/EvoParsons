@@ -32,9 +32,7 @@ void swap(int * data_array, int i, int j) {
 }//end of swap
 void sort(int * data_array) {
    int k, l;
-   for (k = 0; k < SIZE; k++)
-      for(l = 0; l < SIZE - 1 - k; l++)
-         if (*(data_array + l) > *(data_array + l + 1))
-            swap(data_array, l, l + 1);
-}//end of sort
-void display(int * values) {  \\nint j = 0;  \\nfor (; j < SIZE; j++)  \\nprintf("arr[%d]: [%d]\n", j, values[j]);  \\n}//end of display
+   for (k = 0; k < SIZE; k++) {
+      for(l = 0; l < SIZE - 1 - k; l++) {
+         if (*(data_array + l) > *(data_array + l + 1)) { \\n  swap(data_array, l, l + 1); \\n } \\n } //end of inner for loop \\n } // end of outer for loop \\n }//end of sort
+void display(int * values) {  \\nint j = 0;  \\nfor (; j < SIZE; j++)  { \\nprintf("arr[%d]: [%d]\n", j, values[j]); \\n} \\n}//end of display

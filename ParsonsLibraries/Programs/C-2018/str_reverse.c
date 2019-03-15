@@ -26,11 +26,8 @@ void reverse(char * my_string) {
   len = i; \\n i = 0;
    while(i < len) {
       swap(my_string, i, len);
-      i++;  len--;
-    }//end of while inside reverse
-}//end of reverse
+      i++; \\n len--; \\n }//end of while inside reverse \\n }//end of reverse
 void swap(char * data_array, int i, int j) {
   char tmp = data_array[i];
   data_array[i] = data_array[j];
-  data_array[j] = tmp;
-}//end of swap
+  data_array[j] = tmp; \\n }//end of swap
