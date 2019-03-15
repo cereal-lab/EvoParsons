@@ -1,0 +1,14 @@
+#Spring 19 root config
+evoparsons.log = evoparsons.broker.Log+console
+evoparsons.log.header = [GR]
+evoparsons.output=./DATA.out
+evoparsons.net.1=evoparsons.broker.NetworkPolicy+REST
+evoparsons.net.1.hostname=evoparsons.csee.usf.edu
+evoparsons.net.1.port=2520
+evoparsons.broker.name = GR
+evoparsons.broker=evoparsons.broker.GroupsBroker
+evoparsons.broker.child.1=https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/configs/sp19.ecj.params
+evoparsons.broker.child.2=https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/configs/sp19C.pre.params
+evoparsons.lib=evoparsons.broker.ParsonsLibrary
+evoparsons.programs=https://github.com/cereal-lab/EvoParsons/trunk/ParsonsLibraries/Programs/C-2018
+evoparsons.transforms=https://github.com/cereal-lab/EvoParsons/trunk/ParsonsLibraries/Transforms/C-2018
