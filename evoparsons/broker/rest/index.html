@@ -175,6 +175,22 @@
                 font-size: initial;
             }
 
+            .evHeader {
+                line-height: 0.75;
+                color: white;
+                font-size: 95%;
+            }
+
+            .evHeader a {
+                color:white;
+                text-decoration: underline;
+                font-size: 65%;
+            }
+
+            .evHeader a:hover {
+                color: lightgray;
+            }
+
             @media only screen and (max-width : 500px)  {
                 .fragment {
                     font-size: 80%;
@@ -185,8 +201,16 @@
     <body>
         <nav class="navbar navbar-dark bg-dark">
             <div class="container">
-                <div class="col col-lg-8 offset-lg-2 justify-content-between" style="padding-left: 5px">
-                    <a class="navbar-brand" href="#"><i class="fas fa-puzzle-piece" style="font-size: 120%;margin-right:.1em"></i></i>&nbsp;Evoparsons Puzzles</a>
+                <div class="col col-lg-8 offset-lg-2 justify-content-between navbar-brand" style="padding-left: 5px; padding-bottom: 0;">
+                    <div style="display: inline-block; vertical-align: top;">
+                        <a href="#" style="margin-right: .1em; color: white">
+                            <i class="fas fa-puzzle-piece" style="font-size: 120%"></i>
+                        </a>
+                    </div>
+                    <div class="evHeader" style="display: inline-block">
+                        <span>Evoparsons Puzzles</span> <br/>
+                        <span><a href="https://youtu.be/CZtKSXCGK8c" target="_blank">1st time using this software? Watch this video</a></span>
+                    </div>
                 </div>
             </div>
         </nav>
