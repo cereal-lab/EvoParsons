@@ -1,0 +1,8 @@
+#evoparsons server config
+evoparsons.log.header = [SET]
+evoparsons.output=./DATA.out/preset.out
+evoparsons.broker.name = SET
+evoparsons.broker=evoparsons.broker.ParsonsBroker
+evoparsons.broker.distributionPolicy=evoparsons.broker.SelectionPolicy+cycling
+evoparsons.ea=evoparsons.broker.PresetStarter
+evoparsons.ea.preset=https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/configs/s19-2.preset

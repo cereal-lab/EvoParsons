@@ -8,7 +8,7 @@ evoparsons.broker.distributionPolicy=evoparsons.broker.SelectionPolicy+cycling
 
 #lib is taken from parent
 evoparsons.ea=evoparsons.broker.PresetStarter
-evoparsons.ea.preset=./configs/s19-2.preset
+evoparsons.ea.preset=file:/C:/Users/dvitel/Documents/University%20of%20South%20Florida/Lessons/Independent%20Study/cereal/EvoParsons/bin/configs/s19-2.preset
 #evoparsons.ea.preset=file:///home/dvitel/usf/sw/evo/configs/s18c.preset
 
 evoparsons.studentsFile = preset.students.bro
