@@ -20,7 +20,7 @@ isUnique, main.
 
 #include<stdio.h>
 int isUnique(const char *str) {
-  int i = 0, length = 0, j = 0;
+  int i = 0, length = 0,  j = 0;
   for (; str[length]; length++);
   for(; i < length - 1; i++) {
     for (j = i + 1; j < length; j++) {
