@@ -398,6 +398,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                 var msg = $("#message");
                 var wrongMsg = $("#wrongMsg");
                 var hasBug = $("#hasBug");
+                var hintOk = $("#hintOk");
                 var correctMsg = $("#correctMsg");
                 var giveUpMsg = $("#giveUpMsg");
                 //var trashFragment = $("#trashFragment");
@@ -576,7 +577,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                 function hint() {
                     var fragments = $(".fragment").filter(function () { return $(this).data("data-pos") >= 0; });
                     fragments.each(function () {
-                        $(this).data("data-lis", 1);
+                        $(this).removeClass("hint").data("data-lis", 1);
                     });
                     for (var i = 1; i < fragments.length; i++) 
                         for (var j = 0; j < i; j++) {
@@ -632,7 +633,9 @@ I freely give my consent to take part in this study.  I understand that by proce
                     //console.log(missingOrder);
                     for (var i=0; i < missingOrder.length; i++)
                     {
-                        if (!missingOrderOne || (missingOrder[i].data("data-pos") < missingOrderOne.data("data-pos")))
+                        if ((!missingOrderOne || (missingOrder[i].data("data-pos") < missingOrderOne.data("data-pos")))
+                            && (missingOrder[i].data("data-pos") != missingOrder[i].index())
+                        )
                             missingOrderOne = missingOrder[i];
                     }
                     //console.log(missingOrderOne);
