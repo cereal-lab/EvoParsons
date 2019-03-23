@@ -93,51 +93,62 @@
                 white-space: pre-wrap !important;
                 overflow: hidden !important;
             }
-            .fragment:first-child > div:first-child {
-                border-top-left-radius: 5px;                                                                    
+            .fragment:hover {
+                border: 1px dotted #888;    
+                /* border-bottom: none;             */
+            }            
+            .fragment:first-child {
+                border-top-left-radius: 5px;  
+                border-top-right-radius: 5px;                                                                    
             }
-            .fragment:first-child > div:last-child {
-                border-top-right-radius: 5px;                                                       
+            .fragment:first-child > div:first-child { 
+                border-top-left-radius: 5px;  
             }
-            .fragment:last-child > div:first-child {
-                border-bottom-left-radius: 5px;     
-                border-bottom: none;                                                               
+            .fragment:first-child > div:last-child { 
+                border-top-right-radius: 5px;  
             }
-            .fragment:last-child > div:last-child {
-                border-bottom-right-radius: 5px;   
-                border-bottom: none;                                                    
+            .fragment:last-child {
+                border-bottom-right-radius: 5px;  
+                border-bottom-left-radius: 5px;    
+                /* border-bottom: 1px dotted #888;                                      */
             }
+            .fragment:last-child > div:first-child  {
+                border-bottom-left-radius: 5px;                                        
+            }      
+            .fragment:last-child > div:last-child  {
+                border-bottom-right-radius: 5px;                                        
+            }                    
             .fragment:first-child > div.fragmentLinesHolder {                                
-                padding: 1ex 1em 1ex 1em;    
-                border-top: 1px dotted #888;
+                padding: .5ex .1em .5ex .1em;    
             }            
             .fragment:last-child > div.fragmentLinesHolder {
-                padding: 1ex 1em 1ex 1em;                          
+                padding: .5ex .1em .5ex .1em;                          
             }     
-            .fragment.inAction > div {
-                border-radius: 0;
-            }
+            .fragment:hover > div.trashIconHolder {                        
+                background-color: #f29393;       
+            }            
             .fragment > div.trashIconHolder {
                 cursor: pointer;
                 display:table-cell;
                 font-size: 80%;
                 vertical-align:middle;
                 width: 2em;
-                background-color: #f29393;
-                border-bottom: 1px dotted #888;
+                background-color: white;
                 color: white;
                 text-align: center;
                 padding: .5ex;
             }            
+            .fragment:hover > div.handIconHolder {                        
+                background-color: #82e2ea;        
+            }
             .fragment > div.handIconHolder {
-                cursor: pointer;
-                display:table-cell;
+                display: table-cell;
+                cursor: pointer;                
                 font-size: 80%;
                 vertical-align:middle;
-                border-bottom: 1px dotted #888;
                 text-align: center;
-                width: 2em;
-                background-color: #82e2ea;
+                width: 2em;                
+                background-color: white;
                 color: white;
                 padding: .5ex;
             }
@@ -156,8 +167,7 @@
             }            
             .fragment > div.fragmentLinesHolder {
                 display:table-cell;
-                border-bottom: 1px dotted #888;
-                padding: 1ex 1em 1ex 1em;
+                padding: .5ex .1em .5ex .1em;
             }            
             #trashed .fragment .trashIconHolder i {
                 display: none !important;

@@ -1,5 +1,7 @@
 package evoparsons.broker;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 /**
@@ -13,11 +15,20 @@ public class Program {
 	public static final String TITLE = "[#title#]";
 	public static final String DESC = "[#description#]";
 	public static final String SOURCE = "[#source#]";
+	private int index;
 	public final String language;
 	public final String title;
 	public final String description;
 	public final List<String> body;
 	public final String fileName;
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}	
 	
 	public Program(String fileName, String language, String title, String description, List<String> body) {
 		this.language = language;

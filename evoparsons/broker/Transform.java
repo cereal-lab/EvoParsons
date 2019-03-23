@@ -1,5 +1,7 @@
 package evoparsons.broker;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 /**
@@ -14,6 +16,7 @@ public class Transform {
 	public static final String SELECT = "FragmentSelection";
 	public static final String TRANSFORM = "Transform";
 	
+	private int index;
 	private String fileName;
 	private String title;
 	private String description;
@@ -26,6 +29,14 @@ public class Transform {
 		this.description = description;
 		this.transform = transform;
 		this.pattern = Pattern.compile(fragmentSelect, Pattern.MULTILINE | Pattern.DOTALL);
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
 	}
 	
 	/**
@@ -47,7 +58,7 @@ public class Transform {
 	public String getFileName() {
 		return fileName;
 	}
-	
+
 	/**
 	 * Setter for the description of the transform.
 	 * @param description
