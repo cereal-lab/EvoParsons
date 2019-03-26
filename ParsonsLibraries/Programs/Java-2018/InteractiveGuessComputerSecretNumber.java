@@ -21,7 +21,7 @@ Implement these method in the following order; main, getIntFromUser, getRandomIn
 */
 import java.util.Scanner;\\npublic class InteractiveGuessComputerSecretNumber{
    public static void main(String[] args){
-      int guess, sectret, attempts = 0;
+      int guess, secret, attempts = 0;
       secret = getRandomInt(50);
       do{
          System.out.println("Enter your guess for attempt #" + ++attempts);
