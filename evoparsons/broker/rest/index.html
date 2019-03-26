@@ -45,7 +45,6 @@
                         user-select: none;       
                 background-color: white;                    
                 display: table;
-                width: 100%;
             }
             .fragment.inAction {
                 border: 1px solid black !important;                        
@@ -75,8 +74,11 @@
                 display: none;
             }
             #trashed .fragment {
-                border: 1px solid black;
-                border-radius: 5px;               
+                border: 1px dotted #888;    
+            }
+
+            #trashed .fragment {
+                margin-left: 0 !important;
             }
             #message {
                 position: fixed;
@@ -85,7 +87,7 @@
                 width: 100%;
                 display: none;
             }
-            #wrongMsg, #correctMsg, #giveUpMsg {
+            #wrongMsg, #correctMsg, #giveUpMsg, #hasBug, #hintOk {
                 margin: 0 auto;
                 display: none;
             }          
@@ -93,51 +95,41 @@
                 white-space: pre-wrap !important;
                 overflow: hidden !important;
             }
-            .fragment:first-child > div:first-child {
-                border-top-left-radius: 5px;                                                                    
-            }
-            .fragment:first-child > div:last-child {
-                border-top-right-radius: 5px;                                                       
-            }
-            .fragment:last-child > div:first-child {
-                border-bottom-left-radius: 5px;     
-                border-bottom: none;                                                               
-            }
-            .fragment:last-child > div:last-child {
-                border-bottom-right-radius: 5px;   
-                border-bottom: none;                                                    
-            }
+            .fragment:hover {
+                border: 1px dotted #888;    
+                /* border-bottom: none;             */
+            }            
             .fragment:first-child > div.fragmentLinesHolder {                                
-                padding: 1ex 1em 1ex 1em;    
-                border-top: 1px dotted #888;
+                padding: .5ex .1em .5ex .1em;    
             }            
             .fragment:last-child > div.fragmentLinesHolder {
-                padding: 1ex 1em 1ex 1em;                          
+                padding: .5ex .1em .5ex .1em;                          
             }     
-            .fragment.inAction > div {
-                border-radius: 0;
-            }
+            .fragment:hover > div.trashIconHolder {                        
+                background-color: #f29393;       
+            }            
             .fragment > div.trashIconHolder {
                 cursor: pointer;
                 display:table-cell;
                 font-size: 80%;
                 vertical-align:middle;
-                width: 2em;
-                background-color: #f29393;
-                border-bottom: 1px dotted #888;
+                width: 3em;
+                background-color: white;
                 color: white;
                 text-align: center;
                 padding: .5ex;
             }            
+            .fragment:hover > div.handIconHolder {                        
+                background-color: #82e2ea;        
+            }
             .fragment > div.handIconHolder {
-                cursor: pointer;
-                display:table-cell;
+                display: table-cell;
+                cursor: pointer;                
                 font-size: 80%;
                 vertical-align:middle;
-                border-bottom: 1px dotted #888;
                 text-align: center;
-                width: 2em;
-                background-color: #82e2ea;
+                width: 3em;         
+                background-color: white;
                 color: white;
                 padding: .5ex;
             }
@@ -156,14 +148,10 @@
             }            
             .fragment > div.fragmentLinesHolder {
                 display:table-cell;
-                border-bottom: 1px dotted #888;
-                padding: 1ex 1em 1ex 1em;
+                padding: .5ex .1em .5ex .1em;
             }            
-            #trashed .fragment .trashIconHolder i {
-                display: none !important;
-            }
             #trashed .fragment .trashIconHolder {
-                background-color: white;
+                display: none !important;
             }
 
             .formOfConsent {
@@ -365,6 +353,12 @@ I freely give my consent to take part in this study.  I understand that by proce
                 <div class="alert alert-danger col col-lg-8 offset-lg-2" role="alert" id="wrongMsg">
                     <strong>Oh snap!</strong> Change a few things up and try submitting again.
                 </div>
+                <div class="alert alert-danger col col-lg-8 offset-lg-2" role="alert" id="hasBug">
+                    <strong>Bug!</strong> Code is ordered correctly. Try to find bugged fragment
+                </div>  
+                <div class="alert alert-success col col-lg-8 offset-lg-2" role="alert" id="hintOk">
+                    <strong>Ok!</strong> Looks like you can submit solution
+                </div>                                
             </div>
             </div>
         </div>         
@@ -403,6 +397,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                 var userName = $("#userName");
                 var msg = $("#message");
                 var wrongMsg = $("#wrongMsg");
+                var hasBug = $("#hasBug");
+                var hintOk = $("#hintOk");
                 var correctMsg = $("#correctMsg");
                 var giveUpMsg = $("#giveUpMsg");
                 //var trashFragment = $("#trashFragment");
@@ -481,13 +477,15 @@ I freely give my consent to take part in this study.  I understand that by proce
                     var indent = 0;
                     var prevLine = null;
                     taskPane.find(".fragment").each(function () {
+                        var frgmnt = $(this);
+                        var minIndent = indent;
                         $(this).find(".indent").each(function () {
                             var text = $(this).data("data-orig");
                             var ind = 0;
                             if ((prevLine != null) && 
                                 (/^if\s*?\(.*?\)\s*?$/.test(prevLine) ||
-                                 /^while\s*?\(.*?\)\s*?$/.test(prevLine))
-                                 && !text.startsWith("{"))
+                                /^while\s*?\(.*?\)\s*?$/.test(prevLine))
+                                && !text.startsWith("{"))
                                 ind = 1;
                             // if (!text.startsWith("}"))
                             //     $(this).animate({"padding-left": 15 * (indent + ind)}, 'slow');                            
@@ -501,13 +499,24 @@ I freely give my consent to take part in this study.  I understand that by proce
                                 }
                                 else if (textChars[i] === "}"){
                                     localIndent--;
-                                    closedBraces++;
+                                    if (i == 0) closedBraces++;
                                 }
                             }
-                            $(this).animate({"padding-left": 15 * Math.max(0, indent - closedBraces)}, 'slow'); 
-                            indent = indent + localIndent;                                                          
+                            var curIndent = Math.max(0, indent - closedBraces);
+                            $(this).data("indent", curIndent);
+                            //$(this).animate({"padding-left": 15 * Math.max(0, indent - closedBraces)}, 'slow'); 
+                            indent = Math.max(0, indent + localIndent);    
+                            minIndent = Math.min(minIndent, curIndent);                                                      
                             prevLine = text;
                         });
+                        frgmnt.animate({"margin-left": 15 * minIndent}, 'fast',
+                            function ()
+                            {
+                                $(this).find(".indent").each(function () {
+                                    var curIndent = $(this).data("indent") - minIndent;
+                                    $(this).animate({"padding-left": 15 * curIndent}, 'fast'); 
+                                });
+                            });
                     });
                 }                
                 // trashFragment.click(function () {                    
@@ -568,7 +577,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                 function hint() {
                     var fragments = $(".fragment").filter(function () { return $(this).data("data-pos") >= 0; });
                     fragments.each(function () {
-                        $(this).data("data-lis", 1);
+                        $(this).removeClass("hint").data("data-lis", 1);
                     });
                     for (var i = 1; i < fragments.length; i++) 
                         for (var j = 0; j < i; j++) {
@@ -624,7 +633,9 @@ I freely give my consent to take part in this study.  I understand that by proce
                     //console.log(missingOrder);
                     for (var i=0; i < missingOrder.length; i++)
                     {
-                        if (!missingOrderOne || (missingOrder[i].data("data-pos") < missingOrderOne.data("data-pos")))
+                        if ((!missingOrderOne || (missingOrder[i].data("data-pos") < missingOrderOne.data("data-pos")))
+                            && (missingOrder[i].data("data-pos") != missingOrder[i].index())
+                        )
                             missingOrderOne = missingOrder[i];
                     }
                     //console.log(missingOrderOne);
@@ -633,6 +644,25 @@ I freely give my consent to take part in this study.  I understand that by proce
                         missingOrderOne.addClass("hint");
                         //var phantom1 = missingOrderOne.clone();
                         //missingOrderOne.data("data-pos"):
+                    } else {
+                        if ($("#taskPane .fragment").filter(function () { return $(this).data("data-pos") < 0; }).length > 0)
+                        {
+                            hasBug.show();
+                            msg.fadeIn('slow');
+                            setTimeout(function () {
+                                msg.fadeOut(function () {
+                                    hasBug.hide();
+                                });                            
+                            }, 4000);                        
+                        } else {
+                            hintOk.show();
+                            msg.fadeIn('slow');
+                            setTimeout(function () {
+                                msg.fadeOut(function () {
+                                    hintOk.hide();
+                                });                            
+                            }, 4000);                            
+                        }
                     }
                 }
 
@@ -646,9 +676,6 @@ I freely give my consent to take part in this study.  I understand that by proce
                             fragment.data("data-d-id", puzzle.fragments[i].distracterId);
                         else programLength++;
                         fragment.data("data-orig", puzzle.fragments[i].lines);
-                        var handIconHolder = $("<div class='handIconHolder'>");
-                        handIconHolder.append($('<i class="far fa-hand-paper fa-sm">'));
-                        handIconHolder.appendTo(fragment);                        
                         var linesHolder = $("<div class='fragmentLinesHolder'>");
                         for (var j = 0; j < puzzle.fragments[i].lines.length; j++) {
                             var indentContainer = $("<div class='indent'>");
@@ -658,6 +685,9 @@ I freely give my consent to take part in this study.  I understand that by proce
                             indentContainer.appendTo(linesHolder);
                         }
                         linesHolder.appendTo(fragment);
+                        var handIconHolder = $("<div class='handIconHolder'>");
+                        handIconHolder.append($('<i class="far fa-hand-paper fa-sm">'));
+                        handIconHolder.appendTo(fragment);
                         var trashIconHolder = $("<div class='trashIconHolder'>");                        
                         trashIconHolder.append($('<i class="fas fa-trash fa-sm">'));
                         //trashIconHolder.append("<span>" + puzzle.fragments[i].id  + "</span>");

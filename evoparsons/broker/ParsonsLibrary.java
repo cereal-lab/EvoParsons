@@ -95,7 +95,9 @@ public class ParsonsLibrary implements Library
 					.mapToObj(i -> String.format("\t%d\t%s", i, transformStore.get(i).getFileName()))
 					.collect(Collectors.joining(System.lineSeparator()))
 				
-			});		
+			});	
+		IntStream.range(0, programStore.size()).forEach(i -> programStore.get(i).setIndex(i));
+		IntStream.range(0, transformStore.size()).forEach(i -> transformStore.get(i).setIndex(i));
 	}
 	
 	@Override
@@ -108,6 +110,14 @@ public class ParsonsLibrary implements Library
 	{
 		//log(String.format("Requesting ProgNum = %d", ProgNum));
 		return programStore.get(ProgNum);
+	}
+
+	@Override 
+	public Program getProgram(String name) 
+	{
+		return programStore.stream()
+			.filter(p -> p.fileName.toLowerCase().equals(name.toLowerCase()))
+			.findFirst().orElse(null);
 	}
 
 	@Override
@@ -126,6 +136,14 @@ public class ParsonsLibrary implements Library
 		//log(String.format("Requesting TransNum = %d (should be between 0 and %d)", TransNum, transformStore.size()));
 		return transformStore.get(TransNum);
 	}
+
+	@Override 
+	public Transform getTransform(String name) 
+	{
+		return transformStore.stream()
+			.filter(p -> p.getFileName().toLowerCase().equals(name.toLowerCase()))
+			.findFirst().orElse(null);
+	}	
 
 	//TODO: nice to have common format - line JSON, XML, etc	
 	private <C> List<C> load(String folder, String[] sections, BiFunction<String, Map<String, List<String>>, C> mapper)

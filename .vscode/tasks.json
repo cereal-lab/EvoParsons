@@ -1,0 +1,13 @@
+{
+    "version": "0.1.0",
+    "command": "myCommand",
+    "isShellCommand": false,
+    "args": [],
+    "showOutput": "always",
+    "tasks": [
+        {
+            "taskName": "antlr",
+            "command": "antlr4"
+        }
+    ]
+}
