@@ -16,12 +16,12 @@ Implement these method in the following order; main, displaySmallestLargest, get
 
 [#source#]
 */
-import java.util.Scanner; \\npublic class ArraysSmallestLargest { \\n public static void main(String[] args){ \\n int size = 10; \\n int[] data = getRandomArray(size); \\n displayLargestSmallest(data); \\n } //end of main method
+import java.util.Scanner; \\npublic class ArraysSmallestLargest { \\n public static void main(String[] args){ \\n int size = 10; \\n int[] data = getRandomArray(size); \\n displaySmallestLargest(data); \\n } //end of main method
    public static void displaySmallestLargest(int[] array){
       int smallest = array[0], largest = array[0];
       for(int i = 1 ; i < array.length ; i++){
-         if(array[i] > largestValue) { \\n largestValue = array[i]; \\n }
+         if(array[i] > largest) { \\n largest = array[i]; \\n }
          else if(array[i] < smallest) { \\n smallest = array[i]; \\n }
-      }//end of for loop inside displayLargestSmallest
+      }//end of for loop inside displaySmallestLargest
       System.out.println("Largest is " + largest + ", smallest is " + smallest);\\n} // end of displaylargestSmallest method
-   public static int[] getRandomArray(int size){\\nint[] data = new int[size];\\nfor(int i = 0 ; i < data.length ; ){ \\n  data[i++] = (int)(Math.random()*max+1);\\n } \\nreturn data;\\n} // end of getRandomArray method\\n} // end of class
+   public static int[] getRandomArray(int size){\\nint[] data = new int[size];\\nfor(int i = 0 ; i < data.length ; ){ \\n  data[i++] = (int)(Math.random()*10 + 1);\\n } \\nreturn data;\\n} // end of getRandomArray method\\n} // end of class
