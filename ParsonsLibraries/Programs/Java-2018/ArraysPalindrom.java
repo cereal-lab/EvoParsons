@@ -12,7 +12,6 @@ ArraysPalindrom
 This program implements a method isPalindrom that returns true if its array parameter is a palindrom.
 A palindrom is an array that features the same sequence of characters when read from left to right or backward.
 The main method calls isPalindrom on a series of arrays used as tests and displays a message only if one of the tests fails.
-Please use while(high > low) inside the isPalindrom method when comparing the array from both ends.
 Implement these method in the following order; main, isPalindrom.
 
 [#source#]
