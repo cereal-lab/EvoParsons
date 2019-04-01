@@ -1,5 +1,6 @@
 package evoparsons.broker;
 
+import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -12,6 +13,9 @@ import java.util.function.DoubleFunction;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
+import com.sun.xml.internal.ws.developer.Serialization;
+
+import evoparsons.rmishared.Auth;
 import evoparsons.rmishared.ParsonsEvaluation;
 import evoparsons.rmishared.ParsonsPuzzle;
 import evoparsons.rmishared.Stats;
@@ -23,7 +27,7 @@ public class EvaluationDataStore
 	private static final String DEFAULT_GENOTYPE_FILE = "genotype.bro";
 	private String outputFolder;
 
-	private Map<String, Integer> students; //TODO: cen we remove it
+	private Map<String, Auth> students; //TODO: cen we remove it?
 	private Map<Integer, Stats> studentStats;
 	private Map<Integer, PuzzleEvaluation> genotypes;
 	private Map<Integer, PuzzleEvaluation> currentGenerationGenotypes;
@@ -47,15 +51,15 @@ public class EvaluationDataStore
 			this.evalTries = 2;
 		}		
 		studentsFile = config.get("evoparsons.studentsFile", DEFAULT_STUDENTS_FILE);
-		students = Utils.<HashMap<String, Integer>>loadFromFile(log, Paths.get(outputFolder, studentsFile).toString(), HashMap<String, Integer>::new);
+		students = Utils.<HashMap<String, Auth>>loadFromFile(log, Paths.get(outputFolder, studentsFile).toString(), HashMap<String, Auth>::new);
 		if (students.size() == 0)
-			log.log("[EvaluationDataStore] students hash is empty");
+			log.log("[EvaluationDataStore] students map is empty");
 		else 
 		{
 			log.log("[EvaluationDataStore] %d students were restored from %s", students.size(), studentsFile);
 			students.entrySet().stream()
-				.sorted(Comparator.comparing(entry -> entry.getValue()))
-				.forEach(entry -> log.log("\t%8.8s%6d", entry.getKey(), entry.getValue()));
+				.sorted(Comparator.comparing(entry -> entry.getValue().id))
+				.forEach(entry -> log.log("\t%8.8s%6d", entry.getKey(), entry.getValue().id));
 		}
 		studentStatsFile = config.get("evoparsons.studentsStatsFile", DEFAULT_STUDENT_STAT_FILE);
 		studentStats = Utils.<HashMap<Integer, Stats>>loadFromFile(log, Paths.get(outputFolder, studentStatsFile).toString(), HashMap<Integer, Stats>::new);
@@ -113,17 +117,17 @@ public class EvaluationDataStore
 			});		
 		log.log("");
 		students.entrySet().stream()
-			.sorted(Comparator.comparing(student -> student.getValue()))
+			.sorted(Comparator.comparing(student -> student.getValue().id))
 			.forEach(student -> 
 				{
-					log.print("%13.13s", String.format("%8.8s[%d]", student.getKey(), student.getValue()));
+					log.print("%13.13s", String.format("%8.8s[%d]", student.getKey(), student.getValue().id));
 					genotypes.entrySet().stream()
 						.sorted(Comparator.comparing(entry -> entry.getKey()))
 						.forEach(genotype -> {	
-							if (!genotype.getValue().evaluations.containsKey(student.getValue())) log.print("%10.10s", "");
+							if (!genotype.getValue().evaluations.containsKey(student.getValue().id)) log.print("%10.10s", "");
 							else 
 							{
-								ParsonsEvaluation eval = genotype.getValue().evaluations.get(student.getValue());
+								ParsonsEvaluation eval = genotype.getValue().evaluations.get(student.getValue().id);
 								if (eval.gaveUp)
 									log.print("%10.10s", "gaveUp");
 								else 
@@ -223,19 +227,18 @@ public class EvaluationDataStore
 			log.err("[EvaluationDataStore.addEvaluation] Cannot find genotype for eval %s", eval.toString());		
 	}
 
-	public int addStudent(String studentName)
+	public Auth addStudent(String sid, String ssig, String skey)
 	{
-		Integer existingId = students.putIfAbsent(studentName, students.size());		
-		if (existingId == null)
-		{			
-			studentStats.put((students.size() - 1), new Stats(0, 0));
-			log.log("[EvaluationDataStore.addStudent] login %s, %d", studentName, (students.size() - 1));
-			return students.size() - 1;
-		}
-		else {
-			log.log("[EvaluationDataStore.addStudent] continue session %s, %d", studentName, existingId);	
-			return existingId;
-		}	
+		Auth existingAuth = 
+			students.computeIfAbsent(sid, ignorable -> {
+				int id = students.size();
+				log.log("[EvaluationDataStore.addStudent] %s, %s, %s - %d", sid, ssig, skey, id);
+				studentStats.put(id, new Stats(0, 0));
+				return new Auth(id, sid, ssig, skey);
+			});		
+		existingAuth.setSkey(skey);
+		log.log("[EvaluationDataStore.addStudent] session %s, %d", sid, existingAuth.id);	
+		return existingAuth;
 	}
 
 	/**

@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
+import evoparsons.rmishared.Auth;
 import evoparsons.rmishared.BrokerClient;
 import evoparsons.rmishared.BrokerUIInterface;
 import evoparsons.rmishared.Fragment;
@@ -52,7 +53,8 @@ public class PSI
 		String studentLogin;
 		System.out.println("Please enter your student Name: ");
 		studentLogin = userInput.nextLine();
-		int studentId = broker.getStudentID(studentLogin);
+		String sid = Auth.sha1(studentLogin);
+		Auth auth = broker.getStudentID(sid, sid, "");
 		log("Sent student login: " + studentLogin);
 
 		// Main loop;
@@ -62,9 +64,9 @@ public class PSI
 		
 		while (true)
 		{
-			ParsonsPuzzle puzzle = broker.getParsonsPuzzle(studentId);
+			ParsonsPuzzle puzzle = broker.getParsonsPuzzle(auth.id);
 			System.out.format("[PSI] Obtained puzzle #%d%n", puzzle.id);
-			evaluate(studentId, puzzle);
+			evaluate(auth.id, puzzle);
 		}
 	}
 

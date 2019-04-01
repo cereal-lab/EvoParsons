@@ -5,6 +5,7 @@ import java.rmi.RemoteException;// RMI-related imports
 import java.util.List;
 import java.util.function.Consumer;
 
+import evoparsons.rmishared.Auth;
 import evoparsons.rmishared.BrokerUIInterface;
 import evoparsons.rmishared.ParsonsEvaluation;
 import evoparsons.rmishared.ParsonsPuzzle;
@@ -71,15 +72,15 @@ public class ParsonsBroker implements Broker, BrokerUIInterface, BrokerEAInterfa
 		}
 	}
 	
-    public int getStudentID(String login) throws RemoteException
+    public Auth getStudentID(String sid, String ssig, String skey) throws RemoteException
 	{
 		try {
 		synchronized (evalStore)
 		{
-			int studentId = evalStore.addStudent(login);		
+			Auth studentAuth = evalStore.addStudent(sid, ssig, skey);		
 			evalStore.saveStudents();
 			evalStore.saveStudentStats();
-			return studentId;
+			return studentAuth;
 		}	
 		} catch (Exception e) {
 			log.err("[ParsonsBroker.getStudentID] Error: %s", e.getMessage());

@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import evoparsons.rmishared.Auth;
 import evoparsons.rmishared.BrokerUIInterface;
 import evoparsons.rmishared.ParsonsEvaluation;
 import evoparsons.rmishared.ParsonsPuzzle;
@@ -25,11 +26,11 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 		private static final long serialVersionUID = 1L;
 		public final String ui;
 		public final int id;
-		public final int localId;
-		public StudentData(String ui, int id, int localId) {
+		public final Auth localAuth;
+		public StudentData(String ui, int id, Auth localAuth) {
 			this.ui = ui;
 			this.id = id;
-			this.localId = localId;
+			this.localAuth = localAuth;
 		}
 	}	
 	private Log log;
@@ -102,50 +103,45 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 	@Override
 	public synchronized ParsonsPuzzle getParsonsPuzzle(int studentId) throws RemoteException {
 		return exec(studentId, (b, data) -> 
-				b.getUIInterface().getParsonsPuzzle(data.localId));
+				b.getUIInterface().getParsonsPuzzle(data.localAuth.id));
 	}
 
-	private int allocateStudent(String login) throws RemoteException {
+	private Auth allocateStudent(String sid, String ssig, String skey) throws RemoteException {
 		String selectedBrokerName = brokerStudents.entrySet().stream()
 			.min(Comparator.comparing(entry -> entry.getValue().size()))
 			.map(e -> e.getKey()).orElse(null);
 		Broker fullBroker = brokers.get(selectedBrokerName);
 		BrokerUIInterface broker = fullBroker.getUIInterface();
-		int localId = broker.getStudentID(login);
-		StudentData data = new StudentData(selectedBrokerName, studentIdToBroker.size(), localId);
-		log.log("New student: %s --> %d --> %d [%s]", login, data.id, data.localId, selectedBrokerName);
-		loginToStudentId.put(login, data.id);			
+		Auth localAuth = broker.getStudentID(sid, ssig, skey);		
+		StudentData data = new StudentData(selectedBrokerName, studentIdToBroker.size(), localAuth);
+		Auth auth = new Auth(data.id, sid, ssig, skey);
+		log.log("New student: %s --> %d --> %d [%s]", sid, data.id, data.localAuth.id, selectedBrokerName);
+		loginToStudentId.put(sid, data.id);			
 		studentIdToBroker.put(data.id, data);
 		brokerStudents.get(selectedBrokerName).add(data.id);
 		save();
-		return data.id;
+		return auth;
 	}
 
 	@Override
-	public synchronized int getStudentID(String login) throws RemoteException {
-		Integer studentId = loginToStudentId.get(login);
-		//StudentData data = studentLoginToBroker.get(login);
-		if (studentId == null) {
-			return allocateStudent(login);
-		} else {
-			StudentData data = studentIdToBroker.get(studentId);
-			if (data == null)
-			{
-				log.err("[GroupsBroker.getStudentID] student with id %d,%s does not have data. Realocating", studentId, login);
-				loginToStudentId.remove(login);
-				return allocateStudent(login);
-			} else {
-				log.log("Reconnect: %s --> %d --> %d [%s]", login, data.id, data.localId, data.ui);
-				return data.id;
-			}
+	public synchronized Auth getStudentID(String sid, String ssig, String skey) throws RemoteException {
+		Integer studentId = loginToStudentId.get(sid);
+		if (studentId == null) return allocateStudent(sid, ssig, skey);
+		StudentData data = studentIdToBroker.get(studentId);
+		if (data == null) {
+			log.err("[GroupsBroker.getStudentID] student with id %d,%s does not have data. Realocating", studentId, sid);
+			loginToStudentId.remove(studentId);
+			return allocateStudent(sid, ssig, skey);
 		}
-		
+		log.log("Reconnect: %s --> %d --> %d [%s]", sid, data.id, data.localAuth.id, data.ui);
+		data.localAuth.setSkey(skey);
+		return new Auth(data.id, data.localAuth.sid, data.localAuth.ssig, data.localAuth.getSkey());		
 	}
 
 	public synchronized void setParsonsEvaluation(ParsonsEvaluation eval) throws RemoteException {
 		exec(eval.studentId, (b, data) -> 
 			{
-				eval.studentId = data.localId;
+				eval.studentId = data.localAuth.id;
 				b.getUIInterface().setParsonsEvaluation(eval);
 				return 0;
 			});
@@ -154,7 +150,7 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 	@Override
 	public synchronized Stats getStudentStats(int studentId) throws RemoteException {
 		return exec(studentId, (b, data) -> 
-				b.getUIInterface().getStudentStats(data.localId));
+				b.getUIInterface().getStudentStats(data.localAuth.id));
 	}
 
 	@Override

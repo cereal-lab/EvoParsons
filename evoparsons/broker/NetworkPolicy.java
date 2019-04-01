@@ -36,6 +36,7 @@ import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.resource.Resource;
 
 import evoparsons.broker.Log.FileLog;
+import evoparsons.rmishared.Auth;
 import evoparsons.rmishared.BrokerClient;
 import evoparsons.rmishared.BrokerUIInterface;
 import evoparsons.rmishared.Fragment;
@@ -84,28 +85,32 @@ public interface NetworkPolicy {
         }
         
         private void onNewStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
-            String login = "";
+            String sid = "";
+            String ssig = "";
+            String skey = "";
             try {
                 Map<String, Object> requestJson = (Map<String, Object>)JSON.parse(request.getReader());
-                login = (String)requestJson.get("login");
+                sid = (String)requestJson.get("sid");
+                ssig = (String)requestJson.get("ssig");
+                skey = (String)requestJson.get("skey");
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
                 Map<String, Object> respJson = new HashMap<>();
-                respJson.put("error", "Input object should be in format {'login':<nonEmptyLogin>}");
+                respJson.put("error", "Input object should be in format {'sid':'<student id>', 'ssig':'<student signature>', 'skey':'<instructor signature optional>'}");
                 response.getWriter().print(JSON.toString(respJson));
                 return;
             }
-            if (login == null || login.isEmpty()) {
+            if (sid == null || sid.isEmpty() || ssig == null || ssig.isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
                 Map<String, Object> respJson = new HashMap<>();
-                respJson.put("error", "Login should be nonempty");
+                respJson.put("error", "sid and ssig should be nonempty");
                 response.getWriter().print(JSON.toString(respJson));
                 return;                        
             }
             response.setStatus(HttpServletResponse.SC_OK);
-            int id = broker.getStudentID(login);
+            Auth auth = broker.getStudentID(sid, ssig, skey);
             Map<String, Object> respJson = new HashMap<>();
-            respJson.put("id", id);
+            respJson.put("id", auth.id);
             respJson.put("ip", request.getRemoteAddr());
             respJson.put("sessionId", UUID.randomUUID().toString());
             response.getWriter().print(JSON.toString(respJson));

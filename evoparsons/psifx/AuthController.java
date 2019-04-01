@@ -98,8 +98,9 @@ public class AuthController implements BiInitializable {
             @Override 
             protected Tmp call() throws Exception {
                 BrokerUIInterface b = BrokerClient.connect(auth.host, auth.port);
-                int studentId = b.getStudentID(auth.login);
-                return new Tmp(b, studentId);
+                String sid = evoparsons.rmishared.Auth.sha1(auth.login);
+                evoparsons.rmishared.Auth studentAuth = b.getStudentID(sid, sid, "");
+                return new Tmp(b, studentAuth.id);
             }
         };
         connect.setOnSucceeded(state -> {

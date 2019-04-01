@@ -13,8 +13,9 @@
         <script src="./js/jquery.min.js"></script>
         <script src="./js/jquery-ui.min.js"></script>
         <script src="./js/popper.min.js"></script>
-        <script src="./js/bootstrap.min.js"></script>          
+        <script src="./js/bootstrap.min.js"></script>                  
         <script src="./js/jquery.ui.touch-punch.min.js"></script>
+        <script src="./js/sha1.js"></script>    
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">      
         <style>
             #loginRequired {
@@ -23,7 +24,8 @@
                 display: none;        
             }
             input.err {
-                background-color: #844;
+                border-color: #844;
+                border-width: 2px;
             }
             #puzzleTitle {
                 font-weight: bold;
@@ -217,9 +219,17 @@
         <div class="loginContent container">
             <div class="form-group row">
                 <div class="col col-lg-8 offset-lg-2">
-                    <label for="login">User name</label>
-                    <input type="text" id="login" class="form-control" placeholder="Your name" />
-                    <span id="loginRequired">login is required</span>
+                    <input type="text" id="email" class="form-control" placeholder="Write your email address here" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <input type="text" id="secret" class="form-control" placeholder="Write your secret here" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <input type="text" id="instructorEmail" class="form-control" placeholder="Write your instructor email address here" />
                 </div>
             </div>
             <div class="form-group row">
@@ -299,6 +309,12 @@ I freely give my consent to take part in this study.  I understand that by proce
             </div>
             <div class="form-group row">
                 <div class="col col-lg-8 offset-lg-2">
+                    <span>Instructor: </span>
+                    <span id="statsInstructor"></span>
+                </div>
+            </div>            
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
                     <span>Puzzles: </span>
                     <span id="statsPuzzles"></span>
                 </div>
@@ -374,7 +390,6 @@ I freely give my consent to take part in this study.  I understand that by proce
             var puzzleId = -1;
             var sessionId = "";
             var events = [];
-            var login = "";
             var attemptId = 0;
             var shfl = [];
 
@@ -727,39 +742,50 @@ I freely give my consent to take part in this study.  I understand that by proce
                     });                                   
                 }
                 $("#loginButton").click(function () {
-                    login = $("#login").val();
-                    if (!login) {
-                        $("#loginRequired").show();
-                        $("#login").addClass("err");
-                    } else {
-                        $.ajax({
-                            url:service,
-                            type:"POST",
-                            data: JSON.stringify({"login": login}),
-                            contentType:"application/json",
-                            dataType:"json",
-                            processData: false,
-                            success: function(data){                                
-                                studentId = data.id;
-                                sessionId = data.sessionId;
-                                $("#statsUserName").text(login + ", " + studentId);
-                                var loginEvent =
-                                    {
-                                        "timestamp": new Date().getTime(),
-                                        "ip": data.ip,
-                                        "type": "login",
-                                        "touchEvents": ('ontouchstart' in document.documentElement),
-                                        "w": $(window).width(),
-                                        "h": $(window).height(),
-                                    };    
-                                events.push(loginEvent);
-                                userName.val(login);
-                                loginContent.fadeOut(function () {
-                                    getPuzzle(studentId);
-                                });                                
-                            }
-                        });                     
-                    }
+                    var email = $("#email").val();
+                    var secret = $("#secret").val(); 
+                    var instructorEmail = $("#instructorEmail").val(); 
+                    var failed = false; 
+                    if (!email) {
+                        $("#email").addClass("err");
+                        failed = true;
+                    }                     
+                    if (!secret) {
+                        $("#secret").addClass("err");
+                        failed = true;
+                    }                    
+                    if (failed) return;
+                    var sid = sha1(email + '+' + secret);    
+                    var ssig = sha1(email);
+                    var skey = !instructorEmail ? "" : sha1(instructorEmail);
+                    $.ajax({
+                        url:service,
+                        type:"POST",
+                        data: JSON.stringify({"sid": sid, "ssig": ssig, "skey": skey}),
+                        contentType:"application/json",
+                        dataType:"json",
+                        processData: false,
+                        success: function(data){                                
+                            studentId = data.id;
+                            sessionId = data.sessionId;
+                            $("#statsUserName").text(email + ", " + studentId);
+                            $("#statsInstructor").text(instructorEmail || "<not specified>");
+                            var loginEvent =
+                                {
+                                    "timestamp": new Date().getTime(),
+                                    "ip": data.ip,
+                                    "type": "login",
+                                    "touchEvents": ('ontouchstart' in document.documentElement),
+                                    "w": $(window).width(),
+                                    "h": $(window).height(),
+                                };    
+                            events.push(loginEvent);
+                            userName.val(email);
+                            loginContent.fadeOut(function () {
+                                getPuzzle(studentId);
+                            });                                
+                        }
+                    });
                 });
                 $("#giveUpButton").click(function () {
                     giveUpMsg.show();
