@@ -1,0 +1,13 @@
+root:
+for (`init`; `cond`; `inc`) --> for (;`cond`;`inc`)
+
+for (`init`; `cond`; `inc`)
+{
+    ...
+} 
+--> 
+for (;`cond`;`inc`)
+{
+    `init`
+    ...
+}

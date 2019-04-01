@@ -1,0 +1,5 @@
+bin
+*.interp
+*.tokens
+.antlr
+lib/rascal-shell-stable.jar

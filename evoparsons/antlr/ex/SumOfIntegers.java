@@ -1,10 +1,10 @@
+package evoparsons.antlr.ex;
 /**
  * @author Evoparsons team 
  * @Sum Of Integers
  * @description This program repeatedly prompts the user to enter integer values until a zero is entered.
 It then displays the sum of all values that were entered.
  */
-package evoparsons.antlr.ex;
 import java.util.Scanner;
 public class SumOfIntegers {
     public static void main(String[] args){
