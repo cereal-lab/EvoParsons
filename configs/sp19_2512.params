@@ -11,4 +11,4 @@ evoparsons.broker.child.1=https://raw.githubusercontent.com/cereal-lab/EvoParson
 evoparsons.broker.child.2=https://raw.githubusercontent.com/cereal-lab/EvoParsons/Mark2/configs/sp19.pre.params
 evoparsons.lib=evoparsons.broker.ParsonsLibrary
 evoparsons.programs=https://github.com/cereal-lab/EvoParsons/branches/Mark2/ParsonsLibraries/Programs/Java-2018
-evoparsons.transforms=https://github.com/cereal-lab/EvoParsons/braches/Mark2/ParsonsLibraries/Transforms/Java-2018
+evoparsons.transforms=https://github.com/cereal-lab/EvoParsons/branches/Mark2/ParsonsLibraries/Transforms/Java-2018
