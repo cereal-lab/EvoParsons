@@ -18,7 +18,7 @@ Implement these method in the following order; main, getRandomArray, asString, r
 
 [#source#]
 */
-import java.util.Scanner; \\npublic class ArraysRotate {\\n   public static void main(String[] args){ \\n int[] data = getRandomArray(5); \\n System.out.println("Before rotation:\t" + asString(data));\\nrotateLeft(data);\\nSystem.out.println("After rotation:\t" + asString(data));\\n} //end of main method
+   public class ArraysRotate {\\n   public static void main(String[] args){ \\n int[] data = getRandomArray(5); \\n System.out.println("Before rotation:\t" + asString(data));\\nrotateLeft(data);\\nSystem.out.println("After rotation:\t" + asString(data));\\n} //end of main method
    public static int[] getRandomArray(int size){\\nint[] data = new int[size];\\nfor(int i = 0 ; i < data.length ; ){ \\n  data[i++] = (int)(Math.random()*10+1);\\n }\\nreturn data;\\n} // end of getRandomArray method
    public static String asString(int[] a){
       String result = "";

@@ -18,10 +18,10 @@ Implement these method in the following order; main, isPalindrom.
 [#source#]
 */
 public class StringsPalindrom {\\n  public static void main(String[] args){
-      String [] tests = { "radar", "level", "noon", "not", "neither", "nope" }; \\n boolean[] expectedOutcomes = { true, true, true, false, false, false };
+      String [] tests = { "radar", "level", "noon", "not", "neither", "nope" };
       for(int i = 0 ; i < tests.length ; i++){
          boolean observedOutcome = isPalindrom(tests[i]);
-         if(observedOutcome != expectedOutcomes[i]) { \\n System.out.println("Test #" + i + " failed! String was " + tests[i]);\\n }//end of if statement \\n } // end of for loop\\n} //end of main method
+         if(!observedOutcome) { \\n System.out.println("Test #" + (i + 1) + " failed! String was " + tests[i]);\\n }//end of if statement \\n } // end of for loop\\n} //end of main method
    public static boolean isPalindrom(String s){
       int low = 0, high = s.length() - 1;
       while (high > low) {

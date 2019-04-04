@@ -18,7 +18,7 @@ Implement these method in the following order; main, reverse, getRandomArray, as
 
 [#source#]
 */
-import java.util.Scanner; \\npublic class ArraysReverse {\\n   public static void main(String[] args){ \\nint[] myArray = getRandomArray(10);  \\nSystem.out.println("Before\t" + asString(myArray));  \\nreverse(myArray);  \\nSystem.out.println("After \t" + asString(myArray));  \\n} //end of main method
+   public class ArraysReverse {\\n   public static void main(String[] args){ \\nint[] myArray = getRandomArray(10);  \\nSystem.out.println("Before\t" + asString(myArray));  \\nreverse(myArray);  \\nSystem.out.println("After \t" + asString(myArray));  \\n} //end of main method
    public static void reverse(int[] array){
       for(int i = 0 ; i < array.length / 2 ; i++){
          int tmp = array[i];

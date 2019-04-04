@@ -9,7 +9,7 @@ java
 NumbersFibonacci
 
 [#description#]
-This program prompts the user to enter a strictly positive integer value, then displays the corresponding Fibonacci number.
+This program prompts the user to enter a strictly positive integer value (greater than zero), then displays the corresponding Fibonacci number.
 The Fibonacci series is defined as follows; Fib(1) = 1, Fib(2) = 1, and Fib(n) = Fib(n-1) + Fib(n-2).
 Please note that this version uses recursion to compute its result.
 The method getIntFromUser creates a new Scanner, reads an int value from the user, then returns it.

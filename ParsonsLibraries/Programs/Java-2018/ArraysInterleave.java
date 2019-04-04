@@ -19,7 +19,7 @@ Implement these method in the following order; main, interleave, asString, getRa
 
 [#source#]
 */
-import java.util.Scanner; \\npublic class ArraysInterleave {\\n   public static void main(String[] args){ \\n int size = 5;\\n  int[] array1 = getRandomArray(size), array2 = getRandomArray(size);\\n   System.out.println("Array #1\t" + asString(array1));\\n   System.out.println("Array #2\t" + asString(array2));\\n   System.out.println("Interleaved array \t" + asString(interleave(array1, array2)));\\n } //end of main method
+   public class ArraysInterleave {\\n   public static void main(String[] args){ \\n int size = 5;\\n  int[] array1 = getRandomArray(size), array2 = getRandomArray(size);\\n   System.out.println("Array #1\t" + asString(array1));\\n   System.out.println("Array #2\t" + asString(array2));\\n   System.out.println("Interleaved array \t" + asString(interleave(array1, array2)));\\n } //end of main method
    public static int[] interleave(int[] a1, int[] a2){  \\n int[]  a3 = new int[a1.length + a2.length]; \\n int indexA3 = 0, indexA1 = 0, indexA2 = 0;
       while(indexA3 < a3.length){ \\n a3[indexA3++] = a1[indexA1++]; \\n a3[indexA3++] = a2[indexA2++]; \\n } // end of while loop \\n return a3; \\n } // end of interleave method
    public static String asString(int[] a){

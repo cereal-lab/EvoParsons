@@ -10,17 +10,15 @@ StringsRemoveExtraSpaces
 
 [#description#]
 This program replaces consecutive spaces in a string by a single space.
-The main method calls the removeExtraSpaces method on a series of strings used as tests.
-It displays a message only if one of the tests fails.
-In the main method, declare inputs before to declare outputs.
+The main method calls the removeExtraSpaces method on a series of strings.
+Then it displays the strings after extra spaces have been removed.
 Implement these method in the following order; main, removeExtraSpaces.
 
 [#source#]
 */
 public class StringsRemoveExtraSpaces {\\n  public static void main(String[] args){
-      String[] inputs = { "   something", "something  ", "some     thing"};\\nString[] outputs = {" something", "something ", "some thing"};
-      for(int i = 0 ; i < inputs.length ; i++){ \\n String result = removeExtraSpaces(inputs[i]);
-         if(result.compareTo(outputs[i]) != 0) { \\n System.out.println("Test #" + i + " failed, result was " + result); \\n } \\n } // end of for loop \\n} //end of main method
+      String[] inputs = { "   something", "something  ", "some     thing"};
+      for(int i = 0 ; i < inputs.length ; i++){ \\n String result = removeExtraSpaces(inputs[i]); \\n System.out.println(result);\\n } // end of for loop \\n} //end of main method
    public static String removeExtraSpaces(String s){
       String result = "";
       for(int index = 0; index < s.length()-1 ; index++){

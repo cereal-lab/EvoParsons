@@ -17,7 +17,7 @@ Implement these methods in the following order; main, addVectors, getRandomArray
 
 [#source#]
 */
-import java.util.Scanner; \\npublic class ArraysAddition { \\n public static void main(String[] args){
+   public class ArraysAddition { \\n public static void main(String[] args){
       int size = 5; \\n int[] data1 = getRandomArray(size), data2 = getRandomArray(size); \\n System.out.println("Vector #1 = " + asString(data1)); \\nSystem.out.println("Vector #2 = " + asString(data2));
       String res = asString(addVectors(data1, data2));
       System.out.println("Their sum = " +res); \\n }

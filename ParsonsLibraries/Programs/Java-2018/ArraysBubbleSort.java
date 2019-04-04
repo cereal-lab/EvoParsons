@@ -20,10 +20,10 @@ Implement these methods in the following order; main, sort, asString, getRandomA
 
 [#source#]
 */
-import java.util.Scanner; \\n public class ArraysBubbleSort { \\n public static void main(String[] args){
+   public class ArraysBubbleSort { \\n public static void main(String[] args){
       int[] myArray = getRandomArray(10);
       System.out.println("Before\t" + asString(myArray)); \\n sort(myArray); \\n System.out.println("After \t" + asString(myArray)); \\n } //end of main method
-   public static void sort(int[] array){  \\n boolean didWeSwap; \\n do{  \\n didWeSwap = false;  
+   public static void sort(int[] array){  \\n boolean didWeSwap; \\n do{  \\n didWeSwap = false;
       for(int i=0 ; i < array.length - 1 ; i++) {
             if(array[i] > array[i+1]){
                int tmp = array[i];

@@ -16,7 +16,7 @@ Implement these method in the following order; main, displaySmallestLargest, get
 
 [#source#]
 */
-import java.util.Scanner; \\npublic class ArraysSmallestLargest { \\n public static void main(String[] args){ \\n int size = 10; \\n int[] data = getRandomArray(size); \\n displaySmallestLargest(data); \\n } //end of main method
+   public class ArraysSmallestLargest { \\n public static void main(String[] args){ \\n int size = 10; \\n int[] data = getRandomArray(size); \\n displaySmallestLargest(data); \\n } //end of main method
    public static void displaySmallestLargest(int[] array){
       int smallest = array[0], largest = array[0];
       for(int i = 1 ; i < array.length ; i++){

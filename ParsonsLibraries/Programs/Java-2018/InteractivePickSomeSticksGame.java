@@ -19,7 +19,7 @@ Implement these method in the following order; main, player, getRandomInt.
 
 [#source#]
 */
-import java.util.Scanner;\\npublic class InteractivePickSomeSticksGame{
+   public class InteractivePickSomeSticksGame{
    public static void main(String[] args){
       int numberOfSticks = 100, turn = 1, activePlayer = 1;
       do{ \\n System.out.print(numberOfSticks + " sticks left, \t"); \\n numberOfSticks -= player(activePlayer, numberOfSticks); \\n activePlayer = (activePlayer == 1) ? 2 : 1; \\n }while(numberOfSticks > 0); \\n } // end of main method

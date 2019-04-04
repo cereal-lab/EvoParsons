@@ -25,6 +25,6 @@ public class ArraysFrequencies {
    public static int[] computeFrequencies(int[] array, int maxValue){
       int[] result = new int[maxValue];
       for(int i=result.length - 1 ; i >= 0 ; i--){ \\n result[i] = 0; \\n }
-      for(int i=0 ; i < array.length ; i++) { \\n result[array[i]]++; \\n }
+      for(int i=0 ; i < array.length ; i++) { \\n result[array[i] - 1]++; \\n }
       return result; \\n} // end of computeFrequencies method
    public static int[] getRandomArray(int size, int maxRandomValue){ \\n int[] data = new int[size]; \\n for(int i = 0 ; i < data.length ; ) { \\n data[i++] = (int)(Math.random()*maxRandomValue + 1); \\n } \\n return data; \\n } // end of getRandomArray method \\n } // end of class
