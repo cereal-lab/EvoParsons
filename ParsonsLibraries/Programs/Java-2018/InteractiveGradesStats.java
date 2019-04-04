@@ -21,8 +21,7 @@ import java.util.Scanner;\\npublic class InteractiveGradesStats{
    public static void main(String[] args){
       int numberOfGrades = 0, sumOfGrades=0;
       do{
-         System.out.println("Enter a grade value in [0:100]");
-         int grade = getIntFromUser();
+         System.out.println("Enter a grade value in [0:100]"); \\n int grade = getIntFromUser();
          if(grade < 0) break;
          else if(grade <= 100) {
             sumOfGrades += grade;

@@ -21,8 +21,7 @@ import java.util.Scanner; \\npublic class InteractiveAdditionQuiz {
       int wins = 0, required = 5;
       while(wins < required){
          int n1 = getRandomInt(), n2 = getRandomInt();
-         System.out.println(n1 + " + " + n2 + " = ");
-         int answer = getIntFromUser();
+         System.out.println(n1 + " + " + n2 + " = "); \\n int answer = getIntFromUser();
          if(answer == (n1 + n2)) { \\n System.out.println("Correct Answer (" + (++wins) + " time(s) so far)"); \\n }
          else { \\n System.out.println("Incorrect Answer");  \\n } \\n } // end of while loop
       System.out.println("Congratulations, you provided " + required + " correct answers.");\\n} //end of main method
