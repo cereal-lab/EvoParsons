@@ -1,6 +1,5 @@
 //<fragment>
-import java.util.Scanner; 
-public class ArraysReverse {
+   public class ArraysReverse {
    public static void main(String[] args){ 
 int[] myArray = getRandomArray(10);  
 System.out.println("Before\t" + asString(myArray));  

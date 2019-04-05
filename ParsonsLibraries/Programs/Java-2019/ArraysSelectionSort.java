@@ -1,6 +1,5 @@
 //<fragment>
-import java.util.Scanner; 
-public class ArraysSelectionSort {
+  public class ArraysSelectionSort {
 //</fragment>
 //<fragment>
 	public static void main(String[] args){
@@ -17,22 +16,22 @@ public class ArraysSelectionSort {
       for(int key = 0 ; key < array.length - 1 ; key++){
 //</fragment>
 //<fragment>
-         int smallest = array[key];
+         int keyElement = array[key];
 //</fragment>
 //<fragment>
          for(int i = key + 1 ; i < array.length ; i++){
 //</fragment>
 //<fragment>
-            if(array[key] > array[i]){
+            if(keyElement > array[i]){
 //</fragment>
 //<fragment>
-               int tmp = array[key];
+               int tmp = keyElement;
 //</fragment>
 //<fragment>
                array[key] = array[i];
 //</fragment>
 //<fragment>
-               array[i] = tmp;
+               array[i] = tmp; keyElement = array[key];
 //</fragment>
 //<fragment>
             } // end of if statement

@@ -1,6 +1,5 @@
 //<fragment>
-import java.util.Scanner; 
-public class ArraysInterleave {
+   public class ArraysInterleave {
    public static void main(String[] args){ 
  int size = 5;
   int[] array1 = getRandomArray(size), array2 = getRandomArray(size);

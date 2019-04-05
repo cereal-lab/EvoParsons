@@ -1,6 +1,5 @@
 //<fragment>
-import java.util.Scanner;
-public class NumbersDisplayDigits{
+   public class NumbersDisplayDigits{
 //</fragment>
 //<fragment>
    public static void main(String[] args){   

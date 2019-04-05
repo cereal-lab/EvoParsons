@@ -4,16 +4,11 @@ public class StringsRemoveExtraSpaces {
 //</fragment>
 //<fragment>
       String[] inputs = { "   something", "something  ", "some     thing"};
-String[] outputs = {" something", "something ", "some thing"};
 //</fragment>
 //<fragment>
       for(int i = 0 ; i < inputs.length ; i++){ 
- String result = removeExtraSpaces(inputs[i]);
-//</fragment>
-//<fragment>
-         if(result.compareTo(outputs[i]) != 0) { 
- System.out.println("Test #" + i + " failed, result was " + result); 
- } 
+ String result = removeExtraSpaces(inputs[i]); 
+ System.out.println(result);
  } // end of for loop 
 } //end of main method
 //</fragment>

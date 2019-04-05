@@ -1,6 +1,5 @@
 //<fragment>
-import java.util.Scanner;
-public class InteractivePickSomeSticksGame{
+   public class InteractivePickSomeSticksGame{
 //</fragment>
 //<fragment>
    public static void main(String[] args){

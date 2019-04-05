@@ -1,6 +1,5 @@
 //<fragment>
-import java.util.Scanner; 
-public class ArraysAddition { 
+   public class ArraysAddition { 
  public static void main(String[] args){
 //</fragment>
 //<fragment>

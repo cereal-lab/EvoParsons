@@ -12,10 +12,8 @@ public class InteractiveGradesStats{
       do{
 //</fragment>
 //<fragment>
-         System.out.println("Enter a grade value in [0:100]");
-//</fragment>
-//<fragment>
-         int grade = getIntFromUser();
+         System.out.println("Enter a grade value in [0:100]"); 
+ int grade = getIntFromUser();
 //</fragment>
 //<fragment>
          if(grade < 0) break;
