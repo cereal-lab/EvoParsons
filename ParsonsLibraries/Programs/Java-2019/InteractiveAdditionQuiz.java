@@ -15,10 +15,8 @@ public class InteractiveAdditionQuiz {
          int n1 = getRandomInt(), n2 = getRandomInt();
 //</fragment>
 //<fragment>
-         System.out.println(n1 + " + " + n2 + " = ");
-//</fragment>
-//<fragment>
-         int answer = getIntFromUser();
+         System.out.println(n1 + " + " + n2 + " = "); 
+ int answer = getIntFromUser();
 //</fragment>
 //<fragment>
          if(answer == (n1 + n2)) { 

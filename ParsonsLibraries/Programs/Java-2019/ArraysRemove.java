@@ -1,6 +1,5 @@
 //<fragment>
-import java.util.Scanner; 
-public class ArraysRemove {
+   public class ArraysRemove {
   public static void main(String[] args){
 //</fragment>
 //<fragment>

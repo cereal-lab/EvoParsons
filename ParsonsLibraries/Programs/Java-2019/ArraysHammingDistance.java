@@ -2,7 +2,7 @@
 public class ArraysHammingDistance { 
  public static void main(String[] args){   
   int[] array1 = getRandomArray(5), array2 = getRandomArray(5); 
-  System.out.println("Hamming between " + asString(array1) + " and " + asString(array2) + " is " + hamming(array1,array2));
+  System.out.println("Hamming distance between " + asString(array1) + " and " + asString(array2) + " is " + hamming(array1,array2));
  } //end of main method
 //</fragment>
 //<fragment>

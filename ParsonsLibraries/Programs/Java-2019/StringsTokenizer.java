@@ -1,7 +1,7 @@
 //<fragment>
 public class StringsTokenizer {
    public static void main(String[] args){   
-String input = "The result of tokenizing this string is...";
+String input = "The result of tokenizing this string is";
 System.out.println(input);
 tokenize(input);
 } //end of main method

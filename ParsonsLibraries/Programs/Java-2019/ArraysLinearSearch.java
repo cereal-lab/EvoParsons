@@ -1,6 +1,5 @@
 //<fragment>
-import java.util.Scanner; 
-public class ArraysLinearSearch {
+   public class ArraysLinearSearch {
 //</fragment>
 //<fragment>
    public static void main(String[] args){  
@@ -8,7 +7,7 @@ int size = 10;
 int[] data = getRandomArray(size);
 //</fragment>
 //<fragment>
-      int indexRandom = getRandomInt(size);  
+      int indexRandom = getRandomInt(size) - 1;  
 int indexFound = search(data, data[indexRandom]);
 //</fragment>
 //<fragment>

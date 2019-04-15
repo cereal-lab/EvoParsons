@@ -3,8 +3,7 @@ public class StringsPalindrom {
   public static void main(String[] args){
 //</fragment>
 //<fragment>
-      String [] tests = { "radar", "level", "noon", "not", "neither", "nope" }; 
- boolean[] expectedOutcomes = { true, true, true, false, false, false };
+      String [] tests = { "radar", "level", "noon", "not", "neither", "nope" };
 //</fragment>
 //<fragment>
       for(int i = 0 ; i < tests.length ; i++){
@@ -13,8 +12,8 @@ public class StringsPalindrom {
          boolean observedOutcome = isPalindrom(tests[i]);
 //</fragment>
 //<fragment>
-         if(observedOutcome != expectedOutcomes[i]) { 
- System.out.println("Test #" + i + " failed! String was " + tests[i]);
+         if(!observedOutcome) { 
+ System.out.println("Test #" + (i + 1) + " failed! String was " + tests[i]);
  }//end of if statement 
  } // end of for loop
 } //end of main method

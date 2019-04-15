@@ -1,6 +1,5 @@
 //<fragment>
-import java.util.Scanner; 
-public class ArraysRotate {
+   public class ArraysRotate {
    public static void main(String[] args){ 
  int[] data = getRandomArray(5); 
  System.out.println("Before rotation:\t" + asString(data));

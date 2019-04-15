@@ -1,6 +1,5 @@
 //<fragment>
-import java.util.Scanner; 
- public class ArraysBubbleSort { 
+   public class ArraysBubbleSort { 
  public static void main(String[] args){
 //</fragment>
 //<fragment>
@@ -16,7 +15,7 @@ import java.util.Scanner;
    public static void sort(int[] array){  
  boolean didWeSwap; 
  do{  
- didWeSwap = false;  
+ didWeSwap = false;
 //</fragment>
 //<fragment>
       for(int i=0 ; i < array.length - 1 ; i++) {

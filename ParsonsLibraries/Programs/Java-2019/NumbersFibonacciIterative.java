@@ -11,10 +11,11 @@ public class NumbersFibonacciIterative{
    public static long fibonacci(int value){
 //</fragment>
 //<fragment>
-      int current = 1, previous = 0, counter = 1;
+      int current = 1, previous = 1; 
+ if (value <= 1) return value;
 //</fragment>
 //<fragment>
-      while(counter++ < value){
+      for(int i = 2; i < value; i++){
 //</fragment>
 //<fragment>
          int next = current + previous;

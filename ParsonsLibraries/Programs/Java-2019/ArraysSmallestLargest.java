@@ -1,6 +1,5 @@
 //<fragment>
-import java.util.Scanner; 
-public class ArraysSmallestLargest { 
+   public class ArraysSmallestLargest { 
  public static void main(String[] args){ 
  int size = 10; 
  int[] data = getRandomArray(size); 

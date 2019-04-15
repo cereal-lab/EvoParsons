@@ -26,7 +26,7 @@ int[] frequencies = computeFrequencies(data, maxRandomValueInArray);
 //</fragment>
 //<fragment>
       for(int i=0 ; i < array.length ; i++) { 
- result[array[i]]++; 
+ result[array[i] - 1]++; 
  }
 //</fragment>
 //<fragment>

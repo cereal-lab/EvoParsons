@@ -11,8 +11,8 @@ public class NumbersFibonacci{
    public static long fibonacci(int value){
 //</fragment>
 //<fragment>
-      if((value==1)||(value==2)){ 
- return 1; 
+      if(value <= 1){ 
+ return value; 
  }
 //</fragment>
 //<fragment>
