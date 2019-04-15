@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>Evoparsons Puzzles</title>      
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">    
+        <!-- Latest compiled and minified JavaScript -->
+        <link rel="stylesheet" href="./css/bootstrap.min.css">
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="./js/jquery.min.js"></script>
+        <script src="./js/jquery-ui.min.js"></script>
+        <script src="./js/popper.min.js"></script>
+        <script src="./js/bootstrap.min.js"></script>                  
+        <script src="./js/jquery.ui.touch-punch.min.js"></script>
+        <script src="./js/sha1.js"></script>    
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">      
+        <style>
+            input.err {
+                border-color: #844;
+                border-width: 2px;
+            }
+            #puzzleTitle {
+                font-weight: bold;
+                font-size: 120%;
+                line-height: 1.2;
+            }        
+            .loginContent, #dashboard {
+                margin-top: 2ex;
+            }     
+            #dashboard {
+                display: none;
+            }
+            #message {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                display: none;
+            }
+            #authFailedMsg, #errMsg {
+                margin: 0 auto;
+                display: none;
+            }          
+            .formOfConsent {
+                padding: 1ex 1em;
+                font-size: 80%;
+            }
+
+            .formOfConsent b {
+                font-size: initial;
+            }
+
+            #students {
+                display: none;
+            }
+
+            .evHeader {
+                line-height: 0.75;
+                color: white;
+                font-size: 95%;
+            }
+
+            .evHeader a {
+                color:white;
+                text-decoration: underline;
+                font-size: 65%;
+            }
+
+            .evHeader a:hover {
+                color: lightgray;
+            }
+
+            .st:nth-child(even) {
+                background-color: lightgray;
+            }
+
+            .st.templ {
+                font-weight: bold;
+            }
+            .st > div:first-child {
+                font-weight: bold;
+            }            
+
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container">
+                <div class="col col-lg-8 offset-lg-2 justify-content-between navbar-brand" style="padding-left: 5px; padding-bottom: 0;">
+                    <div style="display: inline-block; vertical-align: top;">
+                        <a href="#" style="margin-right: .1em; color: white">
+                            <i class="fas fa-puzzle-piece" style="font-size: 120%"></i>
+                        </a>
+                    </div>
+                    <div class="evHeader" style="display: inline-block">
+                        <span>Evoparsons Puzzles</span> <br/>
+                        <span><a href="https://youtu.be/CZtKSXCGK8c" target="_blank">1st time using this software? Watch this video</a></span>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="loginContent container">
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <input type="text" id="email" class="form-control" placeholder="Instructor email here" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <input type="password" id="secret" class="form-control" placeholder="Allocated pass phrase" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col col-lg-8 offset-lg-2">
+                    <button class="btn btn-primary" type="button" id="loginButton">Login</button>                    
+                    <!--<label style="cursor:pointer"><input type="checkbox" id="consent" />I agree to terms bellow</label>-->                    
+                </div>
+            </div>
+        </div>
+        <div id="dashboard" class="container">
+            <div class="form-group row">                
+                <div class="col col-lg-8 offset-lg-2">
+                    <button type="button" class="btn btn-primary" id="studCsv">Upload csv, 1 column with emails</button>
+                    <input type="file" id="studCsvFile" style="display:none" />
+                </div>
+            </div>
+            <div class="form-group row">
+                <div id="students" class="col col-lg-8 offset-lg-2">
+                    <div class="st templ row d-none d-sm-flex">
+                        <div class="email col-12 col-sm-4"></div>
+                        <div class="puzzles col-auto col-sm-2">solved/seen</div>
+                        <div class="duration col-auto col-sm-2">practice</div>
+                        <div class="firstSession col-auto col-sm-4">first session</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="message">
+            <div class="container" style="padding-top: 1ex;">
+            <div class="row">
+                <div class="alert alert-danger col col-lg-8 offset-lg-2" role="alert" id="authFailedMsg">
+                    <strong>Login failed!</strong> Check your email and secret.
+                </div>
+                <div class="alert alert-danger col col-lg-8 offset-lg-2" role="alert" id="errMsg">
+                    <strong>Something went wrong!</strong> Try again later.
+                </div>    
+            </div>
+            </div>
+        </div>         
+        <script>
+            var service = "/api/instructor"
+            var instructorId = -1;
+            var iid;
+            var isig;
+            var msg = $("#message");
+            var authFailedMsg = $("#authFailedMsg");
+            var errMsg = $("#errMsg");
+
+            $(function () {
+                var loginContent = $(".loginContent");
+                var dashboard = $("#dashboard");
+                $("#loginButton").click(function () {
+                    var email = $("#email").val();
+                    var secret = $("#secret").val(); 
+                    var failed = false; 
+                    if (!email) {
+                        $("#email").addClass("err");
+                        failed = true;
+                    }                     
+                    if (!secret) {
+                        $("#secret").addClass("err");
+                        failed = true;
+                    }                    
+                    if (failed) return;
+                    iid = sha1(email) + sha1(secret);    
+                    isig = sha1(email);
+                    $.ajax({
+                        url:service,
+                        type:"POST",
+                        data: JSON.stringify({"iid": iid, "isig": isig}),
+                        contentType:"application/json",
+                        dataType:"json",
+                        processData: false,
+                        success: function(data){        
+                            iid = data.iid;                        
+                            isig = data.isig;
+                            loginContent.fadeOut(function () {
+                                dashboard.fadeIn();
+                            });                                
+                        }
+                    }).fail(function (jqXHR, textStatus) {
+                        if (jqXHR.status == 403) 
+                        {
+                            authFailedMsg.show();
+                            msg.fadeIn('slow');
+                            setTimeout(function () {
+                                msg.fadeOut(function () {
+                                    authFailedMsg.hide();
+                                });                            
+                            }, 4000);                            
+                        } else {
+                            console.log(textStatus);
+                            console.log(jqXHR);
+                            errMsg.show();
+                            msg.fadeIn('slow');
+                            setTimeout(function () {
+                                msg.fadeOut(function () {
+                                    errMsg.hide();
+                                });                            
+                            }, 4000);                            
+                        }
+                    });
+                });
+
+                var fileInput = $("#studCsvFile");
+                $("#studCsv").click(function () {
+                    fileInput.click();
+                });
+                
+                var stHolder = $("#students");
+                var stLine = $(".st.templ:not(.head)");
+                fileInput.change(function () {
+                    var file = this.files[0];
+                    const reader = new FileReader()
+                    reader.onload = function (event){                        
+                            var students = event.target.result.split(/\r?\n/);
+                            var ssigs = [];
+                            var ssigsMap = {};
+                            $.each(students, function (i, email) {
+                                var ssig = sha1(email);
+                                ssigs.push(ssig);
+                                ssigsMap[ssig] = email;
+                            });
+                            $.ajax({
+                                url:service + "/students",
+                                type:"POST",
+                                data: JSON.stringify({"iid": iid, "isig": isig, "ssigs": ssigs}),
+                                contentType:"application/json",
+                                dataType:"json",
+                                processData: false,
+                                success: function(data){    
+                                    stHolder.find(".st:not(.templ)").remove();
+                                    for (var ssig in ssigsMap) 
+                                    {
+                                        var line = stLine.clone();
+                                        line.find(".email").text(ssigsMap[ssig]).attr("ssig", ssig);
+                                        var d = data.stats[ssig];
+                                        if (d && d.puzzlesSeen)
+                                        {
+                                            line.find(".puzzles").text("" + d.puzzlesSolved + "/" + d.puzzlesSeen);
+                                            var durationSeconds = Math.round(d.duration / 1000);
+                                            var durationMinutes = Math.round(durationSeconds / 60);
+                                            line.find(".duration").text(durationMinutes == 0 ? "1min" : (durationMinutes + " mins"));
+                                            var date = new Date(d.started);
+                                            var df = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + 
+                                                ((date.getMinutes() < 10) ? ("0" + date.getMinutes()) : ("" + date.getMinutes()));
+                                            line.find(".firstSession").text(df);
+                                        } else {
+                                            line.find(".puzzles").text("");
+                                            line.find(".duration").text("");
+                                            line.find(".firstSession").text("");
+                                        }
+                                        line.removeClass("templ").removeClass('d-none').removeClass('d-sm-flex').appendTo(stHolder);
+                                        fileInput.val(null);
+                                    }
+                                    stHolder.show();
+                                }
+                            }).fail(function (jqXHR, textStatus) {
+                                console.log(textStatus);
+                                console.log(jqXHR);
+                                errMsg.show();
+                                msg.fadeIn('slow');
+                                setTimeout(function () {
+                                    msg.fadeOut(function () {
+                                        errMsg.hide();
+                                    });                            
+                                }, 4000);                            
+                            });
+                        }
+                    reader.onerror = function (error){ console.err(error); }
+                    reader.readAsText(file)                    
+                });               
+            });
+        </script>
+    </body>
+</html>

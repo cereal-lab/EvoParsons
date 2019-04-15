@@ -8,7 +8,7 @@ import java.util.Formatter;
 
 public class Auth implements Serializable {
     private static final long serialVersionUID = 1L;
-    public final int id;
+    //public final int id;
     public final String sid; 
     public final String ssig; 
     private String skey;
@@ -19,8 +19,8 @@ public class Auth implements Serializable {
         if (skey != null && !skey.isEmpty())
             this.skey = skey;
     }
-    public Auth(int id, String sid, String ssig, String skey) {
-        this.id = id; 
+    public Auth(String sid, String ssig, String skey) {
+        //this.id = id; 
         this.sid = sid; 
         this.ssig = ssig; 
         this.skey = skey;

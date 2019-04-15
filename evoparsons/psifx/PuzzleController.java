@@ -69,7 +69,7 @@ public class PuzzleController implements BiInitializable {
 
     private void onPuzzleArrival(ParsonsPuzzle currentPuzzle) {
         //ParsonsPuzzle currentPuzzle = getter.getValue();
-        System.out.printf("[Puzzle.onPuzzleArrival] Puzzle (%d, %d) obtained%n", AuthController.studentId, currentPuzzle.id);            
+        System.out.printf("[Puzzle.onPuzzleArrival] Puzzle (%d, %d) obtained%n", AuthController.sid, currentPuzzle.id);            
         Platform.runLater(() -> 
         {
             Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> 
@@ -110,7 +110,7 @@ public class PuzzleController implements BiInitializable {
         Task<ParsonsPuzzle> getter = new Task<ParsonsPuzzle>() {
             @Override 
             protected ParsonsPuzzle call() throws Exception {
-                return AuthController.broker.getParsonsPuzzle(AuthController.studentId);
+                return AuthController.broker.getParsonsPuzzle(AuthController.sid);
             }
         };
         getter.setOnSucceeded(state -> onPuzzleArrival(getter.getValue())); 
@@ -316,7 +316,7 @@ public class PuzzleController implements BiInitializable {
             solvedPuzzleCount++;
             long currentPuzzleDurationMs = currentPuzzleEndTimeMs - currentPuzzleStartTimeMs;
             ParsonsEvaluation eval = 
-                new ParsonsEvaluation(AuthController.studentId, currentPuzzle.id, moves, currentPuzzleDurationMs, ((double)moves/currentPuzzle.getPhenotypeSize()), false, System.currentTimeMillis());            
+                new ParsonsEvaluation(AuthController.sid, currentPuzzle.id, moves, currentPuzzleDurationMs, ((double)moves/currentPuzzle.getPhenotypeSize()), false, System.currentTimeMillis());            
             connectionProgress.setVisible(true);
             sendEval(eval, 0);
         } else {
@@ -334,7 +334,7 @@ public class PuzzleController implements BiInitializable {
         long currentPuzzleEndTimeMs = System.currentTimeMillis();
         long currentPuzzleDurationMs = currentPuzzleEndTimeMs - currentPuzzleStartTimeMs;
         ParsonsEvaluation eval = 
-            new ParsonsEvaluation(AuthController.studentId, currentPuzzle.id, moves, currentPuzzleDurationMs, ((double)moves / currentPuzzle.getPhenotypeSize()), true, System.currentTimeMillis());            
+            new ParsonsEvaluation(AuthController.sid, currentPuzzle.id, moves, currentPuzzleDurationMs, ((double)moves / currentPuzzle.getPhenotypeSize()), true, System.currentTimeMillis());            
         connectionProgress.setVisible(true);
         sendEval(eval, 0);        
     }

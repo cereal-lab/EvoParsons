@@ -11,14 +11,14 @@ import evoparsons.rmishared.ParsonsPuzzle;
 public class PuzzleEvaluation implements Serializable {
 	private static final long serialVersionUID = 1L;
 	public final ParsonsGenotype genotype;
-	public final Map<Integer, ParsonsEvaluation> evaluations;	
+	public final Map<String, ParsonsEvaluation> evaluations;	
 	public final int generation;		
 	public PuzzleEvaluation(ParsonsGenotype genotype, int generation) {
 		this.genotype = genotype;
 		this.evaluations = new HashMap<>();
 		this.generation = generation;
 	}	
-	public PuzzleEvaluation(ParsonsGenotype genotype, Map<Integer, ParsonsEvaluation> evaluations, int generation) {
+	public PuzzleEvaluation(ParsonsGenotype genotype, Map<String, ParsonsEvaluation> evaluations, int generation) {
 		this.genotype = genotype;
 		this.evaluations = evaluations;
 		this.generation = generation;

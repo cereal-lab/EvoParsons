@@ -33,23 +33,21 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 			this.localAuth = localAuth;
 		}
 	}	
+
 	private Log log;
 	private Library lib;
 	private Map<String, Broker> brokers;
-	private Map<String, HashSet<Integer>> brokerStudents;
-	private Map<Integer, StudentData> studentIdToBroker;
-	private Map<String, Integer> loginToStudentId;
+	private Map<String, HashSet<String>> brokerToSids;
+	private Map<String, StudentData> sidToBroker;
 	private String groupsFile;
 	private String name;
 	private static class SerializedData implements Serializable {
 		private static final long serialVersionUID = 1L;
-		public final Map<String, HashSet<Integer>> brokerStudents;
-		public final Map<Integer, StudentData> studentIdToBroker;
-		public final Map<String, Integer> loginToStudentId;
-		public SerializedData(Map<String, HashSet<Integer>> brokerStudents,  Map<Integer, StudentData> studentIdToBroker, Map<String, Integer> loginToStudentId) {
-			this.brokerStudents = brokerStudents;
-			this.studentIdToBroker = studentIdToBroker;
-			this.loginToStudentId = loginToStudentId;
+		public final Map<String, HashSet<String>> brokerToSids;
+		public final Map<String, StudentData> sidToBroker;
+		public SerializedData(Map<String, HashSet<String>> brokerToSids,  Map<String, StudentData> sidToBroker) {
+			this.brokerToSids = brokerToSids;
+			this.sidToBroker = sidToBroker;
 		}
 	}
 
@@ -60,10 +58,9 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 			Paths.get(config.getOutputFolder(),
 				config.get("evoparsons.broker.file", DEFAULT_GROUPS_BROKER_FILE))
 				.toString();
-		SerializedData data = Utils.<SerializedData>loadFromFile(log, groupsFile, () -> new SerializedData(new HashMap<>(), new HashMap<>(), new HashMap<>()));
-		brokerStudents = data.brokerStudents;
-		studentIdToBroker = data.studentIdToBroker;
-		loginToStudentId = data.loginToStudentId;
+		SerializedData data = Utils.<SerializedData>loadFromFile(log, groupsFile, () -> new SerializedData(new HashMap<>(), new HashMap<>()));
+		brokerToSids = data.brokerToSids;
+		sidToBroker = data.sidToBroker;
 		this.lib = config.<Library>getInstanceOpt("evoparsons.lib", config).orElse(null);
 		List<Broker> brokers = 
 			config.getList("evoparsons.broker.child.")
@@ -71,8 +68,8 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 				.map(cf -> Config.FromFile(config, cf).init(this))
 				.collect(Collectors.toList());
 		brokers.stream().forEach(broker -> {
-			if (!brokerStudents.containsKey(broker.getName()))
-				brokerStudents.put(broker.getName(), new HashSet<>());
+			if (!brokerToSids.containsKey(broker.getName()))
+				brokerToSids.put(broker.getName(), new HashSet<>());
 		});
 		if (brokers.size() == 0) {
 			log.err("[GroupsBroker] evoparsons.broker.child was not specified");
@@ -85,73 +82,78 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 		public T e(Broker broker, StudentData data) throws RemoteException;
 	}
 
-	private <T> T exec(int studentId, ExecF<T> f) throws RemoteException
+	private <T> T exec(String sid, ExecF<T> f) throws RemoteException
 	{
-		final StudentData data = studentIdToBroker.get(studentId);
+		final StudentData data = sidToBroker.get(sid);
 		if (data == null) {
-			log.err("[GroupsBroker] No group for student %d", studentId);
+			log.err("[GroupsBroker] No group for student %s", sid);
 			return null; //TODO think
 		}
 		final Broker broker = brokers.get(data.ui);
 		if (broker == null) {
-			log.err("[GroupsBroker] No broker for student %d. Name: %s", studentId, data.ui);
+			log.err("[GroupsBroker] No broker for student %s. Name: %s", sid, data.ui);
 			return null;
 		}
 		return f.e(broker, data);
 	}
 
 	@Override
-	public synchronized ParsonsPuzzle getParsonsPuzzle(int studentId) throws RemoteException {
-		return exec(studentId, (b, data) -> 
-				b.getUIInterface().getParsonsPuzzle(data.localAuth.id));
+	public synchronized ParsonsPuzzle getParsonsPuzzle(String sid) throws RemoteException {
+		return exec(sid, (b, data) -> b.getUIInterface().getParsonsPuzzle(data.localAuth.sid));
 	}
 
 	private Auth allocateStudent(String sid, String ssig, String skey) throws RemoteException {
-		String selectedBrokerName = brokerStudents.entrySet().stream()
+		String selectedBrokerName = brokerToSids.entrySet().stream()
 			.min(Comparator.comparing(entry -> entry.getValue().size()))
 			.map(e -> e.getKey()).orElse(null);
 		Broker fullBroker = brokers.get(selectedBrokerName);
 		BrokerUIInterface broker = fullBroker.getUIInterface();
-		Auth localAuth = broker.getStudentID(sid, ssig, skey);		
-		StudentData data = new StudentData(selectedBrokerName, studentIdToBroker.size(), localAuth);
-		Auth auth = new Auth(data.id, sid, ssig, skey);
-		log.log("New student: %s --> %d --> %d [%s]", sid, data.id, data.localAuth.id, selectedBrokerName);
-		loginToStudentId.put(sid, data.id);			
-		studentIdToBroker.put(data.id, data);
-		brokerStudents.get(selectedBrokerName).add(data.id);
+		Auth auth = broker.authenticateStudent(sid, ssig, skey);		
+		if (auth == null) return null;
+		StudentData data = new StudentData(selectedBrokerName, sidToBroker.size(), auth);
+		//Auth auth = new Auth(sid, ssig, skey);
+		log.log("New student: %s [%s]", auth.sid, selectedBrokerName);
+		sidToBroker.put(auth.sid, data);
+		brokerToSids.get(selectedBrokerName).add(auth.sid);
 		save();
 		return auth;
 	}
 
 	@Override
-	public synchronized Auth getStudentID(String sid, String ssig, String skey) throws RemoteException {
-		Integer studentId = loginToStudentId.get(sid);
-		if (studentId == null) return allocateStudent(sid, ssig, skey);
-		StudentData data = studentIdToBroker.get(studentId);
+	public synchronized Auth authenticateStudent(String sid, String ssig, String skey) throws RemoteException {
+		StudentData data = sidToBroker.get(sid);
 		if (data == null) {
-			log.err("[GroupsBroker.getStudentID] student with id %d,%s does not have data. Realocating", studentId, sid);
-			loginToStudentId.remove(studentId);
+			log.err("[GroupsBroker.getStudent] student with id %s does not have data. Creating", sid);
 			return allocateStudent(sid, ssig, skey);
 		}
-		log.log("Reconnect: %s --> %d --> %d [%s]", sid, data.id, data.localAuth.id, data.ui);
-		data.localAuth.setSkey(skey);
-		return new Auth(data.id, data.localAuth.sid, data.localAuth.ssig, data.localAuth.getSkey());		
+		log.log("Reconnect: %s [%s]", sid, data.ui);
+		//data.localAuth.setSkey(skey);
+		return data.localAuth;
 	}
 
 	public synchronized void setParsonsEvaluation(ParsonsEvaluation eval) throws RemoteException {
-		exec(eval.studentId, (b, data) -> 
+		exec(eval.sid, (b, data) -> 
 			{
-				eval.studentId = data.localAuth.id;
 				b.getUIInterface().setParsonsEvaluation(eval);
 				return 0;
 			});
 	}
 
 	@Override
-	public synchronized Stats getStudentStats(int studentId) throws RemoteException {
-		return exec(studentId, (b, data) -> 
-				b.getUIInterface().getStudentStats(data.localAuth.id));
+	public synchronized Stats getStudentStats(String sid) throws RemoteException {
+		return exec(sid, (b, data) -> 
+				b.getUIInterface().getStudentStats(data.localAuth.sid));
 	}
+
+	@Override
+	public Map<String, Stats> getStudentStats(String iid, String isig, List<String> ssig) throws RemoteException {
+		final Map<String, Stats> stats = new HashMap<>();
+		for (String brokerName: brokers.keySet())
+		{
+			stats.putAll(brokers.get(brokerName).getUIInterface().getStudentStats(iid, isig, ssig));
+		}
+		return stats;
+	}	
 
 	@Override
 	public BrokerUIInterface getUIInterface() {
@@ -191,10 +193,9 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 
 	private void save()
 	{
-		SerializedData data = new SerializedData(brokerStudents, studentIdToBroker, loginToStudentId);
+		SerializedData data = new SerializedData(brokerToSids, sidToBroker);
 		Utils.saveToFile(log, data, groupsFile);
 	}
-
 
 }
 

@@ -18,11 +18,6 @@
         <script src="./js/sha1.js"></script>    
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">      
         <style>
-            #loginRequired {
-                font-size: 80%;                
-                color: #844;        
-                display: none;        
-            }
             input.err {
                 border-color: #844;
                 border-width: 2px;
@@ -224,7 +219,7 @@
             </div>
             <div class="form-group row">
                 <div class="col col-lg-8 offset-lg-2">
-                    <input type="text" id="secret" class="form-control" placeholder="Write your secret here" />
+                    <input type="password" id="secret" class="form-control" placeholder="Write your secret here" />
                 </div>
             </div>
             <div class="form-group row">
@@ -755,7 +750,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                         failed = true;
                     }                    
                     if (failed) return;
-                    var sid = sha1(email + '+' + secret);    
+                    var sid = sha1(email) + sha1(secret);    
                     var ssig = sha1(email);
                     var skey = !instructorEmail ? "" : sha1(instructorEmail);
                     $.ajax({

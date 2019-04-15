@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -11,6 +13,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +39,8 @@ import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.resource.Resource;
 
 import evoparsons.broker.Log.FileLog;
+import evoparsons.repo.IRepo;
+import evoparsons.repo.Instructor;
 import evoparsons.rmishared.Auth;
 import evoparsons.rmishared.BrokerClient;
 import evoparsons.rmishared.BrokerUIInterface;
@@ -73,6 +78,150 @@ public interface NetworkPolicy {
         };
 
     @SuppressWarnings("serial") 
+    public static class InstructorServlet extends HttpServlet
+    {
+        BrokerUIInterface broker;
+        Config config;
+        Log log;
+        IRepo<String, Instructor> instructorRepo; 
+        public InstructorServlet(Config config, BrokerUIInterface broker) {
+            this.broker = broker;
+            this.config = config;
+            this.log = config.getLog();
+            this.instructorRepo = config.<String, Instructor>getRepo("evoparsons.repo.instructor");
+        }
+
+        private void onNewInstructor(HttpServletRequest request, HttpServletResponse response) throws IOException {
+            String iid = "";
+            String isig = "";
+            try {
+                Map<String, Object> requestJson = (Map<String, Object>)JSON.parse(request.getReader());
+                iid = (String)requestJson.get("iid");
+                isig = (String)requestJson.get("isig");
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
+                Map<String, Object> respJson = new HashMap<>();
+                respJson.put("error", "Input object should be in format {'iid':'<instructor id>', 'isig':'<instructor signature>'}");
+                response.getWriter().print(JSON.toString(respJson));
+                return;
+            }
+            if (iid == null || iid.isEmpty() || isig == null || isig.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
+                Map<String, Object> respJson = new HashMap<>();
+                respJson.put("error", "iid and isig should be nonempty");
+                response.getWriter().print(JSON.toString(respJson));
+                return;                        
+            }
+            Instructor instructor = this.instructorRepo.get(iid);
+            if ((instructor != null) && (instructor.isig != null) && instructor.isig.equals(isig)) {
+                response.setStatus(HttpServletResponse.SC_OK);
+                Map<String, Object> respJson = new HashMap<>();
+                respJson.put("iid", instructor.iid);
+                respJson.put("isig", instructor.isig);
+                response.getWriter().print(JSON.toString(respJson));    
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                Map<String, Object> respJson = new HashMap<>();
+                respJson.put("err", true);
+                respJson.put("msg", "Auth failed");
+                response.getWriter().print(JSON.toString(respJson));
+            }            
+        }
+
+        private void getStudents(HttpServletRequest request, HttpServletResponse response) throws IOException {
+            String iid = "";
+            String isig = "";
+            Object[] ssigsArray = null;
+            List<String> ssigs;
+            try {
+                Map<String, Object> requestJson = (Map<String, Object>)JSON.parse(request.getReader());
+                iid = (String)requestJson.get("iid");
+                isig = (String)requestJson.get("isig");
+                ssigsArray = (Object[])requestJson.get("ssigs");
+                ssigs = Arrays.stream(ssigsArray).map(String::valueOf).collect(Collectors.toList());
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
+                Map<String, Object> respJson = new HashMap<>();
+                respJson.put("error", "Input object should be in format {'iid':'<instructor id>', 'isig':'<instructor signature>', 'ssigs':[ 'ssig1', ...]}");
+                response.getWriter().print(JSON.toString(respJson));
+                return;
+            }
+            if (iid == null || iid.isEmpty() || isig == null || isig.isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
+                Map<String, Object> respJson = new HashMap<>();
+                respJson.put("error", "iid and isig should be nonempty");
+                response.getWriter().print(JSON.toString(respJson));
+                return;                        
+            }
+            Instructor instructor = this.instructorRepo.get(iid);
+            if ((instructor != null) && (instructor.isig != null) && instructor.isig.equals(isig)) {
+                Map<String, Stats> students = this.broker.getStudentStats(iid, isig, ssigs);
+                Map<String, Object> respStudentsJson = new HashMap<>();
+                for (String ssig: students.keySet()) {
+                    Map<String, Object> performance = new HashMap<>();
+                    Stats stat = students.get(ssig);
+                    performance.put("puzzlesSeen", stat.puzzlesSeen);
+                    performance.put("puzzlesSolved", stat.puzzlesSolved);
+                    performance.put("duration", stat.duration);
+                    performance.put("started", stat.start);
+                    //TODO: advanced props
+                    respStudentsJson.put(ssig, performance);
+                }
+                response.setStatus(HttpServletResponse.SC_OK);
+                Map<String, Object> respJson = new HashMap<>();
+                respJson.put("iid", instructor.iid);
+                respJson.put("isig", instructor.isig);
+                respJson.put("stats", respStudentsJson);
+                response.getWriter().print(JSON.toString(respJson));    
+            } else {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                Map<String, Object> respJson = new HashMap<>();
+                respJson.put("err", true);
+                respJson.put("msg", "Auth failed");
+                response.getWriter().print(JSON.toString(respJson));
+            }            
+        }
+
+        @Override
+        protected void doPost( HttpServletRequest request,
+                                HttpServletResponse response ) throws ServletException,
+                                                            IOException
+        {
+            //String res1 = request.getReader().lines().collect(Collectors.joining());
+            try 
+            {
+            response.setContentType("application/json");
+            String pathInfo = request.getPathInfo();
+            if (pathInfo == null) pathInfo = "/";
+            switch (pathInfo)
+            {
+                case("/"): {
+                    //new user 
+                    onNewInstructor(request, response);
+                    return;
+                }
+                case("/students"): {
+                    //new user 
+                    getStudents(request, response);
+                    return;
+                }
+                default: break;
+            }
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);    
+            Map<String, Object> respJson = new HashMap<>();
+            respJson.put("error", "API is not found");
+            response.getWriter().print(JSON.toString(respJson));  
+            } catch(Exception e) 
+            {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);    
+                Map<String, Object> respJson = new HashMap<>();
+                respJson.put("error", e.getMessage());
+                response.getWriter().print(JSON.toString(respJson));      
+            }
+        }
+    }        
+
+    @SuppressWarnings("serial") 
     public static class StudentServlet extends HttpServlet
     {
         BrokerUIInterface broker;
@@ -108,9 +257,9 @@ public interface NetworkPolicy {
                 return;                        
             }
             response.setStatus(HttpServletResponse.SC_OK);
-            Auth auth = broker.getStudentID(sid, ssig, skey);
+            Auth auth = broker.authenticateStudent(sid, ssig, skey);
             Map<String, Object> respJson = new HashMap<>();
-            respJson.put("id", auth.id);
+            respJson.put("id", auth.sid);
             respJson.put("ip", request.getRemoteAddr());
             respJson.put("sessionId", UUID.randomUUID().toString());
             response.getWriter().print(JSON.toString(respJson));
@@ -134,7 +283,7 @@ public interface NetworkPolicy {
                 + (fragmentIds.size() - fragmentsWithoutDistractorIds.size());
         }
 
-        private void onNewEval(int studentId, int puzzleId, HttpServletRequest request, HttpServletResponse response) throws IOException
+        private void onNewEval(String sid, int puzzleId, HttpServletRequest request, HttpServletResponse response) throws IOException
         {
             ParsonsEvaluation eval = null;
             try {
@@ -152,7 +301,7 @@ public interface NetworkPolicy {
                 // else fitness = (double)fitnessObj;
                 long timeInMs = (long)requestJson.get("timeInMs");
                 boolean gaveUp = (boolean)requestJson.get("gaveUp");                
-                eval = new ParsonsEvaluation(studentId, puzzleId, moves, timeInMs, fitness, gaveUp, System.currentTimeMillis());
+                eval = new ParsonsEvaluation(sid, puzzleId, moves, timeInMs, fitness, gaveUp, System.currentTimeMillis());
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
                 Map<String, Object> respJson = new HashMap<>();
@@ -167,9 +316,9 @@ public interface NetworkPolicy {
             response.getWriter().print(JSON.toString(respJson));                  
         }
 
-        private void onNewAttempt(int studentId, int puzzleId, HttpServletRequest request, HttpServletResponse response) throws IOException
+        private void onNewAttempt(String sid, int puzzleId, HttpServletRequest request, HttpServletResponse response) throws IOException
         {
-            Stats stats = broker.getStudentStats(studentId);
+            Stats stats = broker.getStudentStats(sid);
             int attemptId = 0;
             synchronized (stats)
             {
@@ -177,7 +326,7 @@ public interface NetworkPolicy {
                     stats.attemptsPerPuzzle.getOrDefault(puzzleId, 0);
                     stats.attemptsPerPuzzle.put(puzzleId, attemptId + 1);
             }
-            File file = Paths.get(config.getOutputFolder(), "data", String.valueOf(studentId), String.valueOf(puzzleId), "attempts", String.format("%d.json", attemptId)).toFile().getAbsoluteFile();
+            File file = Paths.get(config.getOutputFolder(), "data", sid, String.valueOf(puzzleId), "attempts", String.format("%d.json", attemptId)).toFile().getAbsoluteFile();
             file.getParentFile().mkdirs();
             try (FileWriter writer = new FileWriter(file)) {
                 String text = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
@@ -195,59 +344,12 @@ public interface NetworkPolicy {
             response.getWriter().print(JSON.toString(respJson));                  
         }
 
-        // private void onNewEvent(int studentId, String sessionId, HttpServletRequest request, HttpServletResponse response) throws IOException
-        // {
-        //     File file = Paths.get(config.getOutputFolder(), "data", String.valueOf(studentId), String.format("%s.json", sessionId)).toFile().getAbsoluteFile();
-        //     file.getParentFile().mkdirs();
-        //     try (FileWriter writer = new FileWriter(file)) {
-        //         String text = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-        //         writer.append(System.lineSeparator());
-        //         writer.append(text);
-        //     } catch (Exception e) {
-        //         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
-        //         Map<String, Object> respJson = new HashMap<>();
-        //         respJson.put("error", e.getMessage());
-        //         response.getWriter().print(JSON.toString(respJson));
-        //         return;
-        //     }
-        //     response.setStatus(HttpServletResponse.SC_CREATED); //TODO: add Location header and get eval func  
-        //     Map<String, Object> respJson = new HashMap<>();
-        //     respJson.put("ok", true);
-        //     response.getWriter().print(JSON.toString(respJson));                  
-        // }
-
-        // private void onGeneralInfo(int studentId, HttpServletRequest request, HttpServletResponse response) throws IOException
-        // {
-        //     synchronized (generalInfo)
-        //     {
-        //         int generalInfoId = generalInfo.getOrDefault(studentId, 0);
-        //         File file = Paths.get(config.getOutputFolder(), "data", String.valueOf(studentId), "sessions", String.format("%d.json", generalInfoId)).toFile().getAbsoluteFile();
-        //         file.getParentFile().mkdirs();
-        //         try (FileWriter writer = new FileWriter(file)) {
-        //             String text = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-        //             writer.write(text);
-        //             generalInfo.put(studentId, generalInfoId + 1);
-        //         } catch (Exception e) {
-        //             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
-        //             Map<String, Object> respJson = new HashMap<>();
-        //             respJson.put("error", e.getMessage());
-        //             response.getWriter().print(JSON.toString(respJson));
-        //             return;
-        //         }
-        //     }
-        //     response.setStatus(HttpServletResponse.SC_CREATED); //TODO: add Location header and get eval func  
-        //     Map<String, Object> respJson = new HashMap<>();
-        //     respJson.put("ok", true);
-        //     response.getWriter().print(JSON.toString(respJson));                  
-        // }        
-
         
-        private static Pattern puzzlePattern = Pattern.compile("^/(?<studentId>[1-9]\\d*|0)/puzzle/?$");
-        private static Pattern statsPattern = Pattern.compile("^/(?<studentId>[1-9]\\d*|0)/stats/?$");
-        private static Pattern evalPattern = Pattern.compile("^/(?<studentId>[1-9]\\d*|0)/puzzle/(?<puzzleId>[1-9]\\d*|0)/eval/?$");
-        private static Pattern attemptPattern = Pattern.compile("^/(?<studentId>[1-9]\\d*|0)/puzzle/(?<puzzleId>[1-9]\\d*|0)/attempt/?$");
-        //private static Pattern eventPattern = Pattern.compile("^/(?<studentId>[1-9]\\d*|0)/(?<sessionId>.*?)/event/?$");
-        //private static Pattern generalInfoPattern = Pattern.compile("^/(?<studentId>[1-9]\\d*|0)/info/?$");
+        private static Pattern puzzlePattern = Pattern.compile("^/(?<sid>\\w*)/puzzle/?$");
+        private static Pattern statsPattern = Pattern.compile("^/(?<sid>\\w*)/stats/?$");
+        private static Pattern evalPattern = Pattern.compile("^/(?<sid>\\w*)/puzzle/(?<puzzleId>[1-9]\\d*|0)/eval/?$");
+        private static Pattern attemptPattern = Pattern.compile("^/(?<sid>\\w*)/puzzle/(?<puzzleId>[1-9]\\d*|0)/attempt/?$");
+
         @Override
         protected void doGet( HttpServletRequest request,
                                 HttpServletResponse response ) throws ServletException,
@@ -260,8 +362,8 @@ public interface NetworkPolicy {
             if (matcher.matches())
             {
                 //obtaining new puzzle
-                int studentId = Integer.valueOf(matcher.group("studentId"));
-                ParsonsPuzzle puzzle = broker.getParsonsPuzzle(studentId);
+                String sid = URLDecoder.decode(matcher.group("sid"), StandardCharsets.UTF_8.name());
+                ParsonsPuzzle puzzle = broker.getParsonsPuzzle(sid);
                 List<Fragment> fragments = puzzle.buildFragments();
                 Map<String, Object> respJson = new HashMap<>();
                 respJson.put("id", puzzle.id);
@@ -294,8 +396,8 @@ public interface NetworkPolicy {
             Matcher statsMatcher = statsPattern.matcher(pathInfo);
             if (statsMatcher.matches())
             {
-                int studentId = Integer.valueOf(statsMatcher.group("studentId"));
-                Stats stats = broker.getStudentStats(studentId);
+                String sid = URLDecoder.decode(statsMatcher.group("sid"), StandardCharsets.UTF_8.name());
+                Stats stats = broker.getStudentStats(sid);
                 Map<String, Object> respJson = new HashMap<>();
                 respJson.put("solved", stats.puzzlesSolved);
                 respJson.put("seen", stats.puzzlesSeen);
@@ -333,37 +435,20 @@ public interface NetworkPolicy {
             if (evalMatcher.matches())
             {
                 //obtaining new puzzle
-                int studentId = Integer.valueOf(evalMatcher.group("studentId"));
+                String sid = URLDecoder.decode(evalMatcher.group("sid"), StandardCharsets.UTF_8.name());
                 int puzzleId = Integer.valueOf(evalMatcher.group("puzzleId"));
-                onNewEval(studentId, puzzleId, request, response);
+                onNewEval(sid, puzzleId, request, response);
                 return;                        
             }
             Matcher attemptMatcher = attemptPattern.matcher(pathInfo);
             if (attemptMatcher.matches())
             {
                 //obtaining new puzzle
-                int studentId = Integer.valueOf(attemptMatcher.group("studentId"));
+                String sid = URLDecoder.decode(attemptMatcher.group("sid"), StandardCharsets.UTF_8.name());
                 int puzzleId = Integer.valueOf(attemptMatcher.group("puzzleId"));
-                onNewAttempt(studentId, puzzleId, request, response);
+                onNewAttempt(sid, puzzleId, request, response);
                 return;                        
             }
-            // Matcher eventMatcher = eventPattern.matcher(pathInfo);
-            // if (eventMatcher.matches())
-            // {
-            //     //obtaining new puzzle
-            //     int studentId = Integer.valueOf(evalMatcher.group("studentId"));
-            //     String sessionId = evalMatcher.group("sessionId");
-            //     onNewEvent(studentId, sessionId, request, response);
-            //     return;                        
-            // }    
-            // Matcher generalInfoMatcher = generalInfoPattern.matcher(pathInfo);
-            // if (generalInfoMatcher.matches())
-            // {
-            //     //obtaining new puzzle
-            //     int studentId = Integer.valueOf(evalMatcher.group("studentId"));
-            //     onGeneralInfo(studentId, request, response);
-            //     return;                        
-            // }                       
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);    
             Map<String, Object> respJson = new HashMap<>();
             respJson.put("error", "API is not found");
@@ -432,6 +517,7 @@ public interface NetworkPolicy {
                     log.log("[REST] WebUI content by path: %s", staticContentPath);                                                    
 					apiHandler.setBaseResource(Resource.newResource(staticContentPath));
                     apiHandler.addServlet(new ServletHolder(new StudentServlet(config, broker)), "/api/student/*");
+                    apiHandler.addServlet(new ServletHolder(new InstructorServlet(config, broker)), "/api/instructor/*");
                     apiHandler.addServlet(DefaultServlet.class, "/*");
                     apiHandler.setWelcomeFiles(new String[] { "index.html" });  
                     handlers.addHandler(apiHandler);                  

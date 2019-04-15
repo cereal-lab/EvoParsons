@@ -54,7 +54,7 @@ public class PSI
 		System.out.println("Please enter your student Name: ");
 		studentLogin = userInput.nextLine();
 		String sid = Auth.sha1(studentLogin);
-		Auth auth = broker.getStudentID(sid, sid, "");
+		Auth auth = broker.authenticateStudent(sid, sid, "");
 		log("Sent student login: " + studentLogin);
 
 		// Main loop;
@@ -64,9 +64,9 @@ public class PSI
 		
 		while (true)
 		{
-			ParsonsPuzzle puzzle = broker.getParsonsPuzzle(auth.id);
+			ParsonsPuzzle puzzle = broker.getParsonsPuzzle(auth.sid);
 			System.out.format("[PSI] Obtained puzzle #%d%n", puzzle.id);
-			evaluate(auth.id, puzzle);
+			evaluate(auth.sid, puzzle);
 		}
 	}
 
@@ -81,7 +81,7 @@ public class PSI
 		System.out.println("[PSI]\t" + msg);
 	}
 
-	private void evaluate(int studentId, ParsonsPuzzle puzzle) throws RemoteException
+	private void evaluate(String sid, ParsonsPuzzle puzzle) throws RemoteException
 	{
 		List<Fragment> fragments = puzzle.buildFragments();
 		List<String> correctAnswer = 
@@ -206,7 +206,7 @@ public class PSI
 
 		// sending back evaluation data
 		double fitness = ((double)attempts) / puzzle.getPhenotypeSize();
-		broker.setParsonsEvaluation(new ParsonsEvaluation(studentId, puzzle.id, attempts, elapsedMillis, fitness, giveUp, System.currentTimeMillis()));
+		broker.setParsonsEvaluation(new ParsonsEvaluation(sid, puzzle.id, attempts, elapsedMillis, fitness, giveUp, System.currentTimeMillis()));
 		log("Sent evaluation data and got new puzzle");
 	}
 

@@ -3,12 +3,15 @@ package evoparsons.broker;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.DoubleFunction;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
@@ -23,12 +26,12 @@ import evoparsons.rmishared.Stats;
 public class EvaluationDataStore
 {		
 	private static final String DEFAULT_STUDENTS_FILE = "students.bro";
-	private static final String DEFAULT_STUDENT_STAT_FILE = "studentStat.bro";
+	//private static final String DEFAULT_STUDENT_STAT_FILE = "studentStat.bro";
 	private static final String DEFAULT_GENOTYPE_FILE = "genotype.bro";
 	private String outputFolder;
 
-	private Map<String, Auth> students; //TODO: cen we remove it?
-	private Map<Integer, Stats> studentStats;
+	//private Map<String, Auth> students; //TODO: cen we remove it?
+	private Map<String, Student> students;
 	private Map<Integer, PuzzleEvaluation> genotypes;
 	private Map<Integer, PuzzleEvaluation> currentGenerationGenotypes;
 	private String studentsFile;
@@ -51,18 +54,18 @@ public class EvaluationDataStore
 			this.evalTries = 2;
 		}		
 		studentsFile = config.get("evoparsons.studentsFile", DEFAULT_STUDENTS_FILE);
-		students = Utils.<HashMap<String, Auth>>loadFromFile(log, Paths.get(outputFolder, studentsFile).toString(), HashMap<String, Auth>::new);
+		students = Utils.<HashMap<String, Student>>loadFromFile(log, Paths.get(outputFolder, studentsFile).toString(), HashMap<String, Student>::new);
 		if (students.size() == 0)
 			log.log("[EvaluationDataStore] students map is empty");
 		else 
 		{
 			log.log("[EvaluationDataStore] %d students were restored from %s", students.size(), studentsFile);
 			students.entrySet().stream()
-				.sorted(Comparator.comparing(entry -> entry.getValue().id))
-				.forEach(entry -> log.log("\t%8.8s%6d", entry.getKey(), entry.getValue().id));
+				.sorted(Comparator.comparing(entry -> entry.getValue().auth.sid))
+				.forEach(entry -> log.log("\t%s", entry.getKey()));
 		}
-		studentStatsFile = config.get("evoparsons.studentsStatsFile", DEFAULT_STUDENT_STAT_FILE);
-		studentStats = Utils.<HashMap<Integer, Stats>>loadFromFile(log, Paths.get(outputFolder, studentStatsFile).toString(), HashMap<Integer, Stats>::new);
+		//studentStatsFile = config.get("evoparsons.studentsStatsFile", DEFAULT_STUDENT_STAT_FILE);
+		//studentStats = Utils.<HashMap<Integer, Stats>>loadFromFile(log, Paths.get(outputFolder, studentStatsFile).toString(), HashMap<Integer, Stats>::new);
 		genotypesFile = config.get("evoparsons.genotypesFile", DEFAULT_GENOTYPE_FILE);
 		genotypes = 
 			Utils.<Map<Integer, PuzzleEvaluation>>loadFromFile(log, Paths.get(outputFolder, genotypesFile).toString(), 
@@ -100,7 +103,7 @@ public class EvaluationDataStore
 
 	public void printInteractions(Library lib) {
 		log.log("--------------------------------------------");
-		String padding = new String(new char[13]).replace('\0', ' ');
+		String padding = new String(new char[14]).replace('\0', ' ');
 		log.print(padding);
 		genotypes.entrySet().stream()
 			.sorted(Comparator.comparing(entry -> entry.getKey()))
@@ -117,17 +120,17 @@ public class EvaluationDataStore
 			});		
 		log.log("");
 		students.entrySet().stream()
-			.sorted(Comparator.comparing(student -> student.getValue().id))
+			.sorted(Comparator.comparing(student -> student.getValue().auth.sid))
 			.forEach(student -> 
 				{
-					log.print("%13.13s", String.format("%8.8s[%d]", student.getKey(), student.getValue().id));
+					log.print("%13.13s ", student.getKey());
 					genotypes.entrySet().stream()
 						.sorted(Comparator.comparing(entry -> entry.getKey()))
 						.forEach(genotype -> {	
-							if (!genotype.getValue().evaluations.containsKey(student.getValue().id)) log.print("%10.10s", "");
+							if (!genotype.getValue().evaluations.containsKey(student.getKey())) log.print("%10.10s", "");
 							else 
 							{
-								ParsonsEvaluation eval = genotype.getValue().evaluations.get(student.getValue().id);
+								ParsonsEvaluation eval = genotype.getValue().evaluations.get(student.getKey());
 								if (eval.gaveUp)
 									log.print("%10.10s", "gaveUp");
 								else 
@@ -156,22 +159,32 @@ public class EvaluationDataStore
 		genotypes.putAll(currentGenerationGenotypes);
 	}	   
 		
-	public ParsonsPuzzle getPuzzle(int studentId, SelectionPolicy selectionPolicy, Library lib)
+	public ParsonsPuzzle getPuzzle(String sid, SelectionPolicy selectionPolicy, Library lib)
 	{
 		Optional<PuzzleEvaluation> genotypeOpt = 
-			selectionPolicy.select(studentId, currentGenerationGenotypes, log);
+			selectionPolicy.select(sid, currentGenerationGenotypes, log);
 		if (!genotypeOpt.isPresent()) {
 			log.err("[EvaluationDataStore.getPuzzle] Selection policy did not return puzzle. Check configuration");
 			System.exit(1);		
 		} else {
-			log.log("[EvaluationDataStore.getPuzzle] student %d got %s", studentId, genotypeOpt.get().genotype.toString());
+			log.log("[EvaluationDataStore.getPuzzle] student %s got %s", sid, genotypeOpt.get().genotype.toString());
 		}
 		return genotypeOpt.get().genotype.getPuzzle(lib);
 	}
 
-	public Stats getStudentStats(int studentId) {
-		Stats stats = studentStats.computeIfAbsent(studentId, k -> new Stats(0, 0));
-		return stats;
+	public Stats getStudentStats(String sid) {
+		Student student = students.get(sid);
+		if (student == null)  return new Stats(0, 0);
+		return student.stats;
+	}
+
+	public Map<String, Stats> getStudentStats(String isig, List<String> ssigs) {
+		if (isig == null || isig.isEmpty() || ssigs == null || ssigs.isEmpty()) return Collections.emptyMap();
+		Set<String> ssigsSet = new HashSet<String>(ssigs);
+		return 
+			students.entrySet().stream()
+				.filter(s -> ssigsSet.contains(s.getValue().auth.ssig) && s.getValue().auth.getSkey().equals(isig))
+				.collect(Collectors.toMap(s -> s.getValue().auth.ssig, s -> s.getValue().stats));
 	}
 
 	public void addEvaluation(ParsonsEvaluation eval, SelectionPolicy selectionPolicy)
@@ -179,34 +192,38 @@ public class EvaluationDataStore
 		PuzzleEvaluation puzzleEval = genotypes.get(eval.puzzleIndex);				
 		if (puzzleEval != null)
 		{
-			//selectionPolicy.setSeen(eval.studentId, puzzleEval);
-			ParsonsEvaluation existingEval = puzzleEval.evaluations.get(eval.studentId);
-			Stats stats = studentStats.get(eval.studentId);
-			if (stats == null) {
-				log.log("[EvaluationDataStore.addEvaluation] Cannot find stats for student %d. Creating new", eval.studentId);
-				stats = new Stats(0, 0);
-				studentStats.put(eval.studentId, stats);
+			ParsonsEvaluation existingEval = puzzleEval.evaluations.get(eval.sid);
+			Student student = students.get(eval.sid);
+			if (student == null) {
+				//should not be here usually
+				log.err("[EvaluationDataStore.addEvaluation] Cannot find student record for student %s. Ignoring", eval.sid);
+				return;
 			}
-			stats.duration += eval.timeInMs;			
+			if (student.stats == null) {
+				//should not be here
+				log.log("[EvaluationDataStore.addEvaluation] Cannot find stats for student %s. Ignoring", eval.sid);				
+				return; 
+			}
+			student.stats.duration += eval.timeInMs;			
 			if ((existingEval == null) || 
 				(existingEval.gaveUp && !eval.gaveUp))
 			{	
-				if (existingEval == null) stats.puzzlesSeen++;
+				if (existingEval == null) student.stats.puzzlesSeen++;
 				if (!eval.gaveUp)
 				{			
-					stats.puzzlesSolved++;		
-					int studentId = eval.studentId;
+					final String sid = eval.sid;
+					student.stats.puzzlesSolved++;		
 					int programIndex = puzzleEval.genotype.genome[0];
 					boolean studentHasAlreadySeenPuzzle = 
 						genotypes.entrySet().stream()
 							.filter(entry -> 
 								(entry.getValue().genotype.genome[0] == programIndex) 
-								&& entry.getValue().evaluations.containsKey(studentId)
-								&& !entry.getValue().evaluations.get(studentId).gaveUp)
+								&& entry.getValue().evaluations.containsKey(sid)
+								&& !entry.getValue().evaluations.get(sid).gaveUp)
 							.findAny().isPresent();
 					eval =
 						studentHasAlreadySeenPuzzle ?
-							new ParsonsEvaluation(studentId, eval.puzzleIndex, 
+							new ParsonsEvaluation(eval.sid, eval.puzzleIndex, 
 								eval.moves, eval.timeInMs,
 								DoubleStream.concat(DoubleStream.of(eval.fitness),
 									puzzleEval.evaluations.entrySet().stream()
@@ -219,7 +236,7 @@ public class EvaluationDataStore
 				}		
 				puzzleEval
 					.evaluations
-					.put(eval.studentId, eval);				
+					.put(eval.sid, eval);				
 			} else if (existingEval != null) {
 				existingEval.setTimeStamp(eval.timestamp);
 			}			
@@ -229,26 +246,17 @@ public class EvaluationDataStore
 
 	public Auth addStudent(String sid, String ssig, String skey)
 	{
-		Auth existingAuth = 
+		Student student = 
 			students.computeIfAbsent(sid, ignorable -> {
 				int id = students.size();
-				log.log("[EvaluationDataStore.addStudent] %s, %s, %s - %d", sid, ssig, skey, id);
-				studentStats.put(id, new Stats(0, 0));
-				return new Auth(id, sid, ssig, skey);
+				log.log("[EvaluationDataStore.addStudent] %s, %s, %s", sid, ssig, skey);
+				return new Student(new Auth(sid, ssig, skey), new Stats(0, 0));
 			});		
-		existingAuth.setSkey(skey);
-		log.log("[EvaluationDataStore.addStudent] session %s, %d", sid, existingAuth.id);	
-		return existingAuth;
+		//student.auth.setSkey(skey);
+		log.log("[EvaluationDataStore.addStudent] continue %s", sid);	
+		return student.auth;
 	}
 
-	/**
-	 * Each time a ParsonsEvaluation data is sent to the broker, it checks
-	 * if the problet and its pair is evaluated minimum number of evaluation
-	 * by same set of students
-	 * @param data
-	 * @return
-	 */
-	
 	public ParsonsFitness getFitness(ParsonsEvaluation eval, Library lib)
 	{	
 		if (eval.gaveUp) return null;
@@ -256,7 +264,7 @@ public class EvaluationDataStore
 			currentGenerationGenotypes.get(eval.puzzleIndex);
 		if (genotypeEvals == null)  // this evaluation is from previous generation
 		{
-			log.log("[EvaluationDataStore.getFitness] Eval %d, %d from prev. generation, ignored", eval.studentId, eval.puzzleIndex);
+			log.log("[EvaluationDataStore.getFitness] Eval %s, %d from prev. generation, ignored", eval.sid, eval.puzzleIndex);
 			return null;
 		}
 				
@@ -270,7 +278,7 @@ public class EvaluationDataStore
 		class CommonEvaluations {
 			public final List<Double> firstGenotypeEvals;
 			public final List<Double> secondGenotypeEvals;
-			public final List<Integer> students;
+			public final List<String> students;
 			public CommonEvaluations() {
 				firstGenotypeEvals = new ArrayList<>();
 				secondGenotypeEvals = new ArrayList<>();
@@ -319,15 +327,6 @@ public class EvaluationDataStore
 			log.log("[EvaluationDataStore.saveStudents] Students database is empty!");
 	}
 
-	public void saveStudentStats() {
-		if (!studentStats.isEmpty())
-		{				
-			Utils.saveToFile(log, studentStats, Paths.get(outputFolder, studentStatsFile).toString());
-		}
-		else
-			log.log("[EvaluationDataStore.saveStudentStats] studentStats database is empty!");		
-	}
-
 	public void saveGenotypes()
 	{
 		if (!genotypes.isEmpty())
@@ -337,5 +336,13 @@ public class EvaluationDataStore
 		else
 			log.log("[EvaluationDataStore.saveGenotypes] Genotypes database is empty!");
 	}	
+
+	// public Set<String> getSsigsForISig(String isig) {
+	// 	return 
+	// 		students.entrySet().stream().filter(entry -> entry.getValue().auth.getSkey().equals(isig))
+	// 			.map(entry -> entry.getValue().auth.ssig)
+	// 			.collect(Collectors.toSet());
+	// }
+
 
 }

@@ -13,27 +13,17 @@ import evoparsons.rmishared.ParsonsEvaluation;
 
 public interface SelectionPolicy
 {	
-	public Optional<PuzzleEvaluation> select(int studentId, 
+	public Optional<PuzzleEvaluation> select(String sid, 
 		Map<Integer, PuzzleEvaluation> available, 
 		Map<Integer, PuzzleEvaluation> evaluated, 
 		Map<Integer, PuzzleEvaluation> giveUps, 
-		//Optional<PuzzleEvaluation> lastSeen,
 		Log logger);
 		
-	// public default void setSeen(int studentId, PuzzleEvaluation eval) {
-	// 	InternalState.lastSeen.put(studentId, eval.genotype.getIndex());		
-	// }
-
-	public default Optional<PuzzleEvaluation> select(int studentId, Map<Integer, PuzzleEvaluation> currentGeneration, Log logger) {
-		//Integer lastSeenPuzzleIndex = InternalState.lastSeen.get(studentId);		
-		// PuzzleEvaluation lastSeenPuzzle = 
-		// 	(lastSeenPuzzleIndex == null) ? null : currentGeneration.get(lastSeenPuzzleIndex);
+	public default Optional<PuzzleEvaluation> select(String sid, Map<Integer, PuzzleEvaluation> currentGeneration, Log logger) {
 		class Tmp {
 			public final Map<Integer, PuzzleEvaluation> available = new HashMap<>();
 			public final Map<Integer, PuzzleEvaluation> evaluated = new HashMap<>();
 			public final Map<Integer, PuzzleEvaluation> giveUps = new HashMap<>();
-			// public final Optional<PuzzleEvaluation> lastSeen = 
-			// 	(lastSeenPuzzle == null) ? Optional.empty() : Optional.of(lastSeenPuzzle);
 		}
 		Tmp tmp =
 			currentGeneration
@@ -41,20 +31,18 @@ public interface SelectionPolicy
 				.stream()
 				.collect(() -> new Tmp(), 
 					(acc, entry) -> {
-						//if (!acc.lastSeen.isPresent() || (entry.getValue() != acc.lastSeen.get())) {
-						if (entry.getValue().evaluations.containsKey(studentId)) {
-							if (entry.getValue().evaluations.get(studentId).gaveUp)
+						if (entry.getValue().evaluations.containsKey(sid)) {
+							if (entry.getValue().evaluations.get(sid).gaveUp)
 								acc.giveUps.put(entry.getKey(), entry.getValue());
 							else 
 								acc.evaluated.put(entry.getKey(), entry.getValue());
 						} else 
 							acc.available.put(entry.getKey(), entry.getValue());
-//						}
 					},
 					(acc1, acc2) -> {}
 				);
 		Optional<PuzzleEvaluation> selectedPuzzle = 
-			this.select(studentId, tmp.available, tmp.evaluated, tmp.giveUps, logger);
+			this.select(sid, tmp.available, tmp.evaluated, tmp.giveUps, logger);
 		if (!selectedPuzzle.isPresent()) 
 			selectedPuzzle = Utils.randFromMap(currentGeneration);
 		return selectedPuzzle;
@@ -66,22 +54,22 @@ public interface SelectionPolicy
 		public SelectionPolicy then(SelectionPolicy nextPolicy) {
 			SelectionPolicy that = this;
 			return 
-				(studentId, avaliable, evaluated, giveUps, logger) -> 
+				(sid, avaliable, evaluated, giveUps, logger) -> 
 				{
 					Optional<PuzzleEvaluation> puzzleOpt = 
-						that.select(studentId, avaliable, evaluated, giveUps, logger);
+						that.select(sid, avaliable, evaluated, giveUps, logger);
 					if (puzzleOpt.isPresent()) return puzzleOpt;
 					else 
 						return 		
 							(evaluated.size() >= limit) 
-								? nextPolicy.select(studentId, avaliable, evaluated, giveUps, logger)
+								? nextPolicy.select(sid, avaliable, evaluated, giveUps, logger)
 								: Optional.empty();
 				};
 		}
 	}
 
 	public static final SelectionPolicy cycling = 
-		(studentId, available, evaluated, giveUps, logger) ->
+		(sid, available, evaluated, giveUps, logger) ->
 		{
 			Optional<PuzzleEvaluation> puzzleOpt = 
 				available.entrySet().stream().findFirst()
@@ -94,14 +82,14 @@ public interface SelectionPolicy
 		};
 
 	public default LimitedSelectionPolicy limit(int n) {
-		SelectionPolicy that = this;
+		final SelectionPolicy that = this;
 		return 
 			new LimitedSelectionPolicy(n) {
 				@Override 
-				public Optional<PuzzleEvaluation> select(int studentId, Map<Integer, PuzzleEvaluation> avaliable, Map<Integer, PuzzleEvaluation> evaluated, Map<Integer, PuzzleEvaluation> giveUps, Log logger)
+				public Optional<PuzzleEvaluation> select(String sid, Map<Integer, PuzzleEvaluation> avaliable, Map<Integer, PuzzleEvaluation> evaluated, Map<Integer, PuzzleEvaluation> giveUps, Log logger)
 				{					
 					if (evaluated.size() < limit) {
-						return that.select(studentId, avaliable, evaluated, giveUps, logger);
+						return that.select(sid, avaliable, evaluated, giveUps, logger);
 					} else 
 						return Optional.empty();
 				}
@@ -117,7 +105,7 @@ public interface SelectionPolicy
 	}	
 
 	public static final SelectionPolicy pairing =
-		(studentId, available, evaluated, giveUps, logger) -> {
+		(sid, available, evaluated, giveUps, logger) -> {
 			//rule 1: we have pair in current generation where one is evaluated but other is not
 			Optional<PuzzleEvaluation> puzzleOpt = 
 				evaluated
@@ -135,7 +123,7 @@ public interface SelectionPolicy
 					.stream()
 					.collect(
 						Collectors.groupingBy(keyValue -> {
-							ParsonsEvaluation eval = keyValue.getValue().evaluations.get(studentId);
+							ParsonsEvaluation eval = keyValue.getValue().evaluations.get(sid);
 							if (eval == null) return Long.MIN_VALUE;
 							else return eval.timestamp;
 						}))
@@ -173,30 +161,6 @@ public interface SelectionPolicy
 					.stream()
 					.filter(entry -> entry.getValue().genotype.genome[0] != lastSeenProgramIndex)
 					.collect(Collectors.toList());
-			// Optional<PuzzleEvaluation> olderInHistory = 
-			// 	allListGroupedBySeenAndCount.stream().findFirst()
-			// 		.flatMap(keyValue -> 
-			// 			keyValue.second.stream().findFirst().map(entry -> entry.getValue()));
-			// if (olderInHistory.isPresent() 
-			//     && olderInHistory.get().evaluations.containsKey(studentId)
-			// 	&& !olderInHistory.get().evaluations.get(studentId).gaveUp
-			// 	&& available.containsKey(olderInHistory.get().genotype.pairedIndex)) {
-			// 		return Optional.of(available.get(olderInHistory.get().genotype.pairedIndex));
-			// }
-			//rule 2: we need to select random pair from non evaluated yet. we do this by min number of evaluations (as in completness)
-			// this rule takes into account giveUp flag
-			//Check first available map
-			//Map<Integer, PuzzleEvaluation> availableAndGiveUps = new HashMap<>(available);
-			//availableAndGiveUps.putAll(giveUps);
-			// List<Entry<Integer, PuzzleEvaluation>> evals = 
-			// 	allListSortedBySeen
-			// 		.stream()
-			// 		.collect(Collectors.groupingBy(entry -> entry.getValue().evaluations.size()))
-			// 		.entrySet()
-			// 		.stream()
-			// 		.sorted(Comparator.comparing(e -> e.getKey()))
-			// 		.flatMap(entry -> entry.getValue().stream())
-			// 		.collect(Collectors.toList());
 
 			puzzleOpt = 
 				allListGroupedBySeenAndCount
@@ -216,32 +180,14 @@ public interface SelectionPolicy
 					.findFirst()
 					.map(entry -> entry.getValue());
 			if (puzzleOpt.isPresent()) return puzzleOpt;
-			// puzzleOpt = 
-			// 	allListGroupedBySeenAndCount
-			// 	.stream()
-			// 	.filter(entry -> 
-			// 		giveUps.containsKey(entry.getKey())
-			// 			&& evaluated.containsKey(entry.getValue().genotype.pairedIndex))
-			// 	.findFirst()
-			// 	.map(entry -> entry.getValue());					
-			// if (puzzleOpt.isPresent()) return puzzleOpt;
-			// puzzleOpt = 
-			// 	allListGroupedBySeenAndCount
-			// 	.stream()
-			// 	.filter(entry -> 
-			// 		giveUps.containsKey(entry.getKey())
-			// 			&& giveUps.containsKey(entry.getValue().genotype.pairedIndex))
-			// 	.findFirst()
-			// 	.map(entry -> entry.getValue());
-			// if (puzzleOpt.isPresent()) return puzzleOpt;
 			return allListGroupedBySeenAndCount.stream().findFirst().map(entry -> entry.getValue());
 		};
 
 	public static final SelectionPolicy dummy = 
-		(studentId, available, evaluated, giveUps, logger) -> Optional.of(PuzzleEvaluation.dummy);
+		(sid, available, evaluated, giveUps, logger) -> Optional.of(PuzzleEvaluation.dummy);
 		
 	public static final SelectionPolicy exploration = 
-		(studentId, available, evaluated, giveUps, logger) -> 
+		(sid, available, evaluated, giveUps, logger) -> 
 		{
 			Optional<PuzzleEvaluation> puzzleOpt = Utils.randFromMap(available);
 			if (puzzleOpt.isPresent()) return puzzleOpt;
@@ -249,7 +195,7 @@ public interface SelectionPolicy
 		};
 
 	public static final SelectionPolicy exploitation = 
-		(studentId, available, evaluated, giveUps, logger) -> 
+		(sid, available, evaluated, giveUps, logger) -> 
 		{
 			Optional<PuzzleEvaluation> puzzleOpt = 
 				available.entrySet().stream()									
@@ -276,13 +222,13 @@ public interface SelectionPolicy
 				
 		};		
 	public static final SelectionPolicy fatigue = 
-		(studentId, available, evaluated, giveUps, logger) ->
+		(sid, available, evaluated, giveUps, logger) ->
 			(InternalState.rand.nextDouble() <= InternalState.EPSILON)
-			? exploration.select(studentId, available, evaluated, giveUps, logger)
-			: exploitation.select(studentId, available, evaluated, giveUps, logger);
+			? exploration.select(sid, available, evaluated, giveUps, logger)
+			: exploitation.select(sid, available, evaluated, giveUps, logger);
 
 	public static final SelectionPolicy completeness = 
-		(studentId, available, evaluated, giveUps, logger) -> 
+		(sid, available, evaluated, giveUps, logger) -> 
 		{
 			Optional<PuzzleEvaluation> puzzleOpt = 
 				available

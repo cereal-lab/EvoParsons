@@ -1,8 +1,6 @@
 package evoparsons.broker;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
@@ -19,8 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
+
+import evoparsons.repo.IRepo;
 
 public class Config {
     //Reflection - creating instance
@@ -115,6 +116,11 @@ public class Config {
         }
         return null;
     }    
+    public <ID, T> IRepo<ID, T> getRepo(String repoClass) {
+        Optional<IRepo<ID, T>> repoOpt = this.getInstanceOpt(repoClass, this);
+        return repoOpt.orElse(null);
+    }
+
     @SuppressWarnings("unchecked")
     public <T> Optional<T> getInstanceOpt(String instancePathKey, final Object... params) {
         String instancePath = get(instancePathKey, "");
@@ -219,6 +225,7 @@ public class Config {
     protected Properties props = new Properties();
     protected Log log;
     protected Config parent;
+    protected ScheduledThreadPoolExecutor threadPool; 
 
     protected String outputFolder;
 
@@ -226,6 +233,11 @@ public class Config {
         // this.log = log;
         // this.parentConfig = parentConfig;
         this.parent = parent;
+        this.threadPool = new ScheduledThreadPoolExecutor(20);
+    }
+
+    public ScheduledThreadPoolExecutor getTP() {
+        return threadPool;
     }
 
     public Log getLog() {

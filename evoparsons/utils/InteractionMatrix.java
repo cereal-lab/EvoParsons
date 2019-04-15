@@ -45,7 +45,7 @@ public class InteractionMatrix {
 
                 
         log.log("--------------------------------------------");
-        String padding = new String(new char[13]).replace('\0', ' ');
+        String padding = new String(new char[14]).replace('\0', ' ');
         log.print(padding);
         genotypes.entrySet().stream()
             .sorted(Comparator.comparing(entry -> entry.getKey()))
@@ -65,16 +65,16 @@ public class InteractionMatrix {
             .sorted(Comparator.comparing(student -> student.getValue()))
             .forEach(student -> 
                 {
-                    log.print("%13.13s", String.format("%8.8s[%d]", student.getKey(), student.getValue()));
+                    log.print("%13.13s ", student.getKey());
                     genotypes.entrySet().stream()
                         .sorted(Comparator.comparing(entry -> entry.getKey()))
                         .forEach(genotype -> {	
                             ParsonsPuzzle puzzle = genotype.getValue().genotype.getPuzzle(lib);
                             int phenotypeSize = puzzle.program.size() + puzzle.distracters.size();															
-                            if (!genotype.getValue().evaluations.containsKey(student.getValue())) log.print("%10.10s", "");
+                            if (!genotype.getValue().evaluations.containsKey(student.getKey())) log.print("%10.10s", "");
                             else 
                             {
-                                ParsonsEvaluation eval = genotype.getValue().evaluations.get(student.getValue());
+                                ParsonsEvaluation eval = genotype.getValue().evaluations.get(student.getKey());
                                 if (eval.gaveUp)
                                     log.print("%10.10s", "gaveUp");
                                 else 

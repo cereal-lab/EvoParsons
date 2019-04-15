@@ -36,7 +36,7 @@ public class AuthController implements BiInitializable {
     private static final int MAXPORT = 2000;
     public static Auth auth; 
     public static BrokerUIInterface broker;
-    public static int studentId;
+    public static String sid;
     
     @FXML 
     private ProgressBar connectionProgress;
@@ -88,10 +88,10 @@ public class AuthController implements BiInitializable {
         }
         class Tmp {
             public BrokerUIInterface b;
-            public int studentId;
-            public Tmp(BrokerUIInterface b, int studentId) {
+            public String sid;
+            public Tmp(BrokerUIInterface b, String sid) {
                 this.b = b;
-                this.studentId = studentId;
+                this.sid = sid;
             }
         }
         Task<Tmp> connect = new Task<Tmp>() {
@@ -99,17 +99,17 @@ public class AuthController implements BiInitializable {
             protected Tmp call() throws Exception {
                 BrokerUIInterface b = BrokerClient.connect(auth.host, auth.port);
                 String sid = evoparsons.rmishared.Auth.sha1(auth.login);
-                evoparsons.rmishared.Auth studentAuth = b.getStudentID(sid, sid, "");
-                return new Tmp(b, studentAuth.id);
+                evoparsons.rmishared.Auth studentAuth = b.authenticateStudent(sid, sid, "");
+                return new Tmp(b, studentAuth.sid);
             }
         };
         connect.setOnSucceeded(state -> {
             Tmp tmp = connect.getValue();
-            System.out.printf("[BrokerInterface] Attempt %d. Connection succeeded. Id %d%n", attempt, tmp.studentId);
+            System.out.printf("[BrokerInterface] Attempt %d. Connection succeeded. Id %s%n", attempt, tmp.sid);
             Platform.runLater(() -> 
             {                
                 broker = tmp.b;
-                studentId = tmp.studentId;
+                sid = tmp.sid;
                 Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
                     connectionProgress.setVisible(false);
                     connectionProgress.setManaged(false);

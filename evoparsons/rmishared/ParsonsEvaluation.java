@@ -9,7 +9,7 @@ import java.io.*;
  
 public class ParsonsEvaluation implements Serializable{
 	private static final long serialVersionUID = 1L;
-	public int studentId;
+	public String sid;
 	public final int moves;
 	public final double fitness;
 	public final int puzzleIndex;
@@ -20,8 +20,8 @@ public class ParsonsEvaluation implements Serializable{
 		this.timestamp = timestamp;
 	}
 	
-	public ParsonsEvaluation(int studentId, int puzzleIndex, int moves, long timeInMs, double fitness, boolean gaveUp, long timestamp) {
-		this.studentId = studentId;
+	public ParsonsEvaluation(String sid, int puzzleIndex, int moves, long timeInMs, double fitness, boolean gaveUp, long timestamp) {
+		this.sid = sid;
 		this.puzzleIndex = puzzleIndex;
 		this.moves = moves;
 		this.fitness = fitness;//!important - fitness is decided on client - it depends on UI
@@ -32,6 +32,6 @@ public class ParsonsEvaluation implements Serializable{
 	
 	@Override
 	public String toString() {
-		return String.format("{'studentId':%d,'puzzleId':%d,'moves':%d,'timeInMs':%d,'fitness':%.2f,'gaveUp':%b}", studentId, puzzleIndex, moves, timeInMs, fitness, gaveUp);
+		return String.format("{'sid':'%s','puzzleId':%d,'moves':%d,'timeInMs':%d,'fitness':%.2f,'gaveUp':%b}", sid, puzzleIndex, moves, timeInMs, fitness, gaveUp);
 	}
 }

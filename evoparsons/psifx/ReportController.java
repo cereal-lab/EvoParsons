@@ -49,7 +49,7 @@ public class ReportController implements BiInitializable {
 	public void initializeAgain() {
         DateFormat dateFormat = new SimpleDateFormat("EEE, MMM d yyyy");
         Duration d = Duration.millis(PuzzleController.stats.timeSpan);   
-        login.setText(String.format("%s, %d", AuthController.auth.login, AuthController.studentId));
+        login.setText(String.format("%s, %d", AuthController.auth.login, AuthController.sid));
         server.setText(String.format("%s:%d", AuthController.auth.host, AuthController.auth.port));
         duration.setText(String.format("%d minutes", (long)d.toMinutes()));
         puzzles.setText(String.format("%d/%d", PuzzleController.stats.numCorrectPuzzles, PuzzleController.stats.numTotalPuzzles));

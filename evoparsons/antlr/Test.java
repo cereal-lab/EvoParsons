@@ -15,6 +15,8 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import evoparsons.repo.WatchedJsonFileRepo;
+
 public class Test {
 
     public static class Distractor {
@@ -39,7 +41,11 @@ public class Test {
     {
         return IntStream.range(0, parent.getChildCount()).mapToObj(i -> parent.getChild(i));
     }
-    public static void main(String[] args) throws IOException {        
+
+    public static void main(String[] args) {
+        System.out.println(WatchedJsonFileRepo.InstructorJsonFileRepo.class.getName());
+    }
+    public static void main2(String[] args) throws IOException {        
         Files.list(Paths.get(args[0]))
             .forEach(path -> 
             {
