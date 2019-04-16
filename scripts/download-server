@@ -6,7 +6,10 @@ SVNTARGET="https://github.com/cereal-lab/EvoParsons/branches/anonymization/"
 
 svn checkout "${SVNTARGET}evoparsons/broker" evoparsons/broker >/dev/null
 svn checkout "${SVNTARGET}evoparsons/ecj" evoparsons/ecj >/dev/null
+svn checkout "${SVNTARGET}evoparsons/github" evoparsons/github >/dev/null
+svn checkout "${SVNTARGET}evoparsons/repo" evoparsons/repo >/dev/null
 svn checkout "${SVNTARGET}evoparsons/rmishared" evoparsons/rmishared >/dev/null
+svn checkout "${SVNTARGET}evoparsons/utils" evoparsons/utils >/dev/null
 svn checkout "${SVNTARGET}lib" lib >/dev/null
 mkdir scripts
 mkdir docker
