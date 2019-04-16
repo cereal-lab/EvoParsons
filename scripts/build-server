@@ -5,7 +5,7 @@
 
 #javac -cp "lib/*" $(find evoparsons -name "*.java")
 # We avoid build psi and psifx while building the server for now
-javac -cp "lib/*" $(find evoparsons/broker evoparsons/ecj evoparsons/rmishared -name "*.java")
+javac -cp "lib/*" $(find evoparsons/broker evoparsons/ecj evoparsons/github evoparsons/repo evoparsons/utils evoparsons/rmishared -name "*.java")
 
 if [ $? != 0 ] 
 then 
@@ -20,7 +20,7 @@ mkdir -p bin
 #WARN: rebuild cleans them up - TODO: discuss behavior
 find bin ! -path "bin/psi*" -type f -exec rm -f {} +
 
-jar cfm bin/evoparsons.jar ./evoparsons/broker/manifest.mf ./evoparsons/broker/*.class ./evoparsons/broker/rest/*.html ./evoparsons/broker/rest/js/*.js ./evoparsons/broker/rest/css/*.css ./evoparsons/ecj/*.class ./evoparsons/rmishared/*.class
+jar cfm bin/evoparsons.jar ./evoparsons/broker/manifest.mf ./evoparsons/broker/*.class ./evoparsons/ecj/*.class ./evoparsons/github/*.class ./evoparsons/repo/*.class ./evoparsons/utils/*.class ./evoparsons/rmishared/*.class
 cp lib/ecj.24.jar bin
 cp lib/jetty-9.4.10.v20180503.jar bin
 cp lib/jetty-util-ajax-9.4.11.v20180605.jar bin
