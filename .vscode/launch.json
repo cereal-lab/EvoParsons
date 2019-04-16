@@ -13,7 +13,7 @@
             "stopOnEntry": false,
             "mainClass": "evoparsons.broker.Startup",
             "projectName": "trunk",
-            "vmArgs": "-Dfile=./ev.params",
+            "vmArgs": "-Dfile=../configs/dev/ev.params",
             "args": "-?"
         },           
         {

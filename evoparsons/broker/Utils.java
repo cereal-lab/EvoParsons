@@ -15,31 +15,6 @@ import java.util.function.Supplier;
 
 public final class Utils {
 
-	public static void downloadFolderFromGithub(String url, String folder, Log log) {
-		try 
-		{
-			log.log("Downloading %s to %s", url, folder);
-			String line = "";
-			Process process = 
-				Runtime.getRuntime().exec(String.format("svn checkout %s %s", url, folder));
-			try (BufferedReader in = new BufferedReader(new InputStreamReader(process.getInputStream()) ))
-			{
-				while ((line = in.readLine()) != null) log.log(line);
-			}
-			int errorCode = process.waitFor();
-			if (errorCode > 0) 
-			{
-				log.err("Cannot download to folder %s: %d", folder, errorCode);
-				System.exit(1);
-			}
-		} catch (Exception e) 
-		{
-			log.err("Error downloading to folder %s", folder);
-			e.printStackTrace();
-			System.exit(1);
-		}
-	}
-
     @SuppressWarnings("unchecked")
 	public static <T> T loadFromFile(Log log, String path, Supplier<T> defaultBuilder)
 	{

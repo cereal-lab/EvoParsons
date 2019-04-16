@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -207,6 +208,8 @@ public class Config {
         public String policyPath;    
         public String host; 
         public int port;   
+        public List<String> servlets = new ArrayList<>();
+        public String www;
         // public void validate(Log log, String fileName) {
         //     if (this.host == "" || this.host == null) {
         //         log.err("[Config.validate] In given config %s parameter hostname is missing", fileName);
@@ -284,15 +287,21 @@ public class Config {
                             networkInterfaces.computeIfAbsent(Integer.valueOf(nameParts[2]), (key) -> new Network());
                         if (nameParts.length == 3)
                             network.policyPath = name;
-                        else if (nameParts.length == 4) {
-                            if (nameParts[3].equals("hostname"))
+                        else 
+                            if (nameParts.length == 4 && nameParts[3].equals("hostname"))
                                 network.host = value;
-                            else if (nameParts[3].equals("port"))
+                            else if (nameParts.length == 4 && nameParts[3].equals("port"))
                                 network.port = portParser.applyAsInt(value);
+                            else if (nameParts.length == 5 && nameParts[3].equals("servlet"))
+                            {                                
+                                network.servlets.add(name);
+                            }
+                            else if (nameParts.length == 4 && nameParts[3].equals("www"))
+                            {                                
+                                network.www = value;
+                            }                            
                             else 
                                 log.log("[Config.LoadFromFile] Ignoring unknown property %s=%s", name, value);
-                        } else 
-                            log.log("[Config.LoadFromFile] Ignoring unknown property %s=%s", name, value);
                     } catch (NumberFormatException e) {
                         Network network = 
                             networkInterfaces.computeIfAbsent(0, (key) -> new Network());                            

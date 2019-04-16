@@ -1,0 +1,28 @@
+#evoparsons server config
+evoparsons.log = evoparsons.broker.Log+console
+evoparsons.log.header = [GROUPS]
+evoparsons.output=./DATA.out
+evoparsons.net.0=evoparsons.broker.NetworkPolicy+RMI
+evoparsons.net.0.hostname=127.0.0.1
+evoparsons.net.0.port=1240
+evoparsons.net.1=evoparsons.broker.NetworkPolicy+REST
+evoparsons.net.1.hostname=127.0.0.1
+evoparsons.net.1.port=8240
+evoparsons.net.1.www = file:///C:/Users/dvitel/Documents/University%20of%20South%20Florida/Lessons/Independent%20Study/cereal/EvoParsons/www/student
+evoparsons.net.1.servlet.0 = evoparsons.broker.NetworkPolicy$StudentServlet
+evoparsons.net.1.servlet.0.path = /api/student/* 
+evoparsons.net.2=evoparsons.broker.NetworkPolicy+REST
+evoparsons.net.2.hostname=127.0.0.1
+evoparsons.net.2.port=58240
+evoparsons.net.2.www = file:///C:/Users/dvitel/Documents/University%20of%20South%20Florida/Lessons/Independent%20Study/cereal/EvoParsons/www/instructor
+evoparsons.net.2.servlet.0 = evoparsons.broker.NetworkPolicy$InstructorServlet
+evoparsons.net.2.servlet.0.path = /api/instructor/*
+evoparsons.broker.name = GR
+evoparsons.broker=evoparsons.broker.GroupsBroker
+evoparsons.broker.child.1=../configs/dev/ev.1.params
+evoparsons.broker.child.2=../configs/dev/ev.2.params
+evoparsons.lib=evoparsons.broker.ParsonsLibrary
+evoparsons.programs=https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Programs/Java-2018?ref=anonymization
+evoparsons.transforms=https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Transforms/Java-2018?ref=anonymization
+evoparsons.repo.instructor=evoparsons.repo.WatchedJsonFileRepo$InstructorJsonFileRepo
+evoparsons.repo.instructor.file=instructors.json

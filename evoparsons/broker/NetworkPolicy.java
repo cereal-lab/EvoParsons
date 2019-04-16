@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -22,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -459,8 +461,8 @@ public interface NetworkPolicy {
     public static NetworkPolicy REST = 
         (networkConfig, config, broker) -> {
             final Log log = config.getLog();
-            new Thread(() -> 
-			{
+            // new Thread(() -> 
+			// {
 				try (FileLog fileLog = Log.file(Paths.get(config.getOutputFolder(), "web.log").toString())) {				
 					org.eclipse.jetty.util.log.Log.setLog(new Logger(){
 						@Override public void debug(Throwable arg0) { }
@@ -511,25 +513,48 @@ public interface NetworkPolicy {
                     apiHandler.setVirtualHosts(new String[] { networkConfig.host });
 					apiHandler.setServer(server);
                     apiHandler.setContextPath("/");
-                    final String staticContentPath = 
-                        //NetworkPolicy.class.getResource("rest/index.html").toExternalForm();
-                        new URL(NetworkPolicy.class.getResource("rest/index.html"), ".").toExternalForm();
-                    log.log("[REST] WebUI content by path: %s", staticContentPath);                                                    
-					apiHandler.setBaseResource(Resource.newResource(staticContentPath));
-                    apiHandler.addServlet(new ServletHolder(new StudentServlet(config, broker)), "/api/student/*");
-                    apiHandler.addServlet(new ServletHolder(new InstructorServlet(config, broker)), "/api/instructor/*");
-                    apiHandler.addServlet(DefaultServlet.class, "/*");
-                    apiHandler.setWelcomeFiles(new String[] { "index.html" });  
+                    if (networkConfig.www != null)
+                    {
+                        Path contentPath = Paths.get(config.getOutputFolder(), "www");
+                        if (networkConfig.www.startsWith("https://api.github."))
+                        {
+                            evoparsons.github.Client.download(networkConfig.www, contentPath.toString(), log);
+                        } else if (networkConfig.www.startsWith("file://")) {
+                            contentPath = Paths.get(new URL(networkConfig.www).toURI());
+                        } else {
+                            log.err("[REST] cannot create www folder from %s", networkConfig.www);
+                            System.exit(1);
+                        }
+                        final String staticContentPath = 
+                            //NetworkPolicy.class.getResource("rest/index.html").toExternalForm();
+                            //new URL(NetworkPolicy.class.getResource("rest/index.html"), ".").toExternalForm();
+                            contentPath.toUri().toString();
+                        log.log("[REST] WebUI content by path: %s", staticContentPath);                                                    
+                        apiHandler.setResourceBase(staticContentPath);        
+                        apiHandler.addServlet(DefaultServlet.class, "/*");
+                        apiHandler.setWelcomeFiles(new String[] { "index.html" });  
+                    }
+                    if (networkConfig.servlets.size() == 0) {
+                        log.err("[REST} Interface %s does not have servlets", networkConfig.policyPath);
+                    }
+                    networkConfig.servlets.stream()
+                        .forEach(servletId -> 
+                        {
+                            Servlet servlet = config.getInstance(servletId, config, broker);
+                            apiHandler.addServlet(new ServletHolder(servlet), config.get(servletId + ".path", "/*").trim());
+                        });
+                    //apiHandler.addServlet(new ServletHolder(new StudentServlet(config, broker)), "/api/student/*");
+                    //apiHandler.addServlet(new ServletHolder(new InstructorServlet(config, broker)), "/api/instructor/*");
                     handlers.addHandler(apiHandler);                  
 					server.setHandler(handlers);					
 					server.start();
-					server.join();
+					//server.join();
 				} catch (Exception e) {
                     log.err("[REST] Cannot start service");
                     e.printStackTrace();
                     System.exit(1);
 				}
-			}).start();;							
+			//}).start();;							
             
         };
 }

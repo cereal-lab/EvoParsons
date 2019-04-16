@@ -51,7 +51,8 @@ public class ParsonsLibrary implements Library
 		if (Files.notExists(programFolder))
 		{
 			String url = config.get("evoparsons.programs", "");
-			Utils.downloadFolderFromGithub(url, programFolder.toString(), log);
+			//Utils.downloadFolderFromGithub(url, programFolder.toString(), log);
+			evoparsons.github.Client.download(url, programFolder.toString(), log);
 		}
 		programStore = 
 			load(programFolder.toString(), 
@@ -73,7 +74,8 @@ public class ParsonsLibrary implements Library
 		if (Files.notExists(transformFolder))
 		{
 			String url = config.get("evoparsons.transforms", "");
-			Utils.downloadFolderFromGithub(url, transformFolder.toString(), log);
+			//Utils.downloadFolderFromGithub(url, transformFolder.toString(), log);
+			evoparsons.github.Client.download(url, transformFolder.toString(), log);
 		}
 		transformStore = 
 			loadTransforms(transformFolder.toString(), 
