@@ -205,6 +205,7 @@ public class Config {
         return Optional.empty();
     }    
     public static class Network {
+        public String policyName;
         public String policyPath;    
         public String host; 
         public int port;   
@@ -286,7 +287,10 @@ public class Config {
                         Network network = 
                             networkInterfaces.computeIfAbsent(Integer.valueOf(nameParts[2]), (key) -> new Network());
                         if (nameParts.length == 3)
+                        {
                             network.policyPath = name;
+                            network.policyName = nameParts[2];
+                        }
                         else 
                             if (nameParts.length == 4 && nameParts[3].equals("hostname"))
                                 network.host = value;

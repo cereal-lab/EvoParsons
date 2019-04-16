@@ -515,9 +515,10 @@ public interface NetworkPolicy {
                     apiHandler.setContextPath("/");
                     if (networkConfig.www != null)
                     {
-                        Path contentPath = Paths.get(config.getOutputFolder(), "www");
+                        Path contentPath = null;
                         if (networkConfig.www.startsWith("https://api.github."))
                         {
+                            contentPath = Paths.get(config.getOutputFolder(), "www", networkConfig.policyName);
                             evoparsons.github.Client.download(networkConfig.www, contentPath.toString(), log);
                         } else if (networkConfig.www.startsWith("file://")) {
                             contentPath = Paths.get(new URL(networkConfig.www).toURI());
@@ -528,7 +529,7 @@ public interface NetworkPolicy {
                         final String staticContentPath = 
                             //NetworkPolicy.class.getResource("rest/index.html").toExternalForm();
                             //new URL(NetworkPolicy.class.getResource("rest/index.html"), ".").toExternalForm();
-                            contentPath.toUri().toString();
+                            contentPath.normalize().toUri().toString();
                         log.log("[REST] WebUI content by path: %s", staticContentPath);                                                    
                         apiHandler.setResourceBase(staticContentPath);        
                         apiHandler.addServlet(DefaultServlet.class, "/*");
