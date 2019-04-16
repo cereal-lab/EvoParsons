@@ -82,7 +82,7 @@ public class Client {
         if (url != null)
         {
             //download subfolders
-            download(url, Paths.get(outputPath, p.get("name").toString()).toString(), log);
+            download(url, outputPath, log);
         }
         //noop othervise 
         //TODO: logging - this is only possible if protocol of github v3 API changes
@@ -139,7 +139,8 @@ public class Client {
                 if (parsed instanceof Map) // parsed is an object 
                 {
                     Map<String, Object> p = (Map<String, Object>)parsed;
-                    downloadFileFromJson(p, outputPath, log);
+                    String fileOutputPath = Paths.get(outputPath, p.get("name").toString()).toString();
+                    downloadFileFromJson(p, fileOutputPath, log);
                 }
                 if (parsed instanceof Object[])
                 {
