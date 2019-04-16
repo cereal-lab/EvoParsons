@@ -89,7 +89,7 @@ docker_container_build() {
     
     # Download the config files for the docker container
     # Download docker-compose.yml for run the service
-    TargetRepository="https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/docker/"
+    TargetRepository="https://raw.githubusercontent.com/cereal-lab/EvoParsons/anonymization/docker/"
     for TargetFile in "docker-compose.yml" "Dockerfile" "supervisord.conf"
     do
 	    curl -fsSL ${TargetRepository}${TargetFile} -o ${TargetFile}
@@ -103,7 +103,7 @@ docker_container_run() {
   if [[ "$#" -ne 2 ]]; then
     echo "Usage:"
     echo "    $0 up <name> <configUrl>"
-    echo "    Example 1: $0 up class1 https://raw.githubusercontent.com/cereal-lab/EvoParsons/master/ev.params"
+    echo "    Example 1: $0 up class1 https://raw.githubusercontent.com/cereal-lab/EvoParsons/anonymization/ev.params"
     echo "    Example 2: $0 up class2 file:///home/dvitel/usf/sw/evotutoring/trunk/ev.params"
     echo "    Note: if file:// is provided, path will be converted relative to container"
     echo ""
