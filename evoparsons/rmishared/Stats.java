@@ -10,7 +10,8 @@ public class Stats implements Serializable {
     public int puzzlesSeen;
     public long start;
     public long duration;
-    public Map<Integer, Integer> attemptsPerPuzzle;
+    public Map<String, Integer> attemptsPerPuzzle;
+    public Stats() {}
     public Stats(int puzzlesSolved, int puzzlesSeen) {
         this.puzzlesSolved = puzzlesSolved;
         this.puzzlesSeen = puzzlesSeen;

@@ -42,7 +42,7 @@ public class ProgramsByEffectiveDistractors {
                 }				
 			}
         };
-        Config config = new Config(null) {{
+        Config config = new Config(null, null) {{
             this.props.put("evoparsons.programs", args[0]);
             this.props.put("evoparsons.transforms", args[1]);
         }};

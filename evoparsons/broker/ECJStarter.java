@@ -25,18 +25,20 @@ public class ECJStarter implements EAStarter {
         this.broker = broker;
     }
 	
-	public void runFreshInternal(String config) {              
-        File ecjConfigFile = Paths.get(config).toFile().getAbsoluteFile();
-        ParameterDatabase params = null;		
+	public void runFreshInternal() {              
+        //File ecjConfigFile = Paths.get(config).toFile().getAbsoluteFile();
+        ParameterDatabase params = new ParameterDatabase();
         try {
-            params = 
-                new ParameterDatabase(ecjConfigFile, 
-                        new String[] { "-file", ecjConfigFile.getCanonicalPath() });
+                // new ParameterDatabase(ecjConfigFile, 
+                //         new String[] { "-file", ecjConfigFile.getCanonicalPath() });
+            this.config.props.forEach((k, v) -> {
+                params.set(new Parameter(k.toString()), v.toString());
+            });
             params.set(new Parameter("pop.subpop.0.species.min-gene"), "0");
             params.set(new Parameter("pop.subpop.0.species.max-gene"), String.valueOf(broker.getLib().getTransformCount() - 1));
             params.set(new Parameter("pop.subpop.0.species.min-gene.0"), "0");
             params.set(new Parameter("pop.subpop.0.species.max-gene.0"), String.valueOf(broker.getLib().getProgramCount() - 1));
-        } catch (IOException e) {
+        } catch (Exception e) {
             log.err("[ECJ.runFresh] Error starting ECJ (check param file): %s", e.getMessage());
             System.exit(1);
         }
@@ -50,11 +52,11 @@ public class ECJStarter implements EAStarter {
     }
     
     @Override
-    public void runFresh(String config) {
-        new Thread(() -> runFreshInternal(config)).start();
+    public void runFresh() {
+        new Thread(() -> runFreshInternal()).start();
     }
 
-	public void runCheckpointInternal(String config) {
+	public void runCheckpointInternal() {
         evolState = null;
 
         File[] checkpoints = 
@@ -97,13 +99,13 @@ public class ECJStarter implements EAStarter {
 			    .start(EvolutionState.C_STARTED_FROM_CHECKPOINT);
 		} else {
             log.log("[ECJ.runCheckpoint] Cannot restore from checkpoint. Start fresh.");
-            this.runFreshInternal(config);
+            this.runFreshInternal();
         }        
     }     
     
     @Override
-    public void runCheckpoint(String config) {
-        new Thread(() -> runCheckpointInternal(config)).start();
+    public void runCheckpoint() {
+        new Thread(() -> runCheckpointInternal()).start();
     }
 
 }

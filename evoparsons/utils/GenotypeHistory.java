@@ -16,7 +16,7 @@ public class GenotypeHistory {
     public static final String GENOTYPE_EVOL_FILE = "genotypeEvol.bro";
     public static void main(String[] args) throws FileNotFoundException {
         Log log = Log.file("genotypesHistory.txt");
-        Config config = new Config(null) {{
+        Config config = new Config(null, null) {{
             outputFolder = args[0];
         }};
 		Map<Integer, List<ParsonsGenotype>> genotypeEvolution =

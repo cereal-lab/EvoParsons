@@ -9,9 +9,21 @@ import java.util.Formatter;
 public class Auth implements Serializable {
     private static final long serialVersionUID = 1L;
     //public final int id;
-    public final String sid; 
-    public final String ssig; 
+    private String sid; 
+    private String ssig; 
     private String skey;
+    public String getSid() {
+        return sid; 
+    }
+    public void setSid(String sid) {
+        this.sid = sid;
+    }
+    public String getSsig() {
+        return ssig;
+    }
+    public void setSsig(String ssig) {
+        this.ssig = ssig;
+    }
     public String getSkey() {
         return skey;
     }
@@ -19,6 +31,7 @@ public class Auth implements Serializable {
         if (skey != null && !skey.isEmpty())
             this.skey = skey;
     }
+    public Auth() {}
     public Auth(String sid, String ssig, String skey) {
         //this.id = id; 
         this.sid = sid; 

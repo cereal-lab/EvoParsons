@@ -25,12 +25,12 @@ class BroToCsv {
         System.out.println();
         students.entrySet()
             .stream()
-            .filter(kv -> studentEvalCount.containsKey(kv.getValue().auth.sid))
-            .sorted(Comparator.comparing(kv -> kv.getValue().auth.sid))
+            .filter(kv -> studentEvalCount.containsKey(kv.getValue().getAuth().getSid()))
+            .sorted(Comparator.comparing(kv -> kv.getValue().getAuth().getSid()))
             .forEach(kv -> {
-                long totalCnt = studentEvalCount.get(kv.getValue().auth.sid).size();
-                long solved = studentEvalCount.get(kv.getValue().auth.sid).stream().filter(p -> !p.gaveUp).count();
-                System.out.format("%s,%s,%d,%d,%d%n", kv.getValue().auth.sid, kv.getKey(), totalCnt, solved, totalCnt - solved);
+                long totalCnt = studentEvalCount.get(kv.getValue().getAuth().getSid()).size();
+                long solved = studentEvalCount.get(kv.getValue().getAuth().getSid()).stream().filter(p -> !p.gaveUp).count();
+                System.out.format("%s,%s,%d,%d,%d%n", kv.getValue().getAuth().getSid(), kv.getKey(), totalCnt, solved, totalCnt - solved);
             });
     }
 }

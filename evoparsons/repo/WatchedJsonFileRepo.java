@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.eclipse.jetty.util.ajax.JSON;
 
@@ -48,6 +49,11 @@ public abstract class WatchedJsonFileRepo<T> extends FileRepo<String, T> {
             super(config, config.get("evoparsons.repo.instructor.file", ""));
         }
 
+        @Override
+        public String getName() {
+            return this.file.getName();
+        }        
+
         @Override 
         public Instructor get(String id) {
             Map<String, Object> instrInfo = (Map<String, Object>)inMemoryState.get(id);
@@ -59,8 +65,20 @@ public abstract class WatchedJsonFileRepo<T> extends FileRepo<String, T> {
         }
 
         @Override
-        public void update(List<Instructor> entity, Function<Instructor, String> idGetter) {
+        public void update(List<Instructor> entity) {
             //TODO:NOOP
         }
+
+        @Override
+        public void insert(List<Instructor> entities) {
+            //TODO:NOOP
+        }
+
+        @Override
+        public Map<String, Instructor> getAll() {
+            return 
+                inMemoryState.entrySet().stream()
+                    .collect(Collectors.toMap(kv -> kv.getKey(), kv -> get(kv.getKey())));
+        }        
     }    
 }

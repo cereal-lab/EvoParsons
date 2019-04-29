@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -62,8 +63,21 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 		brokerToSids = data.brokerToSids;
 		sidToBroker = data.sidToBroker;
 		this.lib = config.<Library>getInstanceOpt("evoparsons.lib", config).orElse(null);
+		String childKey = "evoparsons.broker.child.";		
+		Set<String> childBrokerPrefixes = new HashSet<>();
+		List<String> childKeys = config.getKeyList(childKey);
+		childKeys
+			.stream().forEach(key -> {
+				String[] parts = key.substring(childKey.length()).split("\\.");
+				if (parts.length > 1)
+					childBrokerPrefixes.add(childKey + parts[0] + ".");
+			});
 		List<Broker> brokers = 
-			config.getList("evoparsons.broker.child.")
+			(childBrokerPrefixes.size() > 0) ?
+				childBrokerPrefixes.stream()
+					.map(prefix -> config.getSubconfig(prefix).init(this))
+					.collect(Collectors.toList())
+			: config.getList(childKey)
 				.stream()
 				.map(cf -> Config.FromFile(config, cf).init(this))
 				.collect(Collectors.toList());
@@ -99,7 +113,7 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 
 	@Override
 	public synchronized ParsonsPuzzle getParsonsPuzzle(String sid) throws RemoteException {
-		return exec(sid, (b, data) -> b.getUIInterface().getParsonsPuzzle(data.localAuth.sid));
+		return exec(sid, (b, data) -> b.getUIInterface().getParsonsPuzzle(data.localAuth.getSid()));
 	}
 
 	private Auth allocateStudent(String sid, String ssig, String skey) throws RemoteException {
@@ -112,9 +126,9 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 		if (auth == null) return null;
 		StudentData data = new StudentData(selectedBrokerName, sidToBroker.size(), auth);
 		//Auth auth = new Auth(sid, ssig, skey);
-		log.log("New student: %s [%s]", auth.sid, selectedBrokerName);
-		sidToBroker.put(auth.sid, data);
-		brokerToSids.get(selectedBrokerName).add(auth.sid);
+		log.log("New student: %s [%s]", auth.getSid(), selectedBrokerName);
+		sidToBroker.put(auth.getSid(), data);
+		brokerToSids.get(selectedBrokerName).add(auth.getSid());
 		save();
 		return auth;
 	}
@@ -142,7 +156,15 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 	@Override
 	public synchronized Stats getStudentStats(String sid) throws RemoteException {
 		return exec(sid, (b, data) -> 
-				b.getUIInterface().getStudentStats(data.localAuth.sid));
+				b.getUIInterface().getStudentStats(data.localAuth.getSid()));
+	}
+
+	@Override
+	public synchronized void recordAttempt(String sid, String puzzleId) throws RemoteException {
+		exec(sid, (b, data) -> {
+			b.getUIInterface().recordAttempt(data.localAuth.getSid(), puzzleId);
+			return 0;
+		});		
 	}
 
 	@Override

@@ -23,8 +23,10 @@ import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
 import evoparsons.repo.IRepo;
+import evoparsons.utils.MongoUtils;
 
 public class Config {
+
     //Reflection - creating instance
     // 1. static field
     // 2. constructor
@@ -232,12 +234,14 @@ public class Config {
     protected ScheduledThreadPoolExecutor threadPool; 
 
     protected String outputFolder;
+    public final String connectionString;
 
-    public Config(Config parent) {
+    public Config(Config parent, String connectionString) {
         // this.log = log;
         // this.parentConfig = parentConfig;
         this.parent = parent;
         this.threadPool = new ScheduledThreadPoolExecutor(20);
+        this.connectionString = (connectionString == null) ? ((parent == null) ? null : parent.connectionString) : connectionString;
     }
 
     public ScheduledThreadPoolExecutor getTP() {
@@ -351,15 +355,56 @@ public class Config {
 
     public static Config FromFile(Config parent, String url) {
         Log log = parent == null ? Log.console : parent.getLog();
-        Config config = new Config(parent).AddFromFile(log, url, true);
+        Config config = new Config(parent, null).AddFromFile(log, url, true);
         config.getLog(); //validation
         config.getOutputFolder(); 
         return config;
     }
 
+    public static Config FromDB(Config parent, String connectionString, String url) {
+        Log log = parent == null ? Log.console : parent.getLog();
+        Config config = new Config(parent, connectionString).AddFromDB(log, url);
+        config.getLog(); //validation
+        config.getOutputFolder(); 
+        return config;
+    }    
+
+    public static Config FromProps(Config parent, String name, Properties props) {
+        Log log = parent == null ? Log.console : parent.getLog();
+        String realName = parent == null ? name : parent.configFileName + ":" + name;
+        Config config = new Config(parent, null).AddFromProps(log, realName, props);
+        config.getLog(); //validation
+        config.getOutputFolder(); 
+        return config;
+    }        
+
     public String get(String key, String defaultValue) {
         return props.getProperty(key, defaultValue);
     }
+
+    public Object getObject(String key) {
+        return props.get(key);
+    }    
+
+    public Config AddFromDB(Log log, String fileName) {
+        this.configFileName = fileName;
+        try
+        {
+            MongoUtils.populatePropsFromFile(connectionString, fileName, props);
+        }
+        catch (Exception e) {            
+            log.err("[Config.LoadFromDB] Error reading config %s: %s", fileName, e.getMessage());
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return this;
+    }
+
+    public Config AddFromProps(Log log, String name, Properties props) {        
+        this.configFileName = name;
+        this.props = props;
+        return this;
+    }    
 
     public Config AddFromFile(Log log, String fileName, boolean tryUrl) {
         this.configFileName = fileName;
@@ -396,8 +441,24 @@ public class Config {
 
     public List<String> getList(final String prefix) {
         return props.entrySet().stream().filter(kv -> ((String)kv.getKey()).startsWith(prefix))
-                    .map(kv -> (String)kv.getValue())
+                    .map(kv -> kv.getValue().toString())
                     .collect(Collectors.toList());
+    }
+
+    public List<String> getKeyList(final String prefix) {
+        return props.entrySet().stream().filter(kv -> ((String)kv.getKey()).startsWith(prefix))
+                    .map(kv -> kv.getKey().toString())
+                    .collect(Collectors.toList());
+    }    
+
+    public Config getSubconfig(final String prefix) {
+        Properties childProps = new Properties();
+        props.entrySet().stream().filter(kv -> ((String)kv.getKey()).startsWith(prefix))
+            .forEach(kv -> {
+                String newKey = ((String)kv.getKey()).substring(prefix.length());
+                childProps.put(newKey, kv.getValue());
+            });
+        return Config.FromProps(this, prefix, childProps);
     }
 
 	public Broker init(Broker parent) {
@@ -413,9 +474,9 @@ public class Config {
             eaStarter = this.<EAStarter>getInstanceOpt("evoparsons.ea", this, brokerEAInterface).orElse(null);
             if (eaStarter != null) {
                 if (brokerEAInterface.startFresh()) 
-                    eaStarter.runFresh(this.getConfigFileName());
+                    eaStarter.runFresh();
                 else 
-                    eaStarter.runCheckpoint(this.getConfigFileName());
+                    eaStarter.runCheckpoint();
             }
         }		
 		return broker;

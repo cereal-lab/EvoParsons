@@ -100,7 +100,7 @@ public class AuthController implements BiInitializable {
                 BrokerUIInterface b = BrokerClient.connect(auth.host, auth.port);
                 String sid = evoparsons.rmishared.Auth.sha1(auth.login);
                 evoparsons.rmishared.Auth studentAuth = b.authenticateStudent(sid, sid, "");
-                return new Tmp(b, studentAuth.sid);
+                return new Tmp(b, studentAuth.getSid());
             }
         };
         connect.setOnSucceeded(state -> {

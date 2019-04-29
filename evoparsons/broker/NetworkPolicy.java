@@ -229,10 +229,12 @@ public interface NetworkPolicy {
         BrokerUIInterface broker;
         Config config;
         Log log;
+        IRepo<String, String> attemptRepo;
         public StudentServlet(Config config, BrokerUIInterface broker) {
             this.broker = broker;
             this.config = config;
             this.log = config.getLog();
+            this.attemptRepo = config.<String, String>getRepo("evoparsons.repo.attempts");
         }
         
         private void onNewStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -261,7 +263,7 @@ public interface NetworkPolicy {
             response.setStatus(HttpServletResponse.SC_OK);
             Auth auth = broker.authenticateStudent(sid, ssig, skey);
             Map<String, Object> respJson = new HashMap<>();
-            respJson.put("id", auth.sid);
+            respJson.put("id", auth.getSid());
             respJson.put("ip", request.getRemoteAddr());
             respJson.put("sessionId", UUID.randomUUID().toString());
             response.getWriter().print(JSON.toString(respJson));
@@ -318,21 +320,25 @@ public interface NetworkPolicy {
             response.getWriter().print(JSON.toString(respJson));                  
         }
 
-        private void onNewAttempt(String sid, int puzzleId, HttpServletRequest request, HttpServletResponse response) throws IOException
+        private void onNewAttempt(String sid, String puzzleId, HttpServletRequest request, HttpServletResponse response) throws IOException
         {
-            Stats stats = broker.getStudentStats(sid);
-            int attemptId = 0;
-            synchronized (stats)
-            {
-                attemptId = 
-                    stats.attemptsPerPuzzle.getOrDefault(puzzleId, 0);
-                    stats.attemptsPerPuzzle.put(puzzleId, attemptId + 1);
-            }
-            File file = Paths.get(config.getOutputFolder(), "data", sid, String.valueOf(puzzleId), "attempts", String.format("%d.json", attemptId)).toFile().getAbsoluteFile();
-            file.getParentFile().mkdirs();
-            try (FileWriter writer = new FileWriter(file)) {
+            broker.recordAttempt(sid, puzzleId);
+            //int attemptId = 0;
+            //File file = Paths.get(config.getOutputFolder(), "data", sid, String.valueOf(puzzleId), "attempts", String.format("%d.json", attemptId)).toFile().getAbsoluteFile();
+            //file.getParentFile().mkdirs();
+            // try (FileWriter writer = new FileWriter(file)) {
+            //     String text = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
+            //     writer.write(text);
+            // } catch (Exception e) {
+            //     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
+            //     Map<String, Object> respJson = new HashMap<>();
+            //     respJson.put("error", e.getMessage());
+            //     response.getWriter().print(JSON.toString(respJson));
+            //     return;
+            // }
+            try {
                 String text = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-                writer.write(text);
+                attemptRepo.insert(Collections.singletonList(text));
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
                 Map<String, Object> respJson = new HashMap<>();
@@ -448,7 +454,7 @@ public interface NetworkPolicy {
                 //obtaining new puzzle
                 String sid = URLDecoder.decode(attemptMatcher.group("sid"), StandardCharsets.UTF_8.name());
                 int puzzleId = Integer.valueOf(attemptMatcher.group("puzzleId"));
-                onNewAttempt(sid, puzzleId, request, response);
+                onNewAttempt(sid, String.valueOf(puzzleId), request, response);
                 return;                        
             }
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);    

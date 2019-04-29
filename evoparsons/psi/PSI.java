@@ -64,9 +64,9 @@ public class PSI
 		
 		while (true)
 		{
-			ParsonsPuzzle puzzle = broker.getParsonsPuzzle(auth.sid);
+			ParsonsPuzzle puzzle = broker.getParsonsPuzzle(auth.getSid());
 			System.out.format("[PSI] Obtained puzzle #%d%n", puzzle.id);
-			evaluate(auth.sid, puzzle);
+			evaluate(auth.getSid(), puzzle);
 		}
 	}
 
