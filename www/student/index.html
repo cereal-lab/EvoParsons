@@ -18,9 +18,13 @@
         <script src="./js/sha1.js"></script>    
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">      
         <style>
+            #emailRequired {
+                font-size: 80%;                
+                color: #844;        
+                display: none;        
+            }            
             input.err {
-                border-color: #844;
-                border-width: 2px;
+                background-color: #844;
             }
             #puzzleTitle {
                 font-weight: bold;
@@ -90,31 +94,125 @@
                 white-space: pre-wrap !important;
                 overflow: hidden !important;
             }
-            .fragment:first-child > div:first-child {
+            .noBorder > .fragment:hover {
+                border: 1px dotted #888;    
+                /* border-bottom: none;             */
+            }            
+            .noBorder > .fragment:first-child {
+                border-top-left-radius: 5px;  
+                border-top-right-radius: 5px;                                                                    
+            }
+
+            .noBorder > .fragment:first-child > div:first-child { 
+                border-top-left-radius: 5px;  
+            }
+
+            .noBorder > .fragment:first-child > div:last-child { 
+                border-top-right-radius: 5px;  
+            }
+
+            .noBorder > .fragment:last-child {
+                border-bottom-right-radius: 5px;  
+                border-bottom-left-radius: 5px;    
+                /* border-bottom: 1px dotted #888;                                      */
+            }            
+
+            .noBorder > .fragment:last-child > div:first-child  {
+                border-bottom-left-radius: 5px;                                        
+            }      
+            .noBorder > .fragment:last-child > div:last-child  {
+                border-bottom-right-radius: 5px;                                        
+            }         
+
+            .noBorder > .fragment:first-child > div.fragmentLinesHolder {                                
+                padding: .5ex .1em .5ex .1em;    
+            }            
+            .noBorder > .fragment:last-child > div.fragmentLinesHolder {
+                padding: .5ex .1em .5ex .1em;                          
+            }     
+            .noBorder > .fragment:hover > div.trashIconHolder {                        
+                background-color: #f29393;       
+            }          
+
+            .noBorder > .fragment > div.trashIconHolder {
+                cursor: pointer;
+                display:table-cell;
+                font-size: 80%;
+                vertical-align:middle;
+                width: 2em;
+                background-color: white;
+                color: white;
+                text-align: center;
+                padding: .5ex;
+            }
+
+            .noBorder > .fragment:hover > div.handIconHolder {                        
+                background-color: #82e2ea;        
+            }            
+
+            .noBorder > .fragment > div.handIconHolder {
+                display: table-cell;
+                cursor: pointer;                
+                font-size: 80%;
+                vertical-align:middle;
+                text-align: center;
+                width: 2em;                
+                background-color: white;
+                color: white;
+                padding: .5ex;
+            }
+
+            .noBorder > .fragment.hint > div.handIconHolder {
+                background-color:red;
+            } 
+
+            .noBorder > .fragment > div.fragmentLinesHolder {
+                display:table-cell;
+                padding: .5ex .1em .5ex .1em;
+            }                 
+
+            .noBorder > .fragment.phantom > div {
+                cursor: inherit;
+                opacity: 50%;
+            }
+            .noBorder > .fragment.phantom > div.handIconHolder {
+                background-color: #888                
+            }            
+            .noBorder > .fragment.phantom > div.trashIconHolder {
+                background-color: #888
+            }            
+            .noBorder > .fragment > div.fragmentLinesHolder {
+                display:table-cell;
+                padding: .5ex .1em .5ex .1em;
+            }                         
+
+            :not(.noBorder) > .fragment:first-child > div:first-child {
                 border-top-left-radius: 5px;                                                                    
             }
-            .fragment:first-child > div:last-child {
+            :not(.noBorder) > .fragment:first-child > div:last-child {
                 border-top-right-radius: 5px;                                                       
             }
-            .fragment:last-child > div:first-child {
+            
+            :not(.noBorder) > .fragment:last-child > div:first-child {
                 border-bottom-left-radius: 5px;     
                 border-bottom: none;                                                               
             }
-            .fragment:last-child > div:last-child {
+            :not(.noBorder) > .fragment:last-child > div:last-child {
                 border-bottom-right-radius: 5px;   
                 border-bottom: none;                                                    
             }
-            .fragment:first-child > div.fragmentLinesHolder {                                
+               
+            :not(.noBorder) > .fragment:first-child > div.fragmentLinesHolder {                                
                 padding: 1ex 1em 1ex 1em;    
                 border-top: 1px dotted #888;
             }            
-            .fragment:last-child > div.fragmentLinesHolder {
+            :not(.noBorder) > .fragment:last-child > div.fragmentLinesHolder {
                 padding: 1ex 1em 1ex 1em;                          
             }     
-            .fragment.inAction > div {
+            :not(.noBorder) > .fragment.inAction > div {
                 border-radius: 0;
             }
-            .fragment > div.trashIconHolder {
+            :not(.noBorder) > .fragment > div.trashIconHolder {
                 cursor: pointer;
                 display:table-cell;
                 font-size: 80%;
@@ -125,8 +223,9 @@
                 color: white;
                 text-align: center;
                 padding: .5ex;
-            }            
-            .fragment > div.handIconHolder {
+            }      
+
+            :not(.noBorder) > .fragment > div.handIconHolder {
                 cursor: pointer;
                 display:table-cell;
                 font-size: 80%;
@@ -138,24 +237,25 @@
                 color: white;
                 padding: .5ex;
             }
-            .fragment.hint > div.handIconHolder {
+            :not(.noBorder) > .fragment.hint > div.handIconHolder {
                 background-color:red;
             }
-            .fragment.phantom > div {
+            :not(.noBorder) > .fragment.phantom > div {
                 cursor: inherit;
                 opacity: 50%;
             }
-            .fragment.phantom > div.handIconHolder {
+            :not(.noBorder) > .fragment.phantom > div.handIconHolder {
                 background-color: #888                
             }            
-            .fragment.phantom > div.trashIconHolder {
+            :not(.noBorder) > .fragment.phantom > div.trashIconHolder {
                 background-color: #888
             }            
-            .fragment > div.fragmentLinesHolder {
+            :not(.noBorder) > .fragment > div.fragmentLinesHolder {
                 display:table-cell;
                 border-bottom: 1px dotted #888;
                 padding: 1ex 1em 1ex 1em;
-            }            
+            }       
+
             #trashed .fragment .trashIconHolder i {
                 display: none !important;
             }
@@ -215,6 +315,7 @@
             <div class="form-group row">
                 <div class="col col-lg-8 offset-lg-2">
                     <input type="text" id="email" class="form-control" placeholder="Write your email address here" />
+                    <span id="emailRequired">Email is required</span>
                 </div>
             </div>
             <div class="form-group row">
@@ -359,6 +460,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                         <button type="button" class="btn" id="giveUpButton">GiveUp</button>
                         <button type="button" class="btn" id="progressButton">My Progress</button>   
                         <button type="button" class="btn" id="hintButton">Hint</button>
+                        <button type="button" class="btn" id="gridButton">Grid</button>
                     </div>
                 </div>                
             </div>    
@@ -742,6 +844,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                     var instructorEmail = $("#instructorEmail").val(); 
                     var failed = false; 
                     if (!email) {
+                        $("#emailRequired").show();
                         $("#email").addClass("err");
                         failed = true;
                     }                     
@@ -895,6 +998,13 @@ I freely give my consent to take part in this study.  I understand that by proce
                 });
                 $("#hintButton").click(function () {
                     hint();
+                });
+                $("#gridButton").click(function () {
+                    taskPane.fadeOut(function () {
+                        taskPane.toggleClass("noBorder", function () {
+                            taskPane.fadeIn();
+                        });
+                    });
                 });
                 /*
                 $("#consent").change(function () {
