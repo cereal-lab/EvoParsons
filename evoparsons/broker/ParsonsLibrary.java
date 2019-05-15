@@ -95,10 +95,27 @@ public class ParsonsLibrary implements Library
 				IntStream.range(0, transformStore.size())
 					//.mapToObj(i -> String.format("\t%d\t%s\t%s", i, transformStore.get(i).getFileName(), transformStore.get(i).getTitle()))
 					.mapToObj(i -> String.format("\t%d\t%s", i, transformStore.get(i).getFileName()))
-					.collect(Collectors.joining(System.lineSeparator()))
-				
+					.collect(Collectors.joining(System.lineSeparator()))				
 			});		
+		IntStream.range(0, programStore.size()).forEach(i -> programStore.get(i).setIndex(i));
+		IntStream.range(0, transformStore.size()).forEach(i -> transformStore.get(i).setIndex(i));	
 	}
+
+	@Override 
+	public Program getProgram(String name) 
+	{
+		return programStore.stream()
+			.filter(p -> p.fileName.toLowerCase().equals(name.toLowerCase()))
+			.findFirst().orElse(null);
+	}
+	
+	@Override 
+	public Transform getTransform(String name) 
+	{
+		return transformStore.stream()
+			.filter(p -> p.getFileName().toLowerCase().equals(name.toLowerCase()))
+			.findFirst().orElse(null);
+	}	
 	
 	@Override
 	public int getProgramCount() { return programStore.size(); }

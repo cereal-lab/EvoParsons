@@ -20,6 +20,15 @@ public class Transform {
 	private String transform;
 	private Pattern pattern;
 
+	private int index;
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}	
+
 	public Transform(String fileName, String title, String description, String fragmentSelect, String transform) {
 		this.title = title;
 		this.fileName = fileName;

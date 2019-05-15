@@ -18,6 +18,15 @@ public class Program {
 	public final String description;
 	public final List<String> body;
 	public final String fileName;
+	private int index;
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}		
 	
 	public Program(String fileName, String language, String title, String description, List<String> body) {
 		this.language = language;

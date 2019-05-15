@@ -15,7 +15,18 @@
             "projectName": "trunk",
             "vmArgs": "-Dfile=../configs/dev/ev.params",
             "args": "-?"
-        },           
+        },      
+        {
+            "type": "java",
+            "name": "ANTLR GRUN",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/bin",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "org.antlr.v4.gui.TestRig",
+            "projectName": "trunk",
+            "args": "evoparsons.antlr.Java compilationUnit ..\\evoparsons\\antlr\\ex\\Welcome.java -gui"
+        },                
         {
             "type": "java",
             "name": "PSI",
@@ -59,7 +70,7 @@
             "stopOnEntry": false,
             "mainClass": "evoparsons.antlr.Test",
             "projectName": "trunk",
-            "args": "./ParsonsLibraries/Programs/Java ./ParsonsLibraries/Transforms/Java",
+            "args": "./evoparsons/antlr/ex",
         },                
         {
             "type": "java",
