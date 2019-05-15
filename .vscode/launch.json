@@ -15,7 +15,21 @@
             "projectName": "trunk",
             "vmArgs": "-Dfile=../configs/dev/ev.params",
             "args": "-?"
-        },      
+        },     
+        {
+            "type": "java",
+            "name": "Startup with mongo",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/bin",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.broker.Startup",
+            "projectName": "trunk",
+            "vmArgs": "-Dfile=dev -Ddb=mongodb://localhost:27017/evoDB",
+            "args": "-?",
+            "preLaunchTask": "startLocalMongo",
+            "postDebugTask": "stopLocalMongo"
+        },          
         {
             "type": "java",
             "name": "ANTLR GRUN",

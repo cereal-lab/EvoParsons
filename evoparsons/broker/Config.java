@@ -119,9 +119,20 @@ public class Config {
         }
         return null;
     }    
-    public <ID, T> IRepo<ID, T> getRepo(String repoClass) {
+    public <ID, T, Repo extends IRepo<ID, T>> IRepo<ID, T> getRepoOrDefault(String repoClass, Class<Repo> defaultRepo) {
         Optional<IRepo<ID, T>> repoOpt = this.getInstanceOpt(repoClass, this);
-        return repoOpt.orElse(null);
+        return repoOpt.orElseGet(() -> {
+            if (defaultRepo == null) return null;
+            try {
+                return defaultRepo.getConstructor(Config.class).newInstance(this);
+            } catch (Exception e) {
+                log.err("Fallback to default repo failed. Asked repo class: %s. Fallback class: %s", repoClass, defaultRepo.getName());
+                log.err("Default fallback Repo does not have constructor which accepts Config instance?");
+                log.err(e.getMessage());
+                System.exit(1);
+                return null;
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")

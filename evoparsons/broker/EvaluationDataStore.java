@@ -1,5 +1,6 @@
 package evoparsons.broker;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.function.DoubleFunction;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
+import evoparsons.repo.HashMapFileRepo;
 import evoparsons.repo.IRepo;
 import evoparsons.rmishared.Auth;
 import evoparsons.rmishared.ParsonsEvaluation;
@@ -46,7 +48,9 @@ public class EvaluationDataStore
 		this.log = config.getLog();
 		this.config = config;
 		this.outputFolder = config.getOutputFolder();
-		this.studentRepo = config.<String, Student>getRepo("evoparsons.repo.students");
+		this.studentRepo = 
+			config.getRepoOrDefault("evoparsons.repo.students", 
+				HashMapFileRepo.StudentsHashMapFileRepo.class);
 		try {
 			String evalTries = config.get("evoparsons.evalTries", "");
 			this.evalTries = Integer.parseInt(evalTries);
@@ -55,7 +59,13 @@ public class EvaluationDataStore
 			this.evalTries = 2;
 		}		
 		//studentsFile = config.get("evoparsons.studentsFile", DEFAULT_STUDENTS_FILE);
-		students = this.studentRepo.getAll();
+		try {
+			students = this.studentRepo.getAll();
+		} catch (IOException e) {
+			log.err("Error reading all students from student repo %s", this.studentRepo.getName());
+			log.err(e.toString());
+			System.exit(1);
+		}
 			//Utils.<HashMap<String, Student>>loadFromFile(log, Paths.get(outputFolder, studentsFile).toString(), HashMap<String, Student>::new);
 		if (students.size() == 0)
 			log.log("[EvaluationDataStore] students map is empty");
@@ -180,7 +190,7 @@ public class EvaluationDataStore
 		return student.getStats();
 	}
 
-	public void recordAttempt(String sid, String puzzleId) {
+	public int recordAttempt(String sid, String puzzleId) {
 		Student student = students.get(sid);
 		if (student != null) 
 		{
@@ -188,7 +198,9 @@ public class EvaluationDataStore
 				student.getStats().attemptsPerPuzzle.getOrDefault(puzzleId, 0);
 			student.getStats().attemptsPerPuzzle.put(puzzleId, attemptId + 1);
 			saveStudent(student);
+			return attemptId + 1;
 		}
+		return -1;
 	}	
 
 	public Map<String, Stats> getStudentStats(String isig, List<String> ssigs) {

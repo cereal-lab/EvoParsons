@@ -16,7 +16,7 @@ import org.bson.Document;
 
 import evoparsons.broker.Config;
 
-public class MongoAttemptRepo implements IRepo<String, String> {
+public class MongoAttemptRepo implements IRepo<String, Attempt> {
 
     private Config config;
     private String collectionName;
@@ -32,7 +32,7 @@ public class MongoAttemptRepo implements IRepo<String, String> {
 
 
     @Override
-    public String get(String id) {
+    public Attempt get(String id) {
         //id has format - studentId/puzzleId/attemptId
         String[] idParts = id.split("/");
         if (idParts.length != 3) return null;
@@ -41,15 +41,15 @@ public class MongoAttemptRepo implements IRepo<String, String> {
             MongoDatabase db = client.getDatabase("evoDB");
             MongoCollection<Document> collection = db.getCollection(this.collectionName);
             Document result = collection.find(Filters.and(Filters.eq("studentId", idParts[0]), Filters.eq("puzzleId", idParts[1]), Filters.eq("attemptId", idParts[2]))).first();
-            return result.toJson();
+            return new Attempt(idParts[0], idParts[1], idParts[2], result.toJson());
         }
     }
 
     @Override
-    public void update(List<String> entity) {
+    public void update(List<Attempt> entity) {
         entity.stream()
-            .forEach(json -> {
-                Document doc = Document.parse(json);
+            .forEach(attempt -> {
+                Document doc = Document.parse(attempt.attempt);
                 try (MongoClient client = MongoClients.create(config.connectionString))
                 {
                     MongoDatabase db = client.getDatabase("evoDB");
@@ -65,9 +65,9 @@ public class MongoAttemptRepo implements IRepo<String, String> {
     }
 
     @Override
-    public void insert(List<String> entities) {
+    public void insert(List<Attempt> entities) {
         List<Document> docs = 
-            entities.stream().map(Document::parse).collect(Collectors.toList());
+            entities.stream().map(attempt -> Document.parse(attempt.attempt)).collect(Collectors.toList());
         try (MongoClient client = MongoClients.create(config.connectionString))
         {
             MongoDatabase db = client.getDatabase("evoDB");
@@ -77,16 +77,16 @@ public class MongoAttemptRepo implements IRepo<String, String> {
     }
 
     @Override
-    public Map<String, String> getAll() {
+    public Map<String, Attempt> getAll() {
         try (MongoClient client = MongoClients.create(config.connectionString))
         {
             MongoDatabase db = client.getDatabase("evoDB");
             MongoCollection<Document> collection = db.getCollection(this.collectionName);
-            Map<String, String> mp = new HashMap<>();
+            Map<String, Attempt> mp = new HashMap<>();
             collection.find().forEach((Document doc) -> 
             {
                 String id = doc.get("studentId") + "/" + doc.get("puzzleId") + "/" + doc.get("attemptId");
-                mp.put(id, doc.toJson());
+                mp.put(id, new Attempt((String)doc.get("studentId"), (String)doc.get("puzzleId"), (String)doc.get("attemptId"), doc.toJson()));
             });
             return mp;
         }

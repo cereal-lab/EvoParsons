@@ -41,6 +41,8 @@ import org.eclipse.jetty.util.log.Logger;
 import org.eclipse.jetty.util.resource.Resource;
 
 import evoparsons.broker.Log.FileLog;
+import evoparsons.repo.Attempt;
+import evoparsons.repo.AttemptFileSystemRepo;
 import evoparsons.repo.IRepo;
 import evoparsons.repo.Instructor;
 import evoparsons.rmishared.Auth;
@@ -90,7 +92,7 @@ public interface NetworkPolicy {
             this.broker = broker;
             this.config = config;
             this.log = config.getLog();
-            this.instructorRepo = config.<String, Instructor>getRepo("evoparsons.repo.instructor");
+            this.instructorRepo = config.getRepoOrDefault("evoparsons.repo.instructor", null);
         }
 
         private void onNewInstructor(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -229,12 +231,13 @@ public interface NetworkPolicy {
         BrokerUIInterface broker;
         Config config;
         Log log;
-        IRepo<String, String> attemptRepo;
+        IRepo<String, Attempt> attemptRepo;
         public StudentServlet(Config config, BrokerUIInterface broker) {
             this.broker = broker;
             this.config = config;
             this.log = config.getLog();
-            this.attemptRepo = config.<String, String>getRepo("evoparsons.repo.attempts");
+            this.attemptRepo = 
+                config.getRepoOrDefault("evoparsons.repo.attempts", AttemptFileSystemRepo.class);
         }
         
         private void onNewStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -323,7 +326,7 @@ public interface NetworkPolicy {
 
         private void onNewAttempt(String sid, String puzzleId, HttpServletRequest request, HttpServletResponse response) throws IOException
         {
-            broker.recordAttempt(sid, puzzleId);
+            int attemptId = broker.recordAttempt(sid, puzzleId);
             //int attemptId = 0;
             //File file = Paths.get(config.getOutputFolder(), "data", sid, String.valueOf(puzzleId), "attempts", String.format("%d.json", attemptId)).toFile().getAbsoluteFile();
             //file.getParentFile().mkdirs();
@@ -339,7 +342,7 @@ public interface NetworkPolicy {
             // }
             try {
                 String text = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-                attemptRepo.insert(Collections.singletonList(text));
+                attemptRepo.insert(Collections.singletonList(new Attempt(sid, puzzleId, String.valueOf(attemptId), text)));
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
                 Map<String, Object> respJson = new HashMap<>();

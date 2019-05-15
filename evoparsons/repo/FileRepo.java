@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
-import java.nio.file.Path;
 
 import evoparsons.broker.Config;
 import evoparsons.broker.Log;
