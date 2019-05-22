@@ -76,8 +76,8 @@
                 display: none;
             }
             #trashed .fragment {
-                border: 1px solid black;
-                border-radius: 5px;               
+                border: 1px dotted #888; 
+                margin-left: 0 !important;         
             }
             #message {
                 position: fixed;
@@ -86,7 +86,7 @@
                 width: 100%;
                 display: none;
             }
-            #wrongMsg, #correctMsg, #giveUpMsg {
+            #wrongMsg, #correctMsg, #giveUpMsg, #hasBug, #hintOk {
                 margin: 0 auto;
                 display: none;
             }          
@@ -98,38 +98,7 @@
                 border: 1px dotted #888;    
                 /* border-bottom: none;             */
             }            
-            .noBorder > .fragment:first-child {
-                border-top-left-radius: 5px;  
-                border-top-right-radius: 5px;                                                                    
-            }
 
-            .noBorder > .fragment:first-child > div:first-child { 
-                border-top-left-radius: 5px;  
-            }
-
-            .noBorder > .fragment:first-child > div:last-child { 
-                border-top-right-radius: 5px;  
-            }
-
-            .noBorder > .fragment:last-child {
-                border-bottom-right-radius: 5px;  
-                border-bottom-left-radius: 5px;    
-                /* border-bottom: 1px dotted #888;                                      */
-            }            
-
-            .noBorder > .fragment:last-child > div:first-child  {
-                border-bottom-left-radius: 5px;                                        
-            }      
-            .noBorder > .fragment:last-child > div:last-child  {
-                border-bottom-right-radius: 5px;                                        
-            }         
-
-            .noBorder > .fragment:first-child > div.fragmentLinesHolder {                                
-                padding: .5ex .1em .5ex .1em;    
-            }            
-            .noBorder > .fragment:last-child > div.fragmentLinesHolder {
-                padding: .5ex .1em .5ex .1em;                          
-            }     
             .noBorder > .fragment:hover > div.trashIconHolder {                        
                 background-color: #f29393;       
             }          
@@ -139,7 +108,7 @@
                 display:table-cell;
                 font-size: 80%;
                 vertical-align:middle;
-                width: 2em;
+                width: 3em;
                 background-color: white;
                 color: white;
                 text-align: center;
@@ -156,7 +125,7 @@
                 font-size: 80%;
                 vertical-align:middle;
                 text-align: center;
-                width: 2em;                
+                width: 3em;                
                 background-color: white;
                 color: white;
                 padding: .5ex;
@@ -180,44 +149,24 @@
             }            
             .noBorder > .fragment.phantom > div.trashIconHolder {
                 background-color: #888
-            }            
-            .noBorder > .fragment > div.fragmentLinesHolder {
-                display:table-cell;
-                padding: .5ex .1em .5ex .1em;
-            }                         
-
-            :not(.noBorder) > .fragment:first-child > div:first-child {
-                border-top-left-radius: 5px;                                                                    
-            }
-            :not(.noBorder) > .fragment:first-child > div:last-child {
-                border-top-right-radius: 5px;                                                       
-            }
+            }                                
             
             :not(.noBorder) > .fragment:last-child > div:first-child {
-                border-bottom-left-radius: 5px;     
                 border-bottom: none;                                                               
             }
             :not(.noBorder) > .fragment:last-child > div:last-child {
-                border-bottom-right-radius: 5px;   
                 border-bottom: none;                                                    
             }
                
-            :not(.noBorder) > .fragment:first-child > div.fragmentLinesHolder {                                
-                padding: 1ex 1em 1ex 1em;    
+            :not(.noBorder) > .fragment:first-child > div.fragmentLinesHolder {
                 border-top: 1px dotted #888;
             }            
-            :not(.noBorder) > .fragment:last-child > div.fragmentLinesHolder {
-                padding: 1ex 1em 1ex 1em;                          
-            }     
-            :not(.noBorder) > .fragment.inAction > div {
-                border-radius: 0;
-            }
             :not(.noBorder) > .fragment > div.trashIconHolder {
                 cursor: pointer;
                 display:table-cell;
                 font-size: 80%;
                 vertical-align:middle;
-                width: 2em;
+                width: 3em;
                 background-color: #f29393;
                 border-bottom: 1px dotted #888;
                 color: white;
@@ -232,7 +181,7 @@
                 vertical-align:middle;
                 border-bottom: 1px dotted #888;
                 text-align: center;
-                width: 2em;
+                width: 3em;
                 background-color: #82e2ea;
                 color: white;
                 padding: .5ex;
@@ -253,14 +202,11 @@
             :not(.noBorder) > .fragment > div.fragmentLinesHolder {
                 display:table-cell;
                 border-bottom: 1px dotted #888;
-                padding: 1ex 1em 1ex 1em;
+                padding: .5ex .1em .5ex .1em;
             }       
 
-            #trashed .fragment .trashIconHolder i {
-                display: none !important;
-            }
             #trashed .fragment .trashIconHolder {
-                background-color: white;
+                display: none !important;
             }
 
             .formOfConsent {
@@ -292,7 +238,11 @@
                 .fragment {
                     font-size: 80%;
                 }
-            }            
+            }       
+
+            #gridButton {
+                display: none;
+            }     
         </style>
     </head>
     <body>
@@ -478,6 +428,12 @@ I freely give my consent to take part in this study.  I understand that by proce
                 <div class="alert alert-danger col col-lg-8 offset-lg-2" role="alert" id="wrongMsg">
                     <strong>Oh snap!</strong> Change a few things up and try submitting again.
                 </div>
+                <div class="alert alert-danger col col-lg-8 offset-lg-2" role="alert" id="hasBug">
+                    <strong>Bug!</strong> Code is ordered correctly. Try to find bugged fragment
+                </div>  
+                <div class="alert alert-success col col-lg-8 offset-lg-2" role="alert" id="hintOk">
+                    <strong>Ok!</strong> Looks like you can submit solution
+                </div>                
             </div>
             </div>
         </div>         
@@ -515,8 +471,10 @@ I freely give my consent to take part in this study.  I understand that by proce
                 var userName = $("#userName");
                 var msg = $("#message");
                 var wrongMsg = $("#wrongMsg");
+                var hasBug = $("#hasBug");                
                 var correctMsg = $("#correctMsg");
                 var giveUpMsg = $("#giveUpMsg");
+                var hintOk= $("#hintOk");
                 //var trashFragment = $("#trashFragment");
                 //var sortableIn = 1;
                 var moveCount = 0;
@@ -593,6 +551,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                     var indent = 0;
                     var prevLine = null;
                     taskPane.find(".fragment").each(function () {
+                        var frgmnt = $(this);
+                        var minIndent = indent;
                         $(this).find(".indent").each(function () {
                             var text = $(this).data("data-orig");
                             var ind = 0;
@@ -613,12 +573,27 @@ I freely give my consent to take part in this study.  I understand that by proce
                                 }
                                 else if (textChars[i] === "}"){
                                     localIndent--;
-                                    closedBraces++;
+                                    if (i == 0) closedBraces++;
                                 }
                             }
-                            $(this).animate({"padding-left": 15 * Math.max(0, indent - closedBraces)}, 'slow'); 
-                            indent = indent + localIndent;                                                          
+                            var curIndent = Math.max(0, indent - closedBraces);
+                            $(this).data("indent", curIndent);
+                            //$(this).animate({"padding-left": 15 * Math.max(0, indent - closedBraces)}, 'slow'); 
+                            indent = Math.max(0, indent + localIndent);
+                            minIndent = Math.min(minIndent, curIndent);
                             prevLine = text;
+                        });
+                        // frgmnt.animate({"margin-left": 15 * minIndent}, 'fast',
+                        //     function ()
+                        //     {
+                        //         $(this).find(".indent").each(function () {
+                        //             var curIndent = $(this).data("indent") - minIndent;
+                        //             $(this).animate({"padding-left": 15 * curIndent}, 'fast'); 
+                        //         });
+                        //     });
+                        $(this).find(".indent").each(function () {
+                            var curIndent = $(this).data("indent");
+                            $(this).animate({"padding-left": 15 * curIndent}, 'fast'); 
                         });
                     });
                 }                
@@ -745,6 +720,25 @@ I freely give my consent to take part in this study.  I understand that by proce
                         missingOrderOne.addClass("hint");
                         //var phantom1 = missingOrderOne.clone();
                         //missingOrderOne.data("data-pos"):
+                    } else {
+                        if ($("#taskPane .fragment").filter(function () { return $(this).data("data-pos") < 0; }).length > 0)
+                        {
+                            hasBug.show();
+                            msg.fadeIn('slow');
+                            setTimeout(function () {
+                                msg.fadeOut(function () {
+                                    hasBug.hide();
+                                });                            
+                            }, 4000);                        
+                        } else {
+                            hintOk.show();
+                            msg.fadeIn('slow');
+                            setTimeout(function () {
+                                msg.fadeOut(function () {
+                                    hintOk.hide();
+                                });                            
+                            }, 4000);                            
+                        }
                     }
                 }
 
@@ -760,7 +754,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                         fragment.data("data-orig", puzzle.fragments[i].lines);
                         var handIconHolder = $("<div class='handIconHolder'>");
                         handIconHolder.append($('<i class="far fa-hand-paper fa-sm">'));
-                        handIconHolder.appendTo(fragment);                        
+                        handIconHolder.appendTo(fragment);                      
                         var linesHolder = $("<div class='fragmentLinesHolder'>");
                         for (var j = 0; j < puzzle.fragments[i].lines.length; j++) {
                             var indentContainer = $("<div class='indent'>");

@@ -230,8 +230,7 @@ public class EvaluationDataStore
 				return; 
 			}
 			student.getStats().duration += eval.timeInMs;			
-			if ((existingEval == null) || 
-				(existingEval.gaveUp && !eval.gaveUp))
+			if ((existingEval == null) || !eval.gaveUp)
 			{	
 				if (existingEval == null) student.getStats().puzzlesSeen++;
 				if (!eval.gaveUp)

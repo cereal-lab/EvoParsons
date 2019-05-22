@@ -21,6 +21,7 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 
 import evoparsons.broker.Config;
+import evoparsons.broker.Log;
 import evoparsons.broker.Student;
 
 public class MongoPojoRepo<T> implements IRepo<String, T> {
@@ -31,7 +32,14 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
     private Class<T> tClass;
     private String idKey;
     private Function<T, String> getId;
+    private String connectionString;
     public MongoPojoRepo(Config config, Class<T> tClass, String configKey, String idKey, Function<T, String> getId) {
+        Log log = config.getLog();
+        this.connectionString = config.getConnectionString();
+        if (connectionString == null || connectionString.equals("")) {
+            log.err("[MongoAttemptRepo] connection string evoparsons.db was not specified in config!!");
+            System.exit(1);
+        }                
         this.config = config;   
         this.tClass = tClass;
         this.idKey = idKey;
@@ -46,7 +54,7 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
     @Override
     public T get(String id) {
         //id has format - studentId/puzzleId/attemptId
-        try (MongoClient client = MongoClients.create(config.connectionString))
+        try (MongoClient client = MongoClients.create(connectionString))
         {
             MongoDatabase db = client.getDatabase("evoDB").withCodecRegistry(this.pojoCodecRegistry);
             MongoCollection<T> collection = db.getCollection(this.collectionName, tClass);
@@ -61,7 +69,7 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
     public void update(List<T> entities) {
         entities.stream()
             .forEach(entity -> {
-                try (MongoClient client = MongoClients.create(config.connectionString))
+                try (MongoClient client = MongoClients.create(connectionString))
                 {
                     MongoDatabase db = client.getDatabase("evoDB").withCodecRegistry(this.pojoCodecRegistry);
                     MongoCollection<T> collection = db.getCollection(this.collectionName, tClass);
@@ -78,7 +86,7 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
 
     @Override
     public void insert(List<T> entities) {
-        try (MongoClient client = MongoClients.create(config.connectionString))
+        try (MongoClient client = MongoClients.create(connectionString))
         {
             MongoDatabase db = client.getDatabase("evoDB").withCodecRegistry(this.pojoCodecRegistry);
             MongoCollection<T> collection = db.getCollection(this.collectionName, tClass);
@@ -88,7 +96,7 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
 
     @Override
     public Map<String, T> getAll() {
-        try (MongoClient client = MongoClients.create(config.connectionString))
+        try (MongoClient client = MongoClients.create(connectionString))
         {
             MongoDatabase db = client.getDatabase("evoDB").withCodecRegistry(this.pojoCodecRegistry);
             MongoCollection<T> collection = db.getCollection(this.collectionName, tClass);

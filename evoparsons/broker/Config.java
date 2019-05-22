@@ -18,9 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
+
+import org.bson.Document;
 
 import evoparsons.repo.IRepo;
 import evoparsons.utils.MongoUtils;
@@ -245,14 +248,14 @@ public class Config {
     protected ScheduledThreadPoolExecutor threadPool; 
 
     protected String outputFolder;
-    public final String connectionString;
+    private String connectionString;
 
-    public Config(Config parent, String connectionString) {
+    public Config(Config parent) {
         // this.log = log;
         // this.parentConfig = parentConfig;
         this.parent = parent;
         this.threadPool = new ScheduledThreadPoolExecutor(20);
-        this.connectionString = (connectionString == null) ? ((parent == null) ? null : parent.connectionString) : connectionString;
+        //this.connectionString = (connectionString == null) ? ((parent == null) ? null : parent.connectionString) : connectionString;
     }
 
     public ScheduledThreadPoolExecutor getTP() {
@@ -340,11 +343,21 @@ public class Config {
         });
         return networkInterfaces;
     }
+    public String getConnectionString() {
+        if (connectionString == null) {
+            this.connectionString = props.getProperty("evoparsons.db");
+            if ((this.connectionString == null || this.connectionString.equals("")) && (parent != null))
+            {
+                connectionString = parent.getConnectionString();            
+            }            
+        }
+        return connectionString;
+    }    
     public String getOutputFolder() {         
         if (outputFolder == null) {
             this.outputFolder = props.getProperty("evoparsons.output");
             boolean fromParent = false;
-            if ((this.outputFolder.equals("") || this.outputFolder == null) && (parent != null))
+            if ((this.outputFolder == null || this.outputFolder.equals("")) && (parent != null))
             {
                 outputFolder = parent.getOutputFolder();            
                 fromParent = true;
@@ -366,24 +379,17 @@ public class Config {
 
     public static Config FromFile(Config parent, String url) {
         Log log = parent == null ? Log.console : parent.getLog();
-        Config config = new Config(parent, null).AddFromFile(log, url, true);
+        Config config = new Config(parent).AddFromFile(log, url, true);
         config.getLog(); //validation
         config.getOutputFolder(); 
+        config.getConnectionString();
         return config;
     }
-
-    public static Config FromDB(Config parent, String connectionString, String url) {
-        Log log = parent == null ? Log.console : parent.getLog();
-        Config config = new Config(parent, connectionString).AddFromDB(log, url);
-        config.getLog(); //validation
-        config.getOutputFolder(); 
-        return config;
-    }    
 
     public static Config FromProps(Config parent, String name, Properties props) {
         Log log = parent == null ? Log.console : parent.getLog();
         String realName = parent == null ? name : parent.configFileName + ":" + name;
-        Config config = new Config(parent, null).AddFromProps(log, realName, props);
+        Config config = new Config(parent).AddFromProps(log, realName, props);
         config.getLog(); //validation
         config.getOutputFolder(); 
         return config;
@@ -417,11 +423,39 @@ public class Config {
         return this;
     }    
 
+
+    private void populateProps(Properties props, String prefix, Document doc) {
+        for (String key: doc.keySet())
+        {
+            if (key.equals("_id")) continue;
+            String curName = key.equals("_") ? prefix : (prefix.isEmpty() ? key : (prefix + "." + key));
+            Object v = doc.get(key);
+            if (v instanceof Document) 
+                populateProps(props, curName, (Document)v);
+            else 
+                props.put(curName, v); //v.toString());             //if (v instanceof String) - or array
+        }
+    }    
+
     public Config AddFromFile(Log log, String fileName, boolean tryUrl) {
         this.configFileName = fileName;
         try (InputStream fileStream = new FileInputStream(this.configFileName))
         {
-            props.load(fileStream);
+            if (this.configFileName.endsWith(".json"))
+            {
+                List<String> lines = new ArrayList<>(); 
+                try (Scanner scanner = new Scanner(fileStream))
+                {
+                    while (scanner.hasNextLine())
+                    {
+                        lines.add(scanner.nextLine());
+                    }                    
+                }
+                String json = String.join(System.lineSeparator(), lines);
+                Document doc = Document.parse(json);
+                populateProps(props, "", doc);
+            } else 
+                props.load(fileStream);
         }
         catch (IOException e) {
             if (tryUrl)

@@ -18,7 +18,7 @@ import evoparsons.rmishared.ParsonsPuzzle;
 
 public class InteractionMatrix {
     public static void main(String[] args) {
-        Config config = new Config(null, null) {{
+        Config config = new Config(null) {{
             outputFolder = args[0];
             this.props.put("evoparsons.programs", args[1]);
             this.props.put("evoparsons.transforms", args[2]);

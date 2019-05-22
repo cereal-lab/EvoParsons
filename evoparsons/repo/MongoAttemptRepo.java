@@ -3,7 +3,6 @@ package evoparsons.repo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.mongodb.client.MongoClient;
@@ -15,12 +14,20 @@ import com.mongodb.client.model.Filters;
 import org.bson.Document;
 
 import evoparsons.broker.Config;
+import evoparsons.broker.Log;
 
 public class MongoAttemptRepo implements IRepo<String, Attempt> {
 
     private Config config;
     private String collectionName;
+    private String connectionString;
     public MongoAttemptRepo(Config config) {
+        Log log = config.getLog();
+        this.connectionString = config.getConnectionString();
+        if (connectionString == null || connectionString.equals("")) {
+            log.err("[MongoAttemptRepo] connection string evoparsons.db was not specified in config!!");
+            System.exit(1);
+        }        
         this.config = config;   
         this.collectionName = config.get("evoparsons.repo.attempts.name", "attempts-" + config.getConfigFileName());
     }
@@ -36,7 +43,7 @@ public class MongoAttemptRepo implements IRepo<String, Attempt> {
         //id has format - studentId/puzzleId/attemptId
         String[] idParts = id.split("/");
         if (idParts.length != 3) return null;
-        try (MongoClient client = MongoClients.create(config.connectionString))
+        try (MongoClient client = MongoClients.create(connectionString))
         {
             MongoDatabase db = client.getDatabase("evoDB");
             MongoCollection<Document> collection = db.getCollection(this.collectionName);
@@ -50,7 +57,7 @@ public class MongoAttemptRepo implements IRepo<String, Attempt> {
         entity.stream()
             .forEach(attempt -> {
                 Document doc = Document.parse(attempt.attempt);
-                try (MongoClient client = MongoClients.create(config.connectionString))
+                try (MongoClient client = MongoClients.create(connectionString))
                 {
                     MongoDatabase db = client.getDatabase("evoDB");
                     MongoCollection<Document> collection = db.getCollection(this.collectionName);
@@ -68,7 +75,7 @@ public class MongoAttemptRepo implements IRepo<String, Attempt> {
     public void insert(List<Attempt> entities) {
         List<Document> docs = 
             entities.stream().map(attempt -> Document.parse(attempt.attempt)).collect(Collectors.toList());
-        try (MongoClient client = MongoClients.create(config.connectionString))
+        try (MongoClient client = MongoClients.create(connectionString))
         {
             MongoDatabase db = client.getDatabase("evoDB");
             MongoCollection<Document> collection = db.getCollection(this.collectionName);
@@ -78,7 +85,7 @@ public class MongoAttemptRepo implements IRepo<String, Attempt> {
 
     @Override
     public Map<String, Attempt> getAll() {
-        try (MongoClient client = MongoClients.create(config.connectionString))
+        try (MongoClient client = MongoClients.create(connectionString))
         {
             MongoDatabase db = client.getDatabase("evoDB");
             MongoCollection<Document> collection = db.getCollection(this.collectionName);
