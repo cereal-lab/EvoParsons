@@ -7,7 +7,7 @@ RUN set -xe \
     && apk add --no-cache wget bash subversion \
     && wget https://raw.githubusercontent.com/cereal-lab/EvoParsons/${branch}/scripts/download-server --content-disposition --no-check-certificate \
     && chmod a+x ./download-server \
-    && ./download-server
+    && BRANCH=${branch} ./download-server
 
 RUN ls -al      
 

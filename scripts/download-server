@@ -2,7 +2,7 @@
 #select fresh folder first to store sources, then download
 #it will bring evoparsons-server, psi, psifx and puzzles to folder 
 
-SVNTARGET="https://github.com/cereal-lab/EvoParsons/branches/${branch}/"
+SVNTARGET="https://github.com/cereal-lab/EvoParsons/branches/${BRANCH}/"
 
 svn checkout "${SVNTARGET}evoparsons/broker" evoparsons/broker >/dev/null
 svn checkout "${SVNTARGET}evoparsons/ecj" evoparsons/ecj >/dev/null
@@ -13,8 +13,8 @@ svn checkout "${SVNTARGET}evoparsons/utils" evoparsons/utils >/dev/null
 svn checkout "${SVNTARGET}lib" lib >/dev/null
 mkdir scripts
 mkdir docker
-wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/${branch}/scripts/build-server" --content-disposition --no-check-certificate -O ./scripts/build-server >/dev/null
-wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/${branch}/scripts/evoparsons-server" --content-disposition --no-check-certificate -O ./scripts/evoparsons-server >/dev/null
-wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/${branch}/docker/supervisord.conf" --content-disposition --no-check-certificate -O ./docker/supervisord.conf >/dev/null
+wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/${BRANCH}/scripts/build-server" --content-disposition --no-check-certificate -O ./scripts/build-server >/dev/null
+wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/${BRANCH}/scripts/evoparsons-server" --content-disposition --no-check-certificate -O ./scripts/evoparsons-server >/dev/null
+wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/${BRANCH}/docker/supervisord.conf" --content-disposition --no-check-certificate -O ./docker/supervisord.conf >/dev/null
 #svn checkout "${SVNTARGET}docker" docker >/dev/null
 
