@@ -3,6 +3,7 @@ package evoparsons.repo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import com.mongodb.client.MongoClient;
@@ -108,11 +109,13 @@ public class EventsMongoRepo implements IRepo<String, Events> {
             MongoDatabase db = client.getDatabase("evoDB");
             MongoCollection<Document> collection = db.getCollection(this.collectionName);
             Map<String, Events> mp = new HashMap<>();
-            collection.find().forEach((Document doc) -> 
-            {
-                String id = doc.get("studentId") + "/" + doc.get("puzzleId");
-                mp.put(id, new Events((String)doc.get("studentId"), (int)doc.get("puzzleId"), doc.toJson()));
-            });
+            Consumer<Document> c = 
+                (Document doc) -> 
+                {
+                    String id = doc.get("studentId") + "/" + doc.get("puzzleId");
+                    mp.put(id, new Events((String)doc.get("studentId"), (int)doc.get("puzzleId"), doc.toJson()));
+                };
+            collection.find().forEach(c);
             return mp;
         }
     }      
