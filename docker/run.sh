@@ -103,14 +103,14 @@ docker_container_run() {
   if [[ "$#" -ne 2 ]]; then
     echo "Usage:"
     echo "    $0 up <name> <configUrl>"
-    echo "    Example 1: $0 up class1 https://raw.githubusercontent.com/cereal-lab/EvoParsons/anonymization/ev.params"
-    echo "    Example 2: $0 up class2 file:///home/dvitel/usf/sw/evotutoring/trunk/ev.params"
+    echo "    Example 1: $0 up class1 https://raw.githubusercontent.com/cereal-lab/EvoParsons/anonymization/ev.json"
+    echo "    Example 2: $0 up class2 file:///home/dvitel/usf/sw/evotutoring/trunk/ev.json"
     echo "    Note: if file:// is provided, path will be converted relative to container"
     echo ""
     return 1;
   fi 
 
-  local name=${1}
+  local name="$(echo ${1} | tr ' ' '-')"
   local config=${2}
   local configContent="$(curl $config)"
   echo "$configContent"  
@@ -118,14 +118,34 @@ docker_container_run() {
     echo "Cannot open url of provided config ${config}"
     return 1
   fi
-  local hosts="$(grep -Eo "evoparsons\.net.*?\.hostname\s*=\s*(\S*)" <<< "$configContent" | cut -d= -f2 | sort -u | xargs)"
+  local dbName="Mongo-${name}" 
+  local dbPort="$(grep -Eo "\"dbPort\"\s*:\s*\"([1-9][0-9]*)\"" <<< "$configContent" | cut -d: -f2 | sort -u | xargs)"
+  if [ "$?" -ne 0 ] || [ -z "$dbPort" ]; then
+    echo "Cannot find dbPort in ${config}"
+  else 
+    echo "DB port was found: $dbPort"     
+    local cs="mongodb://evoRoot:8ndhMVk4Bt%40b123@evoparsons.csee.usf.edu:$dbPort/$dbName"
+    configContent=$(echo "$configContent" | sed -e "s \"db\"\s*:\s*\".*\" \"db\":\"$cs\" g")
+  fi    
+  local checkDbPort="$(docker ps | grep ":$dbPort->")"  
+  if [ "$?" -ne 0 ]; then    
+    mkdir /EvoParsons/mongo/$dbName     
+    docker run --name $dbName -p 0.0.0.0:$dbPort:27017/tcp \
+      --restart=always -e MONGO_INITDB_ROOT_USERNAME=evoRoot \
+      -e MONGO_INITDB_ROOT_PASSWORD=8ndhMVk4Bt@b123 \
+      -v /EvoParsons/mongo/$dbName:/data/db -d mongo:4.1-bionic    
+  else 
+    echo "DB port $dbPort is occupied - assuming by other mongodb instance!!!!!"
+    echo $checkDbPort
+  fi
+  local hosts="$(grep -Eo "\"hostname\"\s*:\s*\"(\S*)\"" <<< "$configContent" | cut -d: -f2 | sort -u | xargs)"
   if [ "$?" -ne 0 ] || [ -z "$hosts" ]; then
     echo "Cannot find host in ${config}"
     return 1
   else 
     echo "Host was found: $host"    
   fi    
-  local ports="$(grep -Eo "evoparsons\.net.*?\.port\s*=\s*(\S*)" <<< "$configContent" | cut -d= -f2 | sort -u | xargs)"
+  local ports="$(grep -Eo "\"port\"\s*:\s*\"(\S*)\"" <<< "$configContent" | cut -d: -f2 | sort -u | xargs)"
   if [ "$?" -ne 0 ] || [ -z "$ports" ]; then
     echo "Cannot find port in ${config}"
     return 1
@@ -134,8 +154,8 @@ docker_container_run() {
   fi    
   local data="./${1}"
   mkdir -p "$data"
-  echo "$configContent" > "$data/ev.params"
-  config="/app/DATA.out/ev.params"
+  echo "$configContent" > "$data/ev.json"
+  config="/app/DATA.out/ev.json"
   echo "Config was remapped to $config"
   
   echo "Starting services for $name ..."
@@ -161,6 +181,11 @@ cat << EOF >> $composeConfig
       - "${port}:${port}"
 EOF
 done
+# if -n "$dbPort" then 
+# cat << EOF >> $composeConfig
+#       - "${dbPort}:${dbPort}"
+# EOF
+# fi
 cat << EOF >> $composeConfig
     environment:
       - "BROKER_CONFIG=${BROKER_CONFIG}"
