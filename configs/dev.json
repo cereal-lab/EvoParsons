@@ -34,7 +34,7 @@
                 "_": "evoparsons.broker.NetworkPolicy+REST"
             }
         },
-        "transforms": "https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Transforms/Java-2018?ref=anonymization",
+        "transforms": "https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Transforms/Java-2018?ref=[[BRANCH]]",
         "output": "./DATA.out",
         "repo": {
             "instructor": {
@@ -54,7 +54,7 @@
             "header": "[GROUPS]",
             "_": "evoparsons.broker.Log+console"
         },
-        "programs": "https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Programs/Java-2018?ref=anonymization",
+        "programs": "https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Programs/Java-2018?ref=[[BRANCH]]",
         "lib": "evoparsons.broker.ParsonsLibrary",
         "broker": {
             "_": "evoparsons.broker.GroupsBroker",

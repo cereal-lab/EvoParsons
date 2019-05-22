@@ -1,5 +1,7 @@
 #!/bin/bash
 
+branch="Mark3"
+
 docker_host_setup(){
 
   ##SET UP THE REPOSITORY
@@ -89,13 +91,13 @@ docker_container_build() {
     
     # Download the config files for the docker container
     # Download docker-compose.yml for run the service
-    TargetRepository="https://raw.githubusercontent.com/cereal-lab/EvoParsons/anonymization/docker/"
+    TargetRepository="https://raw.githubusercontent.com/cereal-lab/EvoParsons/$branch/docker/"
     for TargetFile in "docker-compose.yml" "Dockerfile" "supervisord.conf"
     do
 	    curl -fsSL ${TargetRepository}${TargetFile} -o ${TargetFile}
     done
     
-    docker build --no-cache -t evoparsons_server -f Dockerfile .
+    docker build --no-cache -t evoparsons_server --build-arg branch=$branch -f Dockerfile .
 }
 
 
@@ -103,7 +105,7 @@ docker_container_run() {
   if [[ "$#" -ne 2 ]]; then
     echo "Usage:"
     echo "    $0 up <name> <configUrl>"
-    echo "    Example 1: $0 up class1 https://raw.githubusercontent.com/cereal-lab/EvoParsons/anonymization/ev.json"
+    echo "    Example 1: $0 up class1 https://raw.githubusercontent.com/cereal-lab/EvoParsons/$branch/ev.json"
     echo "    Example 2: $0 up class2 file:///home/dvitel/usf/sw/evotutoring/trunk/ev.json"
     echo "    Note: if file:// is provided, path will be converted relative to container"
     echo ""
@@ -120,6 +122,7 @@ docker_container_run() {
   fi
   local dbName="Mongo-${name}" 
   local dbPort="$(grep -Eo "\"dbPort\"\s*:\s*\"([1-9][0-9]*)\"" <<< "$configContent" | cut -d: -f2 | sort -u | xargs)"
+  configContent=$(echo "$configContent" | sed -e "s [[BRANCH]] ${branch} g")
   if [ "$?" -ne 0 ] || [ -z "$dbPort" ]; then
     echo "Cannot find dbPort in ${config}"
   else 
