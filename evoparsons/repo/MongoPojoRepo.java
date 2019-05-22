@@ -3,6 +3,7 @@ package evoparsons.repo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -101,10 +102,12 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
             MongoDatabase db = client.getDatabase("evoDB").withCodecRegistry(this.pojoCodecRegistry);
             MongoCollection<T> collection = db.getCollection(this.collectionName, tClass);
             Map<String, T> mp = new HashMap<>();
-            collection.find().forEach((T entity) -> 
-            {
-                mp.put(getId.apply(entity), entity);
-            });
+            Consumer<T> c = 
+                ((T entity) -> 
+                    {
+                        mp.put(getId.apply(entity), entity);
+                    });
+            collection.find().forEach(c);
             return mp;
         }
     }      

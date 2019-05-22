@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.function.Consumer;
 
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
@@ -141,11 +142,13 @@ public class MongoUtils {
             MongoDatabase evoDB = client.getDatabase("evoDB");
             MongoCollection<Document> collection = evoDB.getCollection("config");
             Map<String, Document> docs = new HashMap<>();
+            Consumer<Document> c = 
+                ((Document doc) -> docs.put((String)doc.get("config_file_name"), doc));            
             collection.find(Filters.or(
                 Filters.eq("config_file_name", "dev"),
                 Filters.eq("config_file_name", "ev.1.params"),
                 Filters.eq("config_file_name", "ev.2.params")                
-            )).forEach((Document doc) -> docs.put((String)doc.get("config_file_name"), doc));
+            )).forEach(c);
             docs.forEach((name, doc) -> {
                 List<org.bson.conversions.Bson> updates = new ArrayList<>();
                 Document evo = (Document)doc.get("evoparsons");
