@@ -128,6 +128,7 @@ public class Client {
         conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
         conn.setRequestProperty("User-Agent", "EvoParsonsBot");
         conn.setRequestProperty("Content-Type", "application/json");
+        conn.setRequestProperty("Authorization", "Basic ZXZvcGFyc29uczo5XkshQ2EuNGYld3VDKmc=");
         try (InputStream stream = conn.getInputStream()) {
             if (url.startsWith("https://api.")) {
                 //api format

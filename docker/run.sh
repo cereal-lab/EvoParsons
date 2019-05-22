@@ -114,15 +114,14 @@ docker_container_run() {
 
   local name="$(echo ${1} | tr ' ' '-')"
   local config=${2}
-  local configContent="$(curl $config)"
-  echo "$configContent"  
+  local configContent="$(curl $config)"  
   if [[ "$?" -ne 0 ]]; then
     echo "Cannot open url of provided config ${config}"
     return 1
   fi
   local dbName="Mongo-${name}" 
   local dbPort="$(grep -Eo "\"dbPort\"\s*:\s*\"([1-9][0-9]*)\"" <<< "$configContent" | cut -d: -f2 | sort -u | xargs)"
-  configContent=$(echo "$configContent" | sed -e "s [[BRANCH]] ${branch} g")
+  configContent=$(echo "$configContent" | sed -e "s \[\[BRANCH\]\] ${branch} g")
   if [ "$?" -ne 0 ] || [ -z "$dbPort" ]; then
     echo "Cannot find dbPort in ${config}"
   else 
@@ -130,33 +129,34 @@ docker_container_run() {
     local cs="mongodb://evoRoot:8ndhMVk4Bt%40b123@evoparsons.csee.usf.edu:$dbPort/$dbName"
     configContent=$(echo "$configContent" | sed -e "s \"db\"\s*:\s*\".*\" \"db\":\"$cs\" g")
   fi    
-  local checkDbPort="$(docker ps | grep ":$dbPort->")"  
-  if [ "$?" -ne 0 ]; then    
+  if docker ps | grep ":$dbPort->" 
+  then       
+    echo "DB port $dbPort is occupied - assuming by other mongodb instance!!!!!"
+    echo $checkDbPort
+  else 
     mkdir /EvoParsons/mongo/$dbName     
     docker run --name $dbName -p 0.0.0.0:$dbPort:27017/tcp \
       --restart=always -e MONGO_INITDB_ROOT_USERNAME=evoRoot \
       -e MONGO_INITDB_ROOT_PASSWORD=8ndhMVk4Bt@b123 \
-      -v /EvoParsons/mongo/$dbName:/data/db -d mongo:4.1-bionic    
-  else 
-    echo "DB port $dbPort is occupied - assuming by other mongodb instance!!!!!"
-    echo $checkDbPort
+      -v /EvoParsons/mongo/$dbName:/data/db -d mongo:4.1-bionic   
   fi
   local hosts="$(grep -Eo "\"hostname\"\s*:\s*\"(\S*)\"" <<< "$configContent" | cut -d: -f2 | sort -u | xargs)"
   if [ "$?" -ne 0 ] || [ -z "$hosts" ]; then
     echo "Cannot find host in ${config}"
     return 1
   else 
-    echo "Host was found: $host"    
+    echo "Host was found: $hosts"    
   fi    
   local ports="$(grep -Eo "\"port\"\s*:\s*\"(\S*)\"" <<< "$configContent" | cut -d: -f2 | sort -u | xargs)"
   if [ "$?" -ne 0 ] || [ -z "$ports" ]; then
     echo "Cannot find port in ${config}"
     return 1
   else 
-    echo "Port was found: $port"    
+    echo "Port was found: $ports"    
   fi    
   local data="./${1}"
   mkdir -p "$data"
+  echo "$configContent"  
   echo "$configContent" > "$data/ev.json"
   config="/app/DATA.out/ev.json"
   echo "Config was remapped to $config"
