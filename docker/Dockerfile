@@ -1,5 +1,6 @@
 # Building Stage
 FROM openjdk:8-alpine as Builder
+ARG branch
 
 WORKDIR /app/
 
