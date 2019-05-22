@@ -37,7 +37,7 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
         Log log = config.getLog();
         this.connectionString = config.getConnectionString();
         if (connectionString == null || connectionString.equals("")) {
-            log.err("[MongoAttemptRepo] connection string evoparsons.db was not specified in config!!");
+            log.err("[EventsMongoRepo] connection string evoparsons.db was not specified in config!!");
             System.exit(1);
         }                
         this.config = config;   

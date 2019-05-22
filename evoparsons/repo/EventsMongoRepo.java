@@ -10,26 +10,28 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import com.mongodb.client.result.UpdateResult;
 
 import org.bson.Document;
 
 import evoparsons.broker.Config;
 import evoparsons.broker.Log;
 
-public class MongoAttemptRepo implements IRepo<String, Attempt> {
+public class EventsMongoRepo implements IRepo<String, Events> {
 
     private Config config;
     private String collectionName;
     private String connectionString;
-    public MongoAttemptRepo(Config config) {
+    public EventsMongoRepo(Config config) {
         Log log = config.getLog();
         this.connectionString = config.getConnectionString();
         if (connectionString == null || connectionString.equals("")) {
-            log.err("[MongoAttemptRepo] connection string evoparsons.db was not specified in config!!");
+            log.err("[EventsMongoRepo] connection string evoparsons.db was not specified in config!!");
             System.exit(1);
         }        
         this.config = config;   
-        this.collectionName = config.get("evoparsons.repo.attempts.name", "attempts-" + config.getConfigFileName());
+        this.collectionName = config.get("evoparsons.repo.events.name", "evs-" + config.getConfigFileName());
     }
 
     @Override
@@ -39,42 +41,58 @@ public class MongoAttemptRepo implements IRepo<String, Attempt> {
 
 
     @Override
-    public Attempt get(String id) {
+    public Events get(String id) {
         //id has format - studentId/puzzleId/attemptId
         String[] idParts = id.split("/");
-        if (idParts.length != 3) return null;
+        if (idParts.length != 2) return null;
+        String sid = idParts[0];
+        int puzzleId = 0;
+        try {
+            puzzleId = Integer.valueOf(idParts[1]);
+        } catch (NumberFormatException e) {
+            return null;
+        }        
         try (MongoClient client = MongoClients.create(connectionString))
         {
             MongoDatabase db = client.getDatabase("evoDB");
             MongoCollection<Document> collection = db.getCollection(this.collectionName);
-            Document result = collection.find(Filters.and(Filters.eq("studentId", idParts[0]), Filters.eq("puzzleId", idParts[1]), Filters.eq("attemptId", idParts[2]))).first();
-            return new Attempt(idParts[0], idParts[1], idParts[2], result.toJson());
+            Document result = 
+                collection.find(
+                    Filters.and(
+                        Filters.eq("studentId", sid), 
+                        Filters.eq("puzzleId", puzzleId))
+                    ).first();
+            return new Events(sid, puzzleId, result.toJson());
         }
     }
 
     @Override
-    public void update(List<Attempt> entity) {
+    public void update(List<Events> entity) {
         entity.stream()
-            .forEach(attempt -> {
-                Document doc = Document.parse(attempt.attempt);
+            .forEach(events -> {                
                 try (MongoClient client = MongoClients.create(connectionString))
                 {
+                    Document doc = Document.parse(events.events);
                     MongoDatabase db = client.getDatabase("evoDB");
                     MongoCollection<Document> collection = db.getCollection(this.collectionName);
-                    collection.updateOne(
-                        Filters.and(
-                            Filters.eq("studentId", doc.get("studentId")),
-                            Filters.eq("puzzleId", doc.get("puzzleId")),
-                            Filters.eq("attemptId", doc.get("attemptId"))), doc);
+                    UpdateResult res = 
+                        collection.updateOne(
+                            Filters.and(
+                                Filters.eq("studentId", events.sid), 
+                                Filters.eq("puzzleId", events.puzzleId)),
+                                Updates.addEachToSet("events", doc.get("events", List.class))
+                                );
+                    if (res.getModifiedCount() == 0) 
+                        collection.insertOne(doc);
                 }
             
             });
     }
 
     @Override
-    public void insert(List<Attempt> entities) {
+    public void insert(List<Events> entities) {
         List<Document> docs = 
-            entities.stream().map(attempt -> Document.parse(attempt.attempt)).collect(Collectors.toList());
+            entities.stream().map(event -> Document.parse(event.events)).collect(Collectors.toList());
         try (MongoClient client = MongoClients.create(connectionString))
         {
             MongoDatabase db = client.getDatabase("evoDB");
@@ -84,16 +102,16 @@ public class MongoAttemptRepo implements IRepo<String, Attempt> {
     }
 
     @Override
-    public Map<String, Attempt> getAll() {
+    public Map<String, Events> getAll() {
         try (MongoClient client = MongoClients.create(connectionString))
         {
             MongoDatabase db = client.getDatabase("evoDB");
             MongoCollection<Document> collection = db.getCollection(this.collectionName);
-            Map<String, Attempt> mp = new HashMap<>();
+            Map<String, Events> mp = new HashMap<>();
             collection.find().forEach((Document doc) -> 
             {
-                String id = doc.get("studentId") + "/" + doc.get("puzzleId") + "/" + doc.get("attemptId");
-                mp.put(id, new Attempt((String)doc.get("studentId"), (String)doc.get("puzzleId"), (String)doc.get("attemptId"), doc.toJson()));
+                String id = doc.get("studentId") + "/" + doc.get("puzzleId");
+                mp.put(id, new Events((String)doc.get("studentId"), (int)doc.get("puzzleId"), doc.toJson()));
             });
             return mp;
         }

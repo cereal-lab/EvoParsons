@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -38,11 +37,10 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ajax.JSON;
 import org.eclipse.jetty.util.log.Logger;
-import org.eclipse.jetty.util.resource.Resource;
 
 import evoparsons.broker.Log.FileLog;
-import evoparsons.repo.Attempt;
-import evoparsons.repo.AttemptFileSystemRepo;
+import evoparsons.repo.Events;
+import evoparsons.repo.EventsNoopRepo;
 import evoparsons.repo.IRepo;
 import evoparsons.repo.Instructor;
 import evoparsons.rmishared.Auth;
@@ -167,7 +165,7 @@ public interface NetworkPolicy {
                     performance.put("puzzlesSeen", stat.puzzlesSeen);
                     performance.put("puzzlesSolved", stat.puzzlesSolved);
                     performance.put("duration", stat.duration);
-                    performance.put("started", stat.start);
+                    //performance.put("started", stat.start);
                     //TODO: advanced props
                     respStudentsJson.put(ssig, performance);
                 }
@@ -231,13 +229,13 @@ public interface NetworkPolicy {
         BrokerUIInterface broker;
         Config config;
         Log log;
-        IRepo<String, Attempt> attemptRepo;
+        IRepo<String, Events> eventsRepo;
         public StudentServlet(Config config, BrokerUIInterface broker) {
             this.broker = broker;
             this.config = config;
             this.log = config.getLog();
-            this.attemptRepo = 
-                config.getRepoOrDefault("evoparsons.repo.attempts", AttemptFileSystemRepo.class);
+            this.eventsRepo = 
+                config.getRepoOrDefault("evoparsons.repo.events", EventsNoopRepo.class);
         }
         
         private void onNewStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -267,8 +265,8 @@ public interface NetworkPolicy {
             Auth auth = broker.authenticateStudent(sid, ssig, skey);
             Map<String, Object> respJson = new HashMap<>();
             respJson.put("id", auth.getSid());
-            respJson.put("ip", request.getRemoteAddr());
-            respJson.put("sessionId", UUID.randomUUID().toString());
+            //respJson.put("ip", request.getRemoteAddr());
+            respJson.put("sessionId", auth.newSession());
             response.getWriter().print(JSON.toString(respJson));
         }
 
@@ -324,25 +322,11 @@ public interface NetworkPolicy {
             response.getWriter().print(JSON.toString(respJson));                  
         }
 
-        private void onNewAttempt(String sid, String puzzleId, HttpServletRequest request, HttpServletResponse response) throws IOException
-        {
-            int attemptId = broker.recordAttempt(sid, puzzleId);
-            //int attemptId = 0;
-            //File file = Paths.get(config.getOutputFolder(), "data", sid, String.valueOf(puzzleId), "attempts", String.format("%d.json", attemptId)).toFile().getAbsoluteFile();
-            //file.getParentFile().mkdirs();
-            // try (FileWriter writer = new FileWriter(file)) {
-            //     String text = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-            //     writer.write(text);
-            // } catch (Exception e) {
-            //     response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
-            //     Map<String, Object> respJson = new HashMap<>();
-            //     respJson.put("error", e.getMessage());
-            //     response.getWriter().print(JSON.toString(respJson));
-            //     return;
-            // }
+        private void onNewEvents(String sid, int puzzleId, HttpServletRequest request, HttpServletResponse response) throws IOException
+        {            
             try {
                 String text = request.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
-                attemptRepo.insert(Collections.singletonList(new Attempt(sid, puzzleId, String.valueOf(attemptId), text)));
+                eventsRepo.update(Collections.singletonList(new Events(sid, puzzleId, text)));
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
                 Map<String, Object> respJson = new HashMap<>();
@@ -360,7 +344,7 @@ public interface NetworkPolicy {
         private static Pattern puzzlePattern = Pattern.compile("^/(?<sid>\\w*)/puzzle/?$");
         private static Pattern statsPattern = Pattern.compile("^/(?<sid>\\w*)/stats/?$");
         private static Pattern evalPattern = Pattern.compile("^/(?<sid>\\w*)/puzzle/(?<puzzleId>[1-9]\\d*|0)/eval/?$");
-        private static Pattern attemptPattern = Pattern.compile("^/(?<sid>\\w*)/puzzle/(?<puzzleId>[1-9]\\d*|0)/attempt/?$");
+        private static Pattern eventsPattern = Pattern.compile("^/(?<sid>\\w*)/puzzle/(?<puzzleId>[1-9]\\d*|0)/events/?$");
 
         @Override
         protected void doGet( HttpServletRequest request,
@@ -431,6 +415,8 @@ public interface NetworkPolicy {
                                                             IOException
         {
             //String res1 = request.getReader().lines().collect(Collectors.joining());
+            try 
+            {
             response.setContentType("application/json");
             String pathInfo = request.getPathInfo();
             if (pathInfo == null) pathInfo = "/";
@@ -452,19 +438,26 @@ public interface NetworkPolicy {
                 onNewEval(sid, puzzleId, request, response);
                 return;                        
             }
-            Matcher attemptMatcher = attemptPattern.matcher(pathInfo);
-            if (attemptMatcher.matches())
+            Matcher eventsMatcher = eventsPattern.matcher(pathInfo);
+            if (eventsMatcher.matches())
             {
                 //obtaining new puzzle
-                String sid = URLDecoder.decode(attemptMatcher.group("sid"), StandardCharsets.UTF_8.name());
-                int puzzleId = Integer.valueOf(attemptMatcher.group("puzzleId"));
-                onNewAttempt(sid, String.valueOf(puzzleId), request, response);
+                String sid = URLDecoder.decode(eventsMatcher.group("sid"), StandardCharsets.UTF_8.name());
+                int puzzleId = Integer.valueOf(eventsMatcher.group("puzzleId"));
+                onNewEvents(sid, puzzleId, request, response);
                 return;                        
             }
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);    
             Map<String, Object> respJson = new HashMap<>();
             respJson.put("error", "API is not found");
-            response.getWriter().print(JSON.toString(respJson));                    
+            response.getWriter().print(JSON.toString(respJson));    
+            } catch (Exception e) 
+            {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);    
+                Map<String, Object> respJson = new HashMap<>();
+                respJson.put("error", e.getMessage());
+                response.getWriter().print(JSON.toString(respJson));
+            }            
         }
     }         
 

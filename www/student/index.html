@@ -406,10 +406,9 @@ I freely give my consent to take part in this study.  I understand that by proce
                 </div>
                 <div class="row">
                     <div class="col col-lg-8 offset-lg-2 form-group">
-                        <button type="button" class="btn btn-primary" id="nextButton">Next</button>
+                        <button type="button" class="btn btn-primary" id="nextButton">Submit</button>
                         <button type="button" class="btn" id="giveUpButton">GiveUp</button>
-                        <button type="button" class="btn" id="progressButton">My Progress</button>   
-                        <button type="button" class="btn" id="hintButton">Hint</button>
+                        <button type="button" class="btn" id="progressButton">My Progress</button>                           
                         <button type="button" class="btn" id="gridButton">Grid</button>
                     </div>
                 </div>                
@@ -427,6 +426,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                     </div>                
                 <div class="alert alert-danger col col-lg-8 offset-lg-2" role="alert" id="wrongMsg">
                     <strong>Oh snap!</strong> Change a few things up and try submitting again.
+                    <button type="button" class="btn" id="hintButton">Hint</button>
                 </div>
                 <div class="alert alert-danger col col-lg-8 offset-lg-2" role="alert" id="hasBug">
                     <strong>Bug!</strong> Code is ordered correctly. Try to find bugged fragment
@@ -445,17 +445,19 @@ I freely give my consent to take part in this study.  I understand that by proce
             var events = [];
             var attemptId = 0;
             var shfl = [];
+            var sessionStartTimeStamp = new Date().getTime();
 
             $(function () {
                 var windowEvent = null;
                 $(window).blur(function () {
                     windowEvent =
-                        { timestamp: new Date().getTime(), type:"inactive" }
+                        { timestamp: (new Date().getTime() - sessionStartTimeStamp), type:"inactive" }
                 });                
                 $(window).focus(function () {
                     if (windowEvent !== null)
                     {
-                        windowEvent.durationMs = new Date().getTime() - windowEvent.timestamp;
+                        windowEvent.durationMs = (new Date().getTime() - sessionStartTimeStamp) - windowEvent.timestamp;
+                        windowEvent.sessionId = sessionId;
                         events.push(windowEvent);
                         windowEvent = null;
                     }
@@ -478,13 +480,14 @@ I freely give my consent to take part in this study.  I understand that by proce
                 //var trashFragment = $("#trashFragment");
                 //var sortableIn = 1;
                 var moveCount = 0;
+                var hintCount = 0;
                 var attemptCount = 0;
                 var puzzleStartTime;
                 var dragEvent = null;
                 function createDragEvent(ui, startedIn) {
                     var pos = ui.item.data("data-pos");
                     var res = 
-                        { timestamp: new Date().getTime(),
+                        { timestamp: (new Date().getTime() - sessionStartTimeStamp),
                             type: "drag",
                             fragment: 
                                 {
@@ -501,9 +504,10 @@ I freely give my consent to take part in this study.  I understand that by proce
                 }
                 function dragStop(event, ui) {
                     var parentId = ui.item.parent().attr("id");
-                    dragEvent.durationMs = new Date().getTime() - dragEvent.timestamp;
+                    dragEvent.durationMs = (new Date().getTime() - sessionStartTimeStamp) - dragEvent.timestamp;
                     dragEvent.stopPosition = ui.item.index();
                     dragEvent.endedIn = (parentId == "taskPane") ? "answer" : "trash";
+                    dragEvent.sessionId = sessionId;
                     events.push(dragEvent);                                                
                     if ((dragEvent.startedIn !== dragEvent.endedIn) 
                         || ((dragEvent.startPosition !== dragEvent.stopPosition) 
@@ -630,7 +634,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                             var pos = $(this).data("data-pos");
                             hoverEvent = 
                                 {
-                                    timestamp: new Date().getTime(),
+                                    timestamp: (new Date().getTime() - sessionStartTimeStamp),
                                     type: "hover",
                                     fragment: 
                                         {
@@ -643,8 +647,12 @@ I freely give my consent to take part in this study.  I understand that by proce
                         //$(this).find(".iconHolder").show();
                     }, function () {
                         if (hoverEvent != null) {
-                            hoverEvent.durationMs = new Date().getTime() - hoverEvent.timestamp;
-                            events.push(hoverEvent);
+                            hoverEvent.durationMs = (new Date().getTime() - sessionStartTimeStamp) - hoverEvent.timestamp;
+                            if (hoverEvent.durationMs > 1000)
+                            {
+                                hoverEvent.sessionId = sessionId;
+                                //events.push(hoverEvent);
+                            }
                             hoverEvent = null;
                         }
                         //$(this).find(".iconHolder").hide();
@@ -653,6 +661,14 @@ I freely give my consent to take part in this study.  I understand that by proce
                 }
 
                 function hint() {
+                    hintCount++;
+                    var hintEvent = 
+                        {
+                            timestamp: (new Date().getTime() - sessionStartTimeStamp),
+                            type: "hint",
+                            hintCount: hintCount,
+                            sessionId: sessionId                            
+                        }
                     var fragments = $(".fragment").filter(function () { return $(this).data("data-pos") >= 0; });
                     fragments.each(function () {
                         $(this).data("data-lis", 1);
@@ -717,10 +733,18 @@ I freely give my consent to take part in this study.  I understand that by proce
                     //console.log(missingOrderOne);
                     if (missingOrderOne)
                     {
-                        missingOrderOne.addClass("hint");
+                        hintEvent.hintType = "order";
+                        hintEvent.fragment = 
+                            {
+                                type: "fragment",
+                                id: missingOrderOne.data("data-pos")
+                            },   
+                        hintEvent.position = $(missingOrderOne).index();
+                        missingOrderOne.addClass("hint");                        
                         //var phantom1 = missingOrderOne.clone();
                         //missingOrderOne.data("data-pos"):
                     } else {
+                        hintEvent.hintType = "distractor";
                         if ($("#taskPane .fragment").filter(function () { return $(this).data("data-pos") < 0; }).length > 0)
                         {
                             hasBug.show();
@@ -731,6 +755,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                                 });                            
                             }, 4000);                        
                         } else {
+                            hintEvent.hintType = "OK";
                             hintOk.show();
                             msg.fadeIn('slow');
                             setTimeout(function () {
@@ -740,6 +765,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                             }, 4000);                            
                         }
                     }
+                    events.push(hintEvent);                    
                 }
 
                 function buildFragments(puzzle) {
@@ -772,16 +798,19 @@ I freely give my consent to take part in this study.  I understand that by proce
                         fragment.appendTo(taskPane);
                     }
                     taskPane.data("data-len", programLength);               
-                    taskPane.find(".trashIconHolder").click(function () {
+                    taskPane.find(".trashIconHolder").click(function () {                        
                         var li = $(this).closest("li");
                         li.removeClass("hint");
-                        li.fadeOut(function () { 
-                            moveCount++;
-                            li.appendTo(trash);
-                            autoIndent();
-                            li.fadeIn();
-                            trashed.fadeIn();
-                        });                                               
+                        if (li.siblings().length > 0)
+                        {
+                            li.fadeOut(function () { 
+                                moveCount++;
+                                li.appendTo(trash);
+                                autoIndent();
+                                li.fadeIn();
+                                trashed.fadeIn();
+                            });                                               
+                        }
                     })
                     SyntaxHighlighter.highlight();
                     autoIndent();                  
@@ -795,6 +824,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                         processData: false,
                         success: function(puzzle){
                             moveCount = 0;
+                            hintCount = 0;
                             puzzleId = puzzle.id;
                             attemptId = 0;
                             puzzleStartTime = new Date().getTime();
@@ -802,6 +832,12 @@ I freely give my consent to take part in this study.  I understand that by proce
                             puzzleDesc.text(puzzle.description);
                             buildFragments(puzzle);
                             puzzleContent.fadeIn('slow');
+                            events.push({
+                                timestamp: (puzzleStartTime - sessionStartTimeStamp),
+                                type: "new",
+                                sessionId: sessionId,
+                                puzzleTitle: puzzleTitle
+                            });
                         }
                     });  
                 }        
@@ -864,8 +900,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                             $("#statsInstructor").text(instructorEmail || "<not specified>");
                             var loginEvent =
                                 {
-                                    "timestamp": new Date().getTime(),
-                                    "ip": data.ip,
+                                    "timestamp": (new Date().getTime() - sessionStartTimeStamp),
+                                    //"ip": data.ip,
                                     "type": "login",
                                     "touchEvents": ('ontouchstart' in document.documentElement),
                                     "w": $(window).width(),
@@ -886,29 +922,36 @@ I freely give my consent to take part in this study.  I understand that by proce
                         msg.fadeOut(function () {
                             giveUpMsg.hide();
                         });                                           
-                    }, 4000);        
-                    sendEvaluation(studentId, puzzleId, moveCount, true);                                                
+                    }, 4000); 
+                    sendEvents("giveUp");       
+                    sendEvaluation(studentId, puzzleId, moveCount + hintCount, true);                                                
                 });
-                function sendAttempt(errorsNumber, answer, trash) {
+                function sendAttempt(name, errorsNumber, answer, trash, isWrong) {
+                    events.push({
+                        timestamp: (new Date().getTime() - sessionStartTimeStamp),
+                        type: name,
+                        hintCount: hintCount,
+                        puzzleStartTime: (puzzleStartTime - sessionStartTimeStamp),
+                        attemptId: attemptId,
+                        attemptTimeMs: (new Date().getTime() - puzzleStartTime),
+                        sessionId: sessionId,
+                        programTitle: puzzleTitle.text(),
+                        errorsNumber: errorsNumber,
+                        moveCount: moveCount,
+                        answer: answer,
+                        trash: trash,
+                        solutionIsCorrect: !isWrong
+                    });
                     var attempt =
-                        {
-                            timestamp: puzzleStartTime,
-                            programTitle: puzzleTitle.text(),
+                        {                            
                             studentId: studentId,
-                            sessionId: sessionId,
                             puzzleId: puzzleId,
-                            attemptId: attemptId,
-                            attemptTimeMs: (new Date().getTime() - puzzleStartTime),
-                            errorsNumber: errorsNumber,
-                            moveCount: moveCount,                            
-                            answer: answer,
-                            trash: trash,                            
                             events: events
                         };
                     events = [];
                     attemptId++;
                     $.ajax({
-                            url:service + "/" + studentId + "/puzzle/" + puzzleId + "/attempt",
+                            url:service + "/" + studentId + "/puzzle/" + puzzleId + "/events",
                             type:"POST",
                             data: JSON.stringify(attempt),
                             contentType:"application/json",
@@ -916,7 +959,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                             processData: false
                         });                      
                 }
-                $("#nextButton").click(function () {
+                function sendEvents(name) 
+                {
                     var lineIndex = 0;
                     var expectedLength = taskPane.data("data-len");
                     var errorsNumber = 0;
@@ -945,8 +989,13 @@ I freely give my consent to take part in this study.  I understand that by proce
                         else 
                             trashArray.push({type:"fragment", id: pos})                        
                     });
-                    sendAttempt(errorsNumber, answer, trashArray);
-                    if ((errorsNumber > 0) || (lineIndex !== expectedLength)) {
+                    var isWrong = (errorsNumber > 0) || (lineIndex !== expectedLength);
+                    sendAttempt(name, errorsNumber, answer, trashArray, isWrong);
+                    return isWrong;
+                }
+                $("#nextButton").click(function () {
+                    var isWrong = sendEvents("submit");
+                    if (isWrong) {
                         wrongMsg.show();
                         msg.fadeIn('slow');
                         setTimeout(function () {
@@ -962,7 +1011,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                                 correctMsg.hide();
                             });                                           
                         }, 4000);
-                        sendEvaluation(studentId, puzzleId, moveCount, false);
+                        sendEvaluation(studentId, puzzleId, moveCount + hintCount, false);
                     }
                 });
 

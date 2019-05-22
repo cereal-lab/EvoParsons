@@ -1,6 +1,7 @@
 {
     "config_file_name": "dev",
     "evoparsons": {
+        "dbPort": "27017",
         "db": "mongodb://localhost:27017/evoDB",
         "net": {
             "0": {
@@ -40,13 +41,13 @@
                 "_": "evoparsons.repo.WatchedJsonFileRepo$InstructorJsonFileRepo",
                 "file": "instructors.json"
             },
-            "attempts": {
-                "_": "evoparsons.repo.MongoAttemptRepo",
-                "name": "attempts-dev-dvitel"
+            "events": {
+                "_": "evoparsons.repo.EventsMongoRepo",
+                "name": "events"
             },
             "students": {
                 "_": "evoparsons.repo.MongoPojoRepo$Students",
-                "name": "students-dev-dvitel"
+                "name": "students"
             }
         },
         "log": {
@@ -116,7 +117,7 @@
                         "repo": {
                             "students": {
                                 "_": "evoparsons.repo.MongoPojoRepo$Students",
-                                "name": "students-dev-dvitel-preset"
+                                "name": "students"
                             }
                         },
                         "genotypesFile": "preset.genotypes.bro",
@@ -179,7 +180,7 @@
                         "repo": {
                             "students": {
                                 "_": "evoparsons.repo.MongoPojoRepo$Students",
-                                "name": "students-dev-dvitel-ecj"
+                                "name": "students"
                             }
                         },
                         "output": "./DATA.out/ecj.out",

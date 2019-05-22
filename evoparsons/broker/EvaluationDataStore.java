@@ -190,18 +190,18 @@ public class EvaluationDataStore
 		return student.getStats();
 	}
 
-	public int recordAttempt(String sid, String puzzleId) {
-		Student student = students.get(sid);
-		if (student != null) 
-		{
-			int attemptId = 
-				student.getStats().attemptsPerPuzzle.getOrDefault(puzzleId, 0);
-			student.getStats().attemptsPerPuzzle.put(puzzleId, attemptId + 1);
-			saveStudent(student);
-			return attemptId + 1;
-		}
-		return -1;
-	}	
+	// public int recordAttempt(String sid, String puzzleId) {
+	// 	Student student = students.get(sid);
+	// 	if (student != null) 
+	// 	{
+	// 		int attemptId = 
+	// 			student.getStats().attemptsPerPuzzle.getOrDefault(puzzleId, 0);
+	// 		student.getStats().attemptsPerPuzzle.put(puzzleId, attemptId + 1);
+	// 		saveStudent(student);
+	// 		return attemptId + 1;
+	// 	}
+	// 	return -1;
+	// }	
 
 	public Map<String, Stats> getStudentStats(String isig, List<String> ssigs) {
 		if (isig == null || isig.isEmpty() || ssigs == null || ssigs.isEmpty()) return Collections.emptyMap();
@@ -274,7 +274,7 @@ public class EvaluationDataStore
 		Student student = 
 			students.computeIfAbsent(sid, ignorable -> {
 				log.log("[EvaluationDataStore.addStudent] %s, %s, %s", sid, ssig, skey);
-				return new Student(new Auth(sid, ssig, skey), new Stats(0, 0));
+				return new Student(new Auth(sid, ssig, skey, 0), new Stats(0, 0));
 			});		
 		saveStudent(student);
 		//student.auth.setSkey(skey);

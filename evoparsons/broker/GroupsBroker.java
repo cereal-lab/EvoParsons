@@ -159,14 +159,14 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 				b.getUIInterface().getStudentStats(data.localAuth.getSid()));
 	}
 
-	@Override
-	public synchronized int recordAttempt(String sid, String puzzleId) throws RemoteException {
-		return 
-			exec(sid, (b, data) -> {
-				int attempt = b.getUIInterface().recordAttempt(data.localAuth.getSid(), puzzleId);
-				return attempt;
-			});		
-	}
+	// @Override
+	// public synchronized int recordAttempt(String sid, String puzzleId) throws RemoteException {
+	// 	return 
+	// 		exec(sid, (b, data) -> {
+	// 			int attempt = b.getUIInterface().recordAttempt(data.localAuth.getSid(), puzzleId);
+	// 			return attempt;
+	// 		});		
+	// }
 
 	@Override
 	public Map<String, Stats> getStudentStats(String iid, String isig, List<String> ssig) throws RemoteException {

@@ -12,6 +12,17 @@ public class Auth implements Serializable {
     private String sid; 
     private String ssig; 
     private String skey;
+    private long sessionId = 0;
+    public long newSession() {
+        sessionId = (sessionId == Long.MAX_VALUE) ? 0 : (sessionId + 1);
+        return sessionId;
+    }
+    public long getSessionId() {
+        return sessionId;
+    }
+    public void setSessionId(long sessionId) {
+        this.sessionId = sessionId;
+    }    
     public String getSid() {
         return sid; 
     }
@@ -32,11 +43,12 @@ public class Auth implements Serializable {
             this.skey = skey;
     }
     public Auth() {}
-    public Auth(String sid, String ssig, String skey) {
+    public Auth(String sid, String ssig, String skey, long sessionId) {
         //this.id = id; 
         this.sid = sid; 
         this.ssig = ssig; 
         this.skey = skey;
+        this.sessionId = sessionId;
     }
 
     private static String byteToHex(final byte[] hash)

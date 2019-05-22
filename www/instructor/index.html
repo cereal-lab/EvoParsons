@@ -251,10 +251,10 @@
                                             var durationSeconds = Math.round(d.duration / 1000);
                                             var durationMinutes = Math.round(durationSeconds / 60);
                                             line.find(".duration").text(durationMinutes == 0 ? "1min" : (durationMinutes + " mins"));
-                                            var date = new Date(d.started);
-                                            var df = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + 
-                                                ((date.getMinutes() < 10) ? ("0" + date.getMinutes()) : ("" + date.getMinutes()));
-                                            line.find(".firstSession").text(df);
+                                            //var date = new Date(d.started);
+                                            // var df = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + 
+                                            //     ((date.getMinutes() < 10) ? ("0" + date.getMinutes()) : ("" + date.getMinutes()));
+                                            //line.find(".firstSession").text(df);
                                         } else {
                                             line.find(".puzzles").text("");
                                             line.find(".duration").text("");
