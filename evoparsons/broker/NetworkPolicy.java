@@ -522,7 +522,8 @@ public interface NetworkPolicy {
                         if (networkConfig.www.startsWith("https://api.github."))
                         {
                             contentPath = Paths.get(config.getOutputFolder(), "www", networkConfig.policyName);
-                            evoparsons.github.Client.download(networkConfig.www, contentPath.toString(), log);
+                            String auth = config.get("evoparsons.gitAuth", "");
+                            evoparsons.github.Client.download(networkConfig.www, contentPath.toString(), auth, log);
                         } else if (networkConfig.www.startsWith("file://")) {
                             contentPath = Paths.get(new URL(networkConfig.www).toURI());
                         } else {

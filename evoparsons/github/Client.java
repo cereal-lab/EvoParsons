@@ -88,7 +88,7 @@ public class Client {
         //TODO: logging - this is only possible if protocol of github v3 API changes
         return;
     }
-    public static void download(String url, String outputPath, Log log)
+    public static void download(String url, String outputPath, String auth, Log log)
     {        
         try 
         {
@@ -128,7 +128,8 @@ public class Client {
         conn.setRequestProperty("Accept", "application/vnd.github.v3+json");
         conn.setRequestProperty("User-Agent", "EvoParsonsBot");
         conn.setRequestProperty("Content-Type", "application/json");
-        conn.setRequestProperty("Authorization", "Basic ZXZvcGFyc29uczo5XkshQ2EuNGYld3VDKmc=");
+        if (!auth.isEmpty())
+            conn.setRequestProperty("Authorization", auth);
         try (InputStream stream = conn.getInputStream()) {
             if (url.startsWith("https://api.")) {
                 //api format

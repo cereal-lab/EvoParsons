@@ -47,12 +47,13 @@ public class ParsonsLibrary implements Library
 		String outputFolder = config.getOutputFolder();
 		programFolder = Paths.get(outputFolder, "Programs");
 		transformFolder = Paths.get(outputFolder, "Transforms");
-		this.log = config.getLog();		
+		this.log = config.getLog();				
 		if (Files.notExists(programFolder))
 		{
 			String url = config.get("evoparsons.programs", "");
+			String auth = config.get("evoparsons.gitAuth", "");
 			//Utils.downloadFolderFromGithub(url, programFolder.toString(), log);
-			evoparsons.github.Client.download(url, programFolder.toString(), log);
+			evoparsons.github.Client.download(url, programFolder.toString(), auth, log);
 		}
 		programStore = 
 			load(programFolder.toString(), 
@@ -74,8 +75,9 @@ public class ParsonsLibrary implements Library
 		if (Files.notExists(transformFolder))
 		{
 			String url = config.get("evoparsons.transforms", "");
+			String auth = config.get("evoparsons.gitAuth", "");
 			//Utils.downloadFolderFromGithub(url, transformFolder.toString(), log);
-			evoparsons.github.Client.download(url, transformFolder.toString(), log);
+			evoparsons.github.Client.download(url, transformFolder.toString(), auth, log);
 		}
 		transformStore = 
 			loadTransforms(transformFolder.toString(), 
