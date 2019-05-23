@@ -60,7 +60,7 @@ public class Client {
 		}
 	}
 
-    private static void downloadFileFromJson(Map<String, Object> p, String outputPath, Log log) throws IOException {        
+    private static void downloadFileFromJson(Map<String, Object> p, String outputPath, String auth, Log log) throws IOException {        
         String base64EncContent = (String)p.get("content");
         if (base64EncContent != null)
         {
@@ -75,14 +75,14 @@ public class Client {
         String downloadUrl = (String)p.get("download_url");
         if (downloadUrl != null) 
         {
-            download(downloadUrl, outputPath, log);
+            download(downloadUrl, outputPath, auth, log);
             return;
         }
         String url = (String)p.get("url");
         if (url != null)
         {
             //download subfolders
-            download(url, outputPath, log);
+            download(url, outputPath, auth, log);
         }
         //noop othervise 
         //TODO: logging - this is only possible if protocol of github v3 API changes
@@ -142,7 +142,7 @@ public class Client {
                 {
                     Map<String, Object> p = (Map<String, Object>)parsed;
                     String fileOutputPath = Paths.get(outputPath, p.get("name").toString()).toString();
-                    downloadFileFromJson(p, fileOutputPath, log);
+                    downloadFileFromJson(p, fileOutputPath, auth, log);
                 }
                 if (parsed instanceof Object[])
                 {
@@ -154,7 +154,7 @@ public class Client {
                         //download each file
                         Map<String, Object> pf = (Map<String, Object>)p[i];
                         String fileOutputPath = Paths.get(outputPath, pf.get("name").toString()).toString();
-                        downloadFileFromJson(pf, fileOutputPath, log);
+                        downloadFileFromJson(pf, fileOutputPath, auth, log);
                     }
                 }
             } else {
