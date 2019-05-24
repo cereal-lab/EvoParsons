@@ -31,6 +31,7 @@
     ],
     "java.import.gradle.enabled": false,
     "java.import.maven.enabled": false,
-    "files.eol": "\n"
+    "files.eol": "\n",
+    "editor.renderControlCharacters": true
     //"java.trace.server": "verbose"
 }

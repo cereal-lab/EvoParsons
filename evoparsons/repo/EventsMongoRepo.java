@@ -24,9 +24,11 @@ public class EventsMongoRepo implements IRepo<String, Events> {
     private Config config;
     private String collectionName;
     private String connectionString;
+    private String dbName;
     public EventsMongoRepo(Config config) {
         Log log = config.getLog();
         this.connectionString = config.getConnectionString();
+        this.dbName = config.getDbName();
         if (connectionString == null || connectionString.equals("")) {
             log.err("[EventsMongoRepo] connection string evoparsons.db was not specified in config!!");
             System.exit(1);
@@ -55,7 +57,7 @@ public class EventsMongoRepo implements IRepo<String, Events> {
         }        
         try (MongoClient client = MongoClients.create(connectionString))
         {
-            MongoDatabase db = client.getDatabase("evoDB");
+            MongoDatabase db = client.getDatabase(dbName);
             MongoCollection<Document> collection = db.getCollection(this.collectionName);
             Document result = 
                 collection.find(
@@ -74,7 +76,7 @@ public class EventsMongoRepo implements IRepo<String, Events> {
                 try (MongoClient client = MongoClients.create(connectionString))
                 {
                     Document doc = Document.parse(events.events);
-                    MongoDatabase db = client.getDatabase("evoDB");
+                    MongoDatabase db = client.getDatabase(dbName);
                     MongoCollection<Document> collection = db.getCollection(this.collectionName);
                     UpdateResult res = 
                         collection.updateOne(
@@ -96,7 +98,7 @@ public class EventsMongoRepo implements IRepo<String, Events> {
             entities.stream().map(event -> Document.parse(event.events)).collect(Collectors.toList());
         try (MongoClient client = MongoClients.create(connectionString))
         {
-            MongoDatabase db = client.getDatabase("evoDB");
+            MongoDatabase db = client.getDatabase(dbName);
             MongoCollection<Document> collection = db.getCollection(this.collectionName);
             collection.insertMany(docs);
         }
@@ -106,7 +108,7 @@ public class EventsMongoRepo implements IRepo<String, Events> {
     public Map<String, Events> getAll() {
         try (MongoClient client = MongoClients.create(connectionString))
         {
-            MongoDatabase db = client.getDatabase("evoDB");
+            MongoDatabase db = client.getDatabase(dbName);
             MongoCollection<Document> collection = db.getCollection(this.collectionName);
             Map<String, Events> mp = new HashMap<>();
             Consumer<Document> c = 

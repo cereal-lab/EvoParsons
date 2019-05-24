@@ -34,9 +34,11 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
     private String idKey;
     private Function<T, String> getId;
     private String connectionString;
+    private String dbName;
     public MongoPojoRepo(Config config, Class<T> tClass, String configKey, String idKey, Function<T, String> getId) {
         Log log = config.getLog();
         this.connectionString = config.getConnectionString();
+        this.dbName = config.getDbName();
         if (connectionString == null || connectionString.equals("")) {
             log.err("[EventsMongoRepo] connection string evoparsons.db was not specified in config!!");
             System.exit(1);
@@ -57,7 +59,7 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
         //id has format - studentId/puzzleId/attemptId
         try (MongoClient client = MongoClients.create(connectionString))
         {
-            MongoDatabase db = client.getDatabase("evoDB").withCodecRegistry(this.pojoCodecRegistry);
+            MongoDatabase db = client.getDatabase(dbName).withCodecRegistry(this.pojoCodecRegistry);
             MongoCollection<T> collection = db.getCollection(this.collectionName, tClass);
             T result = 
                 collection.find(Filters.eq(idKey, id)).first();
@@ -72,7 +74,7 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
             .forEach(entity -> {
                 try (MongoClient client = MongoClients.create(connectionString))
                 {
-                    MongoDatabase db = client.getDatabase("evoDB").withCodecRegistry(this.pojoCodecRegistry);
+                    MongoDatabase db = client.getDatabase(dbName).withCodecRegistry(this.pojoCodecRegistry);
                     MongoCollection<T> collection = db.getCollection(this.collectionName, tClass);
                     ReplaceOptions options = new ReplaceOptions().upsert(true);
                     collection.replaceOne(Filters.eq(idKey, getId.apply(entity)), entity, options);
@@ -89,7 +91,7 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
     public void insert(List<T> entities) {
         try (MongoClient client = MongoClients.create(connectionString))
         {
-            MongoDatabase db = client.getDatabase("evoDB").withCodecRegistry(this.pojoCodecRegistry);
+            MongoDatabase db = client.getDatabase(dbName).withCodecRegistry(this.pojoCodecRegistry);
             MongoCollection<T> collection = db.getCollection(this.collectionName, tClass);
             collection.insertMany(entities);
         }
@@ -99,7 +101,7 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
     public Map<String, T> getAll() {
         try (MongoClient client = MongoClients.create(connectionString))
         {
-            MongoDatabase db = client.getDatabase("evoDB").withCodecRegistry(this.pojoCodecRegistry);
+            MongoDatabase db = client.getDatabase(dbName).withCodecRegistry(this.pojoCodecRegistry);
             MongoCollection<T> collection = db.getCollection(this.collectionName, tClass);
             Map<String, T> mp = new HashMap<>();
             Consumer<T> c = 
