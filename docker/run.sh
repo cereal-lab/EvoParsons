@@ -125,16 +125,18 @@ docker_container_run() {
     echo "Cannot find dbPort in ${config}"
   else 
     echo "DB port was found: $dbPort"     
-    local cs="mongodb://evoRoot:8ndhMVk4Bt%40b123@evoparsons.csee.usf.edu:$dbPort/$dbName?authSource=admin"
+    local cs="mongodb://evoRoot:8ndhMVk4Bt%40b123@db:27017/$dbName?authSource=admin"
     configContent=$(echo "$configContent" | sed -e "s \"db\"\s*:\s*\".*\" \"db\":\"$cs\" g")
   fi    
   local existingMongo="$(docker ps --format 'table {{.Names}} {{.Ports}}' | grep ":$dbPort->" | cut -d ' ' -f1)"
   if [ -z "$existingMongo" ]; then           
     existingMongo="m-$dbPort"
-    mkdir /EvoParsons/mongo/$dbName     
+    docker network create -d bridge $existingMongo
+    mkdir -p /EvoParsons/mongo/$dbName     
     docker run --name $existingMongo -p 0.0.0.0:$dbPort:27017/tcp \
       --restart=always -e MONGO_INITDB_ROOT_USERNAME=evoRoot \
       -e MONGO_INITDB_ROOT_PASSWORD=8ndhMVk4Bt@b123 \
+      --network=$existingMongo --network-alias=db \
       -v /EvoParsons/mongo/$existingMongo:/data/db -d mongo:4.1-bionic   
   else 
     echo "DB port $dbPort is occupied by $existingMongo - assuming by other mongodb instance!!!!!"  
@@ -210,7 +212,8 @@ docker_container_run() {
   echo "ports are ${mappedPorts[@]}"
   #docker-compose -f $composeConfig -p $name up -d 
   docker run --name $name ${mappedPorts[@]} \
-    --restart=always -e BROKER_CONFIG=${config} \    
+    --restart=always -e BROKER_CONFIG=${config} \
+    --network=$existingMongo --network-alias=$name \
     -v ${data}:/app/DATA.out -d evoparsons_server
 
   #--network=container:$existingMongo \
