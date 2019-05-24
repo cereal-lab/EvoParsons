@@ -1,6 +1,6 @@
 version: '2'
 services:
-  EvoParsonsServer:
+  evo:
     image: evoparsons_server
     restart: always
     ports:
@@ -13,4 +13,14 @@ services:
       default:
         aliases:
           - ${BROKER_HOSTNAME}
+  mongo: 
+    image: mongo:4.1-bionic
+    restart: always
+    ports: 
+      - "${MONGO_PORT}:27017"
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME=evoRoot42"
+      - "MONGO_INITDB_ROOT_PASSWORD=vD2q5J7M8aEU8Dx"
+    volumes:
+      - /EvoParsons/mongo/${MONGO_DB}:/data/db
 

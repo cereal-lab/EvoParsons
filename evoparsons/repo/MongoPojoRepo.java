@@ -114,7 +114,7 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
 
     public static class Students extends MongoPojoRepo<Student> {
         public Students(Config config) {
-            super(config, Student.class, "evoparsons.repo.students.name", "auth.sid", student -> student.getAuth().getSid());
+            super(config, Student.class, "repo.students.name", "auth.sid", student -> student.getAuth().getSid());
         }
     }
 

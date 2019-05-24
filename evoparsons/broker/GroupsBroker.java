@@ -54,16 +54,16 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 
 	public GroupsBroker(Config config, Broker parent) {
 		this.log = config.getLog();
-		name = config.get("evoparsons.broker.name", "GroupsBroker");
+		name = config.get("broker.name", "GroupsBroker");
 		groupsFile = 
 			Paths.get(config.getOutputFolder(),
-				config.get("evoparsons.broker.file", DEFAULT_GROUPS_BROKER_FILE))
+				config.get("broker.file", DEFAULT_GROUPS_BROKER_FILE))
 				.toString();
 		SerializedData data = Utils.<SerializedData>loadFromFile(log, groupsFile, () -> new SerializedData(new HashMap<>(), new HashMap<>()));
 		brokerToSids = data.brokerToSids;
 		sidToBroker = data.sidToBroker;
-		this.lib = config.<Library>getInstanceOpt("evoparsons.lib", config).orElse(null);
-		String childKey = "evoparsons.broker.child.";		
+		this.lib = config.<Library>getInstanceOpt("lib", config).orElse(null);
+		String childKey = "broker.child.";		
 		Set<String> childBrokerPrefixes = new HashSet<>();
 		List<String> childKeys = config.getKeyList(childKey);
 		childKeys

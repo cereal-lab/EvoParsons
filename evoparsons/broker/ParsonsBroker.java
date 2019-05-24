@@ -28,9 +28,9 @@ public class ParsonsBroker implements Broker, BrokerUIInterface, BrokerEAInterfa
 	};
 
 	public ParsonsBroker(Config config, Broker parent) {
-		this.name = config.get("evoparsons.broker.name", "ParsonsBroker");
+		this.name = config.get("broker.name", "ParsonsBroker");
 		this.evalStore = new EvaluationDataStore(config);
-		this.lib = config.<Library>getInstanceOpt("evoparsons.lib", config).orElseGet(() -> {
+		this.lib = config.<Library>getInstanceOpt("lib", config).orElseGet(() -> {
 			if (parent != null) {
 				BrokerEAInterface parentEAInterface = parent.getEAInterface();
 				if (parentEAInterface != null)
@@ -44,7 +44,7 @@ public class ParsonsBroker implements Broker, BrokerUIInterface, BrokerEAInterfa
 		}
 		this.config = config;
 		this.log = config.getLog();
-		this.selectionPolicy = config.<SelectionPolicy>getInstanceOpt("evoparsons.broker.distributionPolicy")
+		this.selectionPolicy = config.<SelectionPolicy>getInstanceOpt("broker.distributionPolicy")
 				.orElse(SelectionPolicy.pairing);
 	}
 

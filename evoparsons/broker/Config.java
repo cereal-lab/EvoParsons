@@ -272,14 +272,14 @@ public class Config {
                         log = log.parentLog();
             }
             if (log == null) log = Log.console;
-            String header = get("evoparsons.log.header", "");
-            log = Log.createWrapper((Log)getInstanceOpt("evoparsons.log").orElse(Log.console), header);
+            String header = get("log.header", "");
+            log = Log.createWrapper((Log)getInstanceOpt("log").orElse(Log.console), header);
         }
         return log;
     }
 
-    public Map<Integer, Network> createNetworkInterfaces() {  
-        final Map<Integer, Network> networkInterfaces = new HashMap<>();
+    public Map<String, Network> createNetworkInterfaces() {  
+        final Map<String, Network> networkInterfaces = new HashMap<>();
         ToIntFunction<String> portParser = 
             value -> {
                 try {
@@ -293,51 +293,31 @@ public class Config {
         props.forEach((k, v) -> {
             String name = k.toString();
             String value = v.toString();
-            if (name.startsWith("evoparsons.net")) {
-                String[] nameParts = name.split("\\.");
-                if (nameParts.length <= 2)
-                {
-                    networkInterfaces.computeIfAbsent(0, (key) -> new Network())
-                        .policyPath = name;
-                }
-                else {
-                    try {
-                        Network network = 
-                            networkInterfaces.computeIfAbsent(Integer.valueOf(nameParts[2]), (key) -> new Network());
-                        if (nameParts.length == 3)
-                        {
-                            network.policyPath = name;
-                            network.policyName = nameParts[2];
-                        }
-                        else 
-                            if (nameParts.length == 4 && nameParts[3].equals("hostname"))
-                                network.host = value;
-                            else if (nameParts.length == 4 && nameParts[3].equals("port"))
-                                network.port = portParser.applyAsInt(value);
-                            else if (nameParts.length == 5 && nameParts[3].equals("servlet"))
-                            {                                
-                                network.servlets.add(name);
-                            }
-                            else if (nameParts.length == 4 && nameParts[3].equals("www"))
-                            {                                
-                                network.www = value;
-                            }                            
-                            else 
-                                log.log("[Config.LoadFromFile] Ignoring unknown property %s=%s", name, value);
-                    } catch (NumberFormatException e) {
-                        Network network = 
-                            networkInterfaces.computeIfAbsent(0, (key) -> new Network());                            
-                        if (nameParts.length == 3)
-                        {
-                            if (nameParts[2].equals("hostname"))
-                                network.host = value;
-                            else if (nameParts[2].equals("port"))
-                                network.port = portParser.applyAsInt(value);
-                            else 
-                                log.log("[Config.LoadFromFile] Ignoring unknown property %s=%s", name, value);
-                        } else 
-                            log.log("[Config.LoadFromFile] Ignoring unknown property %s=%s", name, value);
+            if (name.startsWith("net.")) {
+                try {
+                    int splitPoint = name.indexOf(".", name.indexOf(".") + 1);                 
+                    String prefix = splitPoint == -1 ? name : name.substring(0, splitPoint);
+                    Network network = 
+                        networkInterfaces.computeIfAbsent(prefix, (key) -> new Network());
+                    if (name.matches("^net\\.[^.]*$"))
+                    {
+                        network.policyPath = name;
+                        network.policyName = prefix;
                     }
+                    else 
+                        if (name.matches("^net\\..*?\\.hostname$"))
+                            network.host = value;
+                        else if (name.matches("^net\\..*?\\.port$"))
+                            network.port = portParser.applyAsInt(value);
+                        else if (name.matches("^net\\..*?\\.servlet\\.[^.]*$"))
+                            network.servlets.add(name);
+                        else if (name.matches("^net\\..*?\\.www$"))
+                            network.www = value;
+                        else if (!name.matches("^net\\..*?\\.servlet\\..*?\\.[^.]*$"))
+                            log.log("[Config.LoadFromFile] Ignoring unknown property %s=%s", name, value);
+                } catch (Exception e) {
+                    log.err("[Config.createNetworkInterfaces] Cannot process %s with value %s", name, value);
+                    System.exit(1);
                 }
             }
         });
@@ -345,7 +325,7 @@ public class Config {
     }
     public String getConnectionString() {
         if (connectionString == null) {
-            this.connectionString = props.getProperty("evoparsons.db");
+            this.connectionString = props.getProperty("db");
             if ((this.connectionString == null || this.connectionString.equals("")) && (parent != null))
             {
                 connectionString = parent.getConnectionString();            
@@ -355,7 +335,7 @@ public class Config {
     }    
     public String getOutputFolder() {         
         if (outputFolder == null) {
-            this.outputFolder = props.getProperty("evoparsons.output");
+            this.outputFolder = props.getProperty("output");
             boolean fromParent = false;
             if ((this.outputFolder == null || this.outputFolder.equals("")) && (parent != null))
             {
@@ -508,7 +488,7 @@ public class Config {
 
 	public Broker init(Broker parent) {
 
-		Broker broker = this.getInstance("evoparsons.broker", this, parent == null ? Broker.class : parent);
+		Broker broker = this.getInstance("broker", this, parent == null ? Broker.class : parent);
 		this.createNetworkInterfaces().forEach((id, networkConfig) ->
 			networkConfig.createPolicy(this).startInterface(networkConfig, this, broker.getUIInterface()));
 
@@ -516,7 +496,7 @@ public class Config {
         EAStarter eaStarter = null;
         if (brokerEAInterface != null)
         {
-            eaStarter = this.<EAStarter>getInstanceOpt("evoparsons.ea", this, brokerEAInterface).orElse(null);
+            eaStarter = this.<EAStarter>getInstanceOpt("ea", this, brokerEAInterface).orElse(null);
             if (eaStarter != null) {
                 if (brokerEAInterface.startFresh()) 
                     eaStarter.runFresh();

@@ -46,7 +46,7 @@ public abstract class WatchedJsonFileRepo<T> extends FileRepo<String, T> {
 
     public static class InstructorJsonFileRepo extends WatchedJsonFileRepo<Instructor> {
         public InstructorJsonFileRepo(Config config) {
-            super(config, config.get("evoparsons.repo.instructor.file", ""));
+            super(config, config.get("repo.instructor.file", ""));
         }
 
         @Override

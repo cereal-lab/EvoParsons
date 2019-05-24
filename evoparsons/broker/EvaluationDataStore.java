@@ -49,16 +49,15 @@ public class EvaluationDataStore
 		this.config = config;
 		this.outputFolder = config.getOutputFolder();
 		this.studentRepo = 
-			config.getRepoOrDefault("evoparsons.repo.students", 
+			config.getRepoOrDefault("repo.students", 
 				HashMapFileRepo.StudentsHashMapFileRepo.class);
 		try {
-			String evalTries = config.get("evoparsons.evalTries", "");
+			String evalTries = config.get("ea.evalTries", "");
 			this.evalTries = Integer.parseInt(evalTries);
 		} catch (NumberFormatException e) {
 			log.log("[EvaluationDataStore] Using default value for evalTries=2");
 			this.evalTries = 2;
 		}		
-		//studentsFile = config.get("evoparsons.studentsFile", DEFAULT_STUDENTS_FILE);
 		try {
 			students = this.studentRepo.getAll();
 		} catch (IOException e) {
@@ -76,9 +75,7 @@ public class EvaluationDataStore
 				.sorted(Comparator.comparing(entry -> entry.getValue().getAuth().getSid()))
 				.forEach(entry -> log.log("\t%s", entry.getKey()));
 		}
-		//studentStatsFile = config.get("evoparsons.studentsStatsFile", DEFAULT_STUDENT_STAT_FILE);
-		//studentStats = Utils.<HashMap<Integer, Stats>>loadFromFile(log, Paths.get(outputFolder, studentStatsFile).toString(), HashMap<Integer, Stats>::new);
-		genotypesFile = config.get("evoparsons.genotypesFile", DEFAULT_GENOTYPE_FILE);
+		genotypesFile = config.get("genotypesFile", DEFAULT_GENOTYPE_FILE);
 		genotypes = 
 			Utils.<Map<Integer, PuzzleEvaluation>>loadFromFile(log, Paths.get(outputFolder, genotypesFile).toString(), 
 				HashMap<Integer, PuzzleEvaluation>::new);

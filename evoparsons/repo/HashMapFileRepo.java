@@ -43,7 +43,7 @@ public abstract class HashMapFileRepo<ID, T> implements IRepo<ID, T> {
 
     public static class StudentsHashMapFileRepo extends HashMapFileRepo<String, Student> {
         public StudentsHashMapFileRepo(Config config) {
-            super(config, Paths.get(config.getOutputFolder(), config.get("evoparsons.studentsFile", "students.bro")).toString());            
+            super(config, Paths.get(config.getOutputFolder(), config.get("studentsFile", "students.bro")).toString());            
         }
 
         @Override

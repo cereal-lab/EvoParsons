@@ -48,7 +48,7 @@ public class ParsonsGenotypeIndex
 		this.log = config.getLog();
 		this.config = config;
 		this.outputFolder = config.getOutputFolder();
-		genotypeIndexFile = config.get("evoparsons.genotypeIndexFile", DEFAULT_GENOTYPE_INDEX_FILE);
+		genotypeIndexFile = config.get("genotypeIndexFile", DEFAULT_GENOTYPE_INDEX_FILE);
 		genotypeIndexes = 
 			Utils.<Map<HashRemapper, Integer>>loadFromFile(log, Paths.get(outputFolder, genotypeIndexFile).toString(), 
 				HashMap<HashRemapper, Integer>::new);		

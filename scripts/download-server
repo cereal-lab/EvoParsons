@@ -11,6 +11,8 @@ svn checkout "${SVNTARGET}evoparsons/repo" evoparsons/repo >/dev/null
 svn checkout "${SVNTARGET}evoparsons/rmishared" evoparsons/rmishared >/dev/null
 svn checkout "${SVNTARGET}evoparsons/utils" evoparsons/utils >/dev/null
 svn checkout "${SVNTARGET}lib" lib >/dev/null
+#svn checkout "${SVNTARGET}ParsonsLibraries/Programs/${PROGRAMS}" Programs >/dev/null
+#svn checkout "${SVNTARGET}ParsonsLibraries/Programs/${TRANS}" Transforms >/dev/null
 mkdir scripts
 mkdir docker
 wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/${BRANCH}/scripts/build-server" --content-disposition --no-check-certificate -O ./scripts/build-server >/dev/null

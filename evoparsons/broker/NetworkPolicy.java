@@ -90,7 +90,7 @@ public interface NetworkPolicy {
             this.broker = broker;
             this.config = config;
             this.log = config.getLog();
-            this.instructorRepo = config.getRepoOrDefault("evoparsons.repo.instructor", null);
+            this.instructorRepo = config.getRepoOrDefault("repo.instructor", null);
         }
 
         private void onNewInstructor(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -235,7 +235,7 @@ public interface NetworkPolicy {
             this.config = config;
             this.log = config.getLog();
             this.eventsRepo = 
-                config.getRepoOrDefault("evoparsons.repo.events", EventsNoopRepo.class);
+                config.getRepoOrDefault("repo.events", EventsNoopRepo.class);
         }
         
         private void onNewStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -522,7 +522,7 @@ public interface NetworkPolicy {
                         if (networkConfig.www.startsWith("https://api.github."))
                         {
                             contentPath = Paths.get(config.getOutputFolder(), "www", networkConfig.policyName);
-                            String auth = config.get("evoparsons.gitAuth", "");
+                            String auth = config.get("gitAuth", "");
                             evoparsons.github.Client.download(networkConfig.www, contentPath.toString(), auth, log);
                         } else if (networkConfig.www.startsWith("file://")) {
                             contentPath = Paths.get(new URL(networkConfig.www).toURI());

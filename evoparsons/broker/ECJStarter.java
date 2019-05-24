@@ -31,8 +31,13 @@ public class ECJStarter implements EAStarter {
         try {
                 // new ParameterDatabase(ecjConfigFile, 
                 //         new String[] { "-file", ecjConfigFile.getCanonicalPath() });
+            //this.config.getList(prefix)
             this.config.props.forEach((k, v) -> {
-                params.set(new Parameter(k.toString()), v.toString());
+                String key = k.toString();
+                if (key.startsWith("ea."))
+                {
+                    params.set(new Parameter(key.substring(3)), v.toString());
+                }
             });
             params.set(new Parameter("pop.subpop.0.species.min-gene"), "0");
             params.set(new Parameter("pop.subpop.0.species.max-gene"), String.valueOf(broker.getLib().getTransformCount() - 1));

@@ -132,7 +132,7 @@ public class MongoUtils {
             Document doc = collection.find(Filters.eq("_id", new ObjectId("5cc701aecf45c84f5ed20da2"))).first();
             Object data = doc.getEmbedded(Arrays.asList("evoparsons", "broker", "child", "2", "evoparsons", "ea", "preset"), ArrayList.class);
             collection.updateOne(Filters.eq("_id", new ObjectId("5cc71b956650bb591d9a4f5f")),
-                Updates.set("evoparsons.broker.child.1.evoparsons.ea.preset", data));
+                Updates.set("broker.child.1.ea.preset", data));
         }
     }
 
@@ -191,7 +191,7 @@ public class MongoUtils {
                     if (docs.containsKey(childBrokerDocId))
                     {
                         Document childBrokerDoc = docs.get(childBrokerDocId);
-                        updates.add(Updates.set("evoparsons.broker.child.1", childBrokerDoc));
+                        updates.add(Updates.set("broker.child.1", childBrokerDoc));
                     }
                 }    
                 childBroker = doc.getEmbedded(Arrays.asList("evoparsons", "broker", "child", "2"), String.class);                
@@ -202,7 +202,7 @@ public class MongoUtils {
                     if (docs.containsKey(childBrokerDocId))
                     {
                         Document childBrokerDoc = docs.get(childBrokerDocId);
-                        updates.add(Updates.set("evoparsons.broker.child.2", childBrokerDoc));
+                        updates.add(Updates.set("broker.child.2", childBrokerDoc));
                     }
                 }          
                 if (updates.size() > 0)

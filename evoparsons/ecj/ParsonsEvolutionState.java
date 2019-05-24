@@ -33,7 +33,7 @@ public class ParsonsEvolutionState extends SimpleEvolutionState {
 	public ParsonsEvolutionState withConfig(Config config) {
 		this.log = config.getLog();
 		this.config = config;
-		genotypeEvolFile = Paths.get(config.getOutputFolder(), config.get("evoparsons.genotypeEvolFile", DEFAULT_GENOTYPE_EVOL_FILE)).toString();
+		genotypeEvolFile = Paths.get(config.getOutputFolder(), config.get("genotypeEvolFile", DEFAULT_GENOTYPE_EVOL_FILE)).toString();
 		this.genotypeEvolution =
 			Utils.<Map<ParsonsGenotype, List<ParsonsGenotype>>>loadFromFile(log, genotypeEvolFile, 
 				HashMap<ParsonsGenotype, List<ParsonsGenotype>>::new);

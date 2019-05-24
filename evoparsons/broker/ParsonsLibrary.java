@@ -50,8 +50,8 @@ public class ParsonsLibrary implements Library
 		this.log = config.getLog();				
 		if (Files.notExists(programFolder))
 		{
-			String url = config.get("evoparsons.programs", "");
-			String auth = config.get("evoparsons.gitAuth", "");
+			String url = config.get("programs", "");
+			String auth = config.get("gitAuth", "");
 			//Utils.downloadFolderFromGithub(url, programFolder.toString(), log);
 			evoparsons.github.Client.download(url, programFolder.toString(), auth, log);
 		}
@@ -74,8 +74,8 @@ public class ParsonsLibrary implements Library
 					.collect(Collectors.joining(System.lineSeparator()))});
 		if (Files.notExists(transformFolder))
 		{
-			String url = config.get("evoparsons.transforms", "");
-			String auth = config.get("evoparsons.gitAuth", "");
+			String url = config.get("transforms", "");
+			String auth = config.get("gitAuth", "");
 			//Utils.downloadFolderFromGithub(url, transformFolder.toString(), log);
 			evoparsons.github.Client.download(url, transformFolder.toString(), auth, log);
 		}

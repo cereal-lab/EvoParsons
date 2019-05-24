@@ -20,8 +20,8 @@ public class InteractionMatrix {
     public static void main(String[] args) {
         Config config = new Config(null) {{
             outputFolder = args[0];
-            this.props.put("evoparsons.programs", args[1]);
-            this.props.put("evoparsons.transforms", args[2]);
+            this.props.put("programs", args[1]);
+            this.props.put("transforms", args[2]);
         }};
         Log log = Log.console;
 		Map<Integer, PuzzleEvaluation> genotypes = 

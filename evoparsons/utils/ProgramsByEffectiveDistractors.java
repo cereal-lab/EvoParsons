@@ -43,8 +43,8 @@ public class ProgramsByEffectiveDistractors {
 			}
         };
         Config config = new Config(null) {{
-            this.props.put("evoparsons.programs", args[0]);
-            this.props.put("evoparsons.transforms", args[1]);
+            this.props.put("programs", args[0]);
+            this.props.put("transforms", args[1]);
         }};
         ParsonsLibrary lib = new ParsonsLibrary(config);
 

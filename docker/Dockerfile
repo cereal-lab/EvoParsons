@@ -20,18 +20,23 @@ RUN set -xe \
 FROM openjdk:8-jre-alpine
 
 # We use supervisord to run multiple programs in a single container.
-RUN apk add --no-cache supervisor bash subversion
+#RUN apk add --no-cache supervisor bash subversion
+#NOTE for now we have only one service
+#idea to have one service inside one container
 
 WORKDIR /app/
 
 # Get what we built during the building process
-COPY --from=Builder /app/docker/supervisord.conf /etc/
+#COPY --from=Builder /app/docker/supervisord.conf /etc/
 COPY --from=Builder /app/bin/*.jar /app/
 COPY --from=Builder /app/scripts/evoparsons-server /app/
+#COPY --from=Builder /app/Programs /data/Programs/
+#COPY --from=Builder /app/Transforms /data/Transforms/
 
 RUN chmod a+x /app/evoparsons-server
 
 # Specify where we are going to store the data
 VOLUME [ "/data" ]
 
-CMD [ "/usr/bin/supervisord"]
+#CMD [ "/usr/bin/supervisord"]
+CMD [ "/app/evoparsons-server" ]

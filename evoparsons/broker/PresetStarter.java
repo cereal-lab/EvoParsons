@@ -54,7 +54,7 @@ public class PresetStarter implements EAStarter {
         Library lib = broker.getLib();
         this.log = config.getLog();
         genotypes = new ArrayList<>();
-        Object presetConfig = config.getObject("evoparsons.ea.preset");
+        Object presetConfig = config.getObject("ea.preset");
         if (presetConfig instanceof String)
         {
             String presetUrl = (String)presetConfig;

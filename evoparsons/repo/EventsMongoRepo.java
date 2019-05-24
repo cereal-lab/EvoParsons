@@ -32,7 +32,7 @@ public class EventsMongoRepo implements IRepo<String, Events> {
             System.exit(1);
         }        
         this.config = config;   
-        this.collectionName = config.get("evoparsons.repo.events.name", "evs-" + config.getConfigFileName());
+        this.collectionName = config.get("repo.events.name", "evs-" + config.getConfigFileName());
     }
 
     @Override

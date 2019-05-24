@@ -90,9 +90,8 @@ EOF
 docker_container_build() {
     
     # Download the config files for the docker container
-    # Download docker-compose.yml for run the service
     TargetRepository="https://raw.githubusercontent.com/cereal-lab/EvoParsons/$branch/docker/"
-    for TargetFile in "docker-compose.yml" "Dockerfile" "supervisord.conf"
+    for TargetFile in "Dockerfile"
     do
 	    curl -fsSL ${TargetRepository}${TargetFile} -o ${TargetFile}
     done
@@ -119,26 +118,26 @@ docker_container_run() {
     echo "Cannot open url of provided config ${config}"
     return 1
   fi
-  local dbName="Mongo-${name}" 
+  local dbName="${name}" 
   local dbPort="$(grep -Eo "\"dbPort\"\s*:\s*\"([1-9][0-9]*)\"" <<< "$configContent" | cut -d: -f2 | sort -u | xargs)"
   configContent=$(echo "$configContent" | sed -e "s \[\[BRANCH\]\] ${branch} g")
   if [ "$?" -ne 0 ] || [ -z "$dbPort" ]; then
     echo "Cannot find dbPort in ${config}"
   else 
     echo "DB port was found: $dbPort"     
-    local cs="mongodb://evoRoot:8ndhMVk4Bt%40b123@evoparsons.csee.usf.edu:$dbPort/$dbName"
+    local cs="mongodb://evoRoot:8ndhMVk4Bt%40b123@evoparsons.csee.usf.edu:$dbPort/$dbName?authSource=admin"
     configContent=$(echo "$configContent" | sed -e "s \"db\"\s*:\s*\".*\" \"db\":\"$cs\" g")
   fi    
-  if docker ps | grep ":$dbPort->" 
-  then       
-    echo "DB port $dbPort is occupied - assuming by other mongodb instance!!!!!"
-    echo $checkDbPort
-  else 
+  local existingMongo="$(docker ps --format 'table {{.Names}} {{.Ports}}' | grep ":$dbPort->" | cut -d ' ' -f1)"
+  if [ -z "$existingMongo" ]; then           
+    existingMongo="m-$dbPort"
     mkdir /EvoParsons/mongo/$dbName     
-    docker run --name $dbName -p 0.0.0.0:$dbPort:27017/tcp \
+    docker run --name $existingMongo -p 0.0.0.0:$dbPort:27017/tcp \
       --restart=always -e MONGO_INITDB_ROOT_USERNAME=evoRoot \
       -e MONGO_INITDB_ROOT_PASSWORD=8ndhMVk4Bt@b123 \
-      -v /EvoParsons/mongo/$dbName:/data/db -d mongo:4.1-bionic   
+      -v /EvoParsons/mongo/$existingMongo:/data/db -d mongo:4.1-bionic   
+  else 
+    echo "DB port $dbPort is occupied by $existingMongo - assuming by other mongodb instance!!!!!"  
   fi
   local hosts="$(grep -Eo "\"hostname\"\s*:\s*\"(\S*)\"" <<< "$configContent" | cut -d: -f2 | sort -u | xargs)"
   if [ "$?" -ne 0 ] || [ -z "$hosts" ]; then
@@ -154,7 +153,7 @@ docker_container_run() {
   else 
     echo "Port was found: $ports"    
   fi    
-  local data="./${1}"
+  local data="$(pwd)/${1}"
   mkdir -p "$data"
   echo "$configContent"  
   echo "$configContent" > "$data/ev.json"
@@ -164,48 +163,58 @@ docker_container_run() {
   echo "Starting services for $name ..."
   echo "Data folder: $data"
   
-  export BROKER_PORT=$port
-  export BROKER_HOSTNAME=$host
-  export DATA_DIR=$data
-  export BROKER_CONFIG=$config
+  #export BROKER_PORT=$port
+  #export BROKER_HOSTNAME=$host
+  #export DATA_DIR=$data
+  #export BROKER_CONFIG=$config
 
-  local composeConfig="./$name.yml"
-cat << EOF > $composeConfig
-version: '2'
-services:
-  EvoParsonsServer:
-    image: evoparsons_server
-    restart: always
-    ports:
-EOF
-for port in $ports
-do
-cat << EOF >> $composeConfig
-      - "${port}:${port}"
-EOF
-done
-# if -n "$dbPort" then 
-# cat << EOF >> $composeConfig
-#       - "${dbPort}:${dbPort}"
+#   local composeConfig="./$name.yml"
+# cat << EOF > $composeConfig
+# version: '2'
+# services:
+#   EvoParsonsServer:
+#     image: evoparsons_server
+#     restart: always
+#     ports:
 # EOF
-# fi
-cat << EOF >> $composeConfig
-    environment:
-      - "BROKER_CONFIG=${BROKER_CONFIG}"
-    volumes:
-      - "${DATA_DIR}:/app/DATA.out"
-    networks:
-      default:
-        aliases:
-EOF
-for host in $hosts
-do
-cat << EOF >> $composeConfig
-          - ${host}
-EOF
-done
+# for port in $ports
+# do
+# cat << EOF >> $composeConfig
+#       - "${port}:${port}"
+# EOF
+# done
+# # if -n "$dbPort" then 
+# # cat << EOF >> $composeConfig
+# #       - "${dbPort}:${dbPort}"
+# # EOF
+# # fi
+# cat << EOF >> $composeConfig
+#     environment:
+#       - "BROKER_CONFIG=${BROKER_CONFIG}"
+#     volumes:
+#       - "${DATA_DIR}:/app/DATA.out"
+#     networks:
+#       default:
+#         aliases:
+# EOF
+# for host in $hosts
+# do
+# cat << EOF >> $composeConfig
+#           - ${host}
+# EOF
+# done
+  local mappedPorts=()
+  for port in $ports; do
+    mappedPorts+=("-p 0.0.0.0:$port:$port/tcp")
+  done
+  echo "ports are ${mappedPorts[@]}"
+  #docker-compose -f $composeConfig -p $name up -d 
+  docker run --name $name ${mappedPorts[@]} \
+    --restart=always -e BROKER_CONFIG=${config} \    
+    -v ${data}:/app/DATA.out -d evoparsons_server
 
-  docker-compose -f $composeConfig -p $name up -d 
+  #--network=container:$existingMongo \
+
 }
 
 
