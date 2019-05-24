@@ -19,4 +19,3 @@ wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/${BRANCH}/scripts/
 wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/${BRANCH}/scripts/evoparsons-server" --content-disposition --no-check-certificate -O ./scripts/evoparsons-server >/dev/null
 wget "https://raw.githubusercontent.com/cereal-lab/EvoParsons/${BRANCH}/docker/supervisord.conf" --content-disposition --no-check-certificate -O ./docker/supervisord.conf >/dev/null
 #svn checkout "${SVNTARGET}docker" docker >/dev/null
-

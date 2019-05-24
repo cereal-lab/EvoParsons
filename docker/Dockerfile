@@ -36,7 +36,7 @@ COPY --from=Builder /app/scripts/evoparsons-server /app/
 RUN chmod a+x /app/evoparsons-server
 
 # Specify where we are going to store the data
-VOLUME [ "/data" ]
+#VOLUME [ "/data" ]
 
 #CMD [ "/usr/bin/supervisord"]
-CMD [ "/app/evoparsons-server" ]
+ENTRYPOINT [ "/app/evoparsons-server" ]
