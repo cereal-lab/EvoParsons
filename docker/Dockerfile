@@ -3,7 +3,7 @@ FROM openjdk:8-alpine as Builder
 ARG branch
 WORKDIR /app/
 RUN set -xe \
-    && apk add --no-cache wget bash subversion \
+    && apk add --no-cache wget bash subversion sqlite-dev \
     && wget https://raw.githubusercontent.com/cereal-lab/EvoParsons/${branch}/scripts/download-server --content-disposition --no-check-certificate \
     && chmod a+x ./download-server \
     && BRANCH=${branch} ./download-server \
