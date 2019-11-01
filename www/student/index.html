@@ -770,13 +770,16 @@ I freely give my consent to take part in this study.  I understand that by proce
 
                 function buildFragments(puzzle) {
                     var programLength = 0;
+                    shfl = [];
                     for (var i = 0; i < puzzle.fragments.length; i++) {
                         var fragment = $("<li class='fragment'>");
-                        fragment.data("data-pos", puzzle.fragments[i].id);
-                        shfl.push(puzzle.fragments[i].id);
+                        fragment.data("data-pos", puzzle.fragments[i].id);                        
                         if (puzzle.fragments[i].id == -1) 
                             fragment.data("data-d-id", puzzle.fragments[i].distracterId);
-                        else programLength++;
+                        else {
+                            shfl.push(puzzle.fragments[i].id);
+                            programLength++;
+                        }
                         fragment.data("data-orig", puzzle.fragments[i].lines);
                         var handIconHolder = $("<div class='handIconHolder'>");
                         handIconHolder.append($('<i class="far fa-hand-paper fa-sm">'));
