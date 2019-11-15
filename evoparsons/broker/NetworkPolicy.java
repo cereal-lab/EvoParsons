@@ -3,6 +3,8 @@ package evoparsons.broker;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -351,62 +353,73 @@ public interface NetworkPolicy {
                                 HttpServletResponse response ) throws ServletException,
                                                             IOException
         {
-            response.setContentType("application/json");        
-            String pathInfo = request.getPathInfo();
-            if (pathInfo == null) pathInfo = "/";             
-            Matcher matcher = puzzlePattern.matcher(pathInfo);
-            if (matcher.matches())
-            {
-                //obtaining new puzzle
-                String sid = URLDecoder.decode(matcher.group("sid"), StandardCharsets.UTF_8.name());
-                ParsonsPuzzle puzzle = broker.getParsonsPuzzle(sid);
-                List<Fragment> fragments = puzzle.buildFragments();
+            try {
+                response.setContentType("application/json");        
+                String pathInfo = request.getPathInfo();
+                if (pathInfo == null) pathInfo = "/";             
+                Matcher matcher = puzzlePattern.matcher(pathInfo);
+                if (matcher.matches())
+                {
+                    //obtaining new puzzle
+                    String sid = URLDecoder.decode(matcher.group("sid"), StandardCharsets.UTF_8.name());
+                    ParsonsPuzzle puzzle = broker.getParsonsPuzzle(sid);
+                    List<Fragment> fragments = puzzle.buildFragments();
+                    Map<String, Object> respJson = new HashMap<>();
+                    respJson.put("id", puzzle.id);
+                    respJson.put("title", puzzle.title);
+                    respJson.put("description", puzzle.description);
+                    //respJson.put("program", puzzle.program);
+                    //List<Map<String, Object>> distractersJson = new ArrayList<>();
+                    List<Map<String, Object>> fragmentsJson = new ArrayList<>();
+                    fragments.forEach(fragment -> {
+                        Map<String, Object> dMap = new HashMap<>();
+                        dMap.put("id", fragment.index);   
+                        dMap.put("lines", fragment.lines);
+                        if (fragment.distracterId.isPresent()) {
+                            dMap.put("distracterId", fragment.distracterId.get());
+                        }
+                        fragmentsJson.add(dMap);
+                    });
+                    // puzzle.distracters.forEach(d -> {
+                    //     Map<String, Object> dMap = new HashMap<>();
+                    //     dMap.put("id", d.distracterId);
+                    //     dMap.put("line", d.distractedLine);
+                    //     distractersJson.add(dMap);
+                    // });
+                    //respJson.put("distracters", distractersJson);
+                    respJson.put("fragments", fragmentsJson);
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getWriter().print(JSON.toString(respJson));
+                    return;                        
+                }
+                Matcher statsMatcher = statsPattern.matcher(pathInfo);
+                if (statsMatcher.matches())
+                {
+                    String sid = URLDecoder.decode(statsMatcher.group("sid"), StandardCharsets.UTF_8.name());
+                    Stats stats = broker.getStudentStats(sid);
+                    Map<String, Object> respJson = new HashMap<>();
+                    respJson.put("solved", stats.puzzlesSolved);
+                    respJson.put("seen", stats.puzzlesSeen);
+                    respJson.put("duration", stats.duration);
+                    //respJson.put("start", stats.start.getTime());
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    response.getWriter().print(JSON.toString(respJson));                                
+                    return;
+                }            
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);    
                 Map<String, Object> respJson = new HashMap<>();
-                respJson.put("id", puzzle.id);
-                respJson.put("title", puzzle.title);
-                respJson.put("description", puzzle.description);
-                //respJson.put("program", puzzle.program);
-                //List<Map<String, Object>> distractersJson = new ArrayList<>();
-                List<Map<String, Object>> fragmentsJson = new ArrayList<>();
-                fragments.forEach(fragment -> {
-                    Map<String, Object> dMap = new HashMap<>();
-                    dMap.put("id", fragment.index);   
-                    dMap.put("lines", fragment.lines);
-                    if (fragment.distracterId.isPresent()) {
-                        dMap.put("distracterId", fragment.distracterId.get());
-                    }
-                    fragmentsJson.add(dMap);
-                });
-                // puzzle.distracters.forEach(d -> {
-                //     Map<String, Object> dMap = new HashMap<>();
-                //     dMap.put("id", d.distracterId);
-                //     dMap.put("line", d.distractedLine);
-                //     distractersJson.add(dMap);
-                // });
-                //respJson.put("distracters", distractersJson);
-                respJson.put("fragments", fragmentsJson);
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().print(JSON.toString(respJson));
-                return;                        
+                respJson.put("error", "API is not found");
+                response.getWriter().print(JSON.toString(respJson));   
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);    
+                Map<String, Object> respJson = new HashMap<>();
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);                
+                respJson.put("error", e.getMessage());
+                respJson.put("stack", sw.toString());
+                response.getWriter().print(JSON.toString(respJson));   
             }
-            Matcher statsMatcher = statsPattern.matcher(pathInfo);
-            if (statsMatcher.matches())
-            {
-                String sid = URLDecoder.decode(statsMatcher.group("sid"), StandardCharsets.UTF_8.name());
-                Stats stats = broker.getStudentStats(sid);
-                Map<String, Object> respJson = new HashMap<>();
-                respJson.put("solved", stats.puzzlesSolved);
-                respJson.put("seen", stats.puzzlesSeen);
-                respJson.put("duration", stats.duration);
-                //respJson.put("start", stats.start.getTime());
-                response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().print(JSON.toString(respJson));                                
-                return;
-            }            
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);    
-            Map<String, Object> respJson = new HashMap<>();
-            respJson.put("error", "API is not found");
-            response.getWriter().print(JSON.toString(respJson));                    
         }
         
         @Override

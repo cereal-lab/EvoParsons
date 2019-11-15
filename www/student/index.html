@@ -18,6 +18,9 @@
         <script src="./js/sha1.js"></script>    
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">      
         <style>
+            body {
+                overflow-y:scroll;
+            }            
             #emailRequired {
                 font-size: 80%;                
                 color: #844;        
@@ -53,6 +56,7 @@
             }
             #taskPane, #trashedList {
                 list-style: none;
+                overflow:auto;
                 padding-left: 0;
             }
             #trashedList li {
@@ -413,7 +417,6 @@ I freely give my consent to take part in this study.  I understand that by proce
                     </div>
                 </div>                
             </div>    
-            <div style="height: 50em;"></div>        
         </div>  
         <div id="message">
             <div class="container" style="padding-top: 1ex;">
@@ -748,7 +751,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                         if ($("#taskPane .fragment").filter(function () { return $(this).data("data-pos") < 0; }).length > 0)
                         {
                             hasBug.show();
-                            msg.fadeIn('slow');
+                            msg.fadeIn();
                             setTimeout(function () {
                                 msg.fadeOut(function () {
                                     hasBug.hide();
@@ -757,7 +760,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                         } else {
                             hintEvent.hintType = "OK";
                             hintOk.show();
-                            msg.fadeIn('slow');
+                            msg.fadeIn();
                             setTimeout(function () {
                                 msg.fadeOut(function () {
                                     hintOk.hide();
@@ -826,28 +829,33 @@ I freely give my consent to take part in this study.  I understand that by proce
                         dataType:"json",
                         processData: false,
                         success: function(puzzle){
-                            moveCount = 0;
-                            hintCount = 0;
-                            puzzleId = puzzle.id;
-                            attemptId = 0;
-                            puzzleStartTime = new Date().getTime();
-                            puzzleTitle.text(puzzle.title);
-                            puzzleDesc.text(puzzle.description);
-                            buildFragments(puzzle);
-                            puzzleContent.fadeIn('slow');
-                            events.push({
-                                timestamp: (puzzleStartTime - sessionStartTimeStamp),
-                                type: "new",
-                                sessionId: sessionId,
-                                puzzleTitle: puzzleTitle
-                            });
+                            if (puzzle.error) {
+                                console.error(puzzle.error);
+                                console.log(puzzle);
+                            } else {
+                                moveCount = 0;
+                                hintCount = 0;
+                                puzzleId = puzzle.id;
+                                attemptId = 0;
+                                puzzleStartTime = new Date().getTime();
+                                puzzleTitle.text(puzzle.title);
+                                puzzleDesc.text(puzzle.description);
+                                buildFragments(puzzle);
+                                puzzleContent.fadeIn();
+                                events.push({
+                                    timestamp: (puzzleStartTime - sessionStartTimeStamp),
+                                    type: "new",
+                                    sessionId: sessionId,
+                                    puzzleTitle: puzzleTitle
+                                });
+                            }
                         }
                     });  
                 }        
                 function sendEvaluation(studentId, puzzleId, moveCount, gaveUp) {
                     var puzzleEndTime = new Date().getTime();
                     var timeInMs = puzzleEndTime - puzzleStartTime;
-                    puzzleContent.fadeOut('slow', function () {
+                    puzzleContent.fadeOut(function () {
                         taskPane.empty();
                         trash.empty();
                         trashed.hide();    
@@ -896,36 +904,41 @@ I freely give my consent to take part in this study.  I understand that by proce
                         contentType:"application/json",
                         dataType:"json",
                         processData: false,
-                        success: function(data){                                
-                            studentId = data.id;
-                            sessionId = data.sessionId;
-                            $("#statsUserName").text(email + ", " + studentId);
-                            $("#statsInstructor").text(instructorEmail || "<not specified>");
-                            var loginEvent =
-                                {
-                                    "timestamp": (new Date().getTime() - sessionStartTimeStamp),
-                                    //"ip": data.ip,
-                                    "type": "login",
-                                    "touchEvents": ('ontouchstart' in document.documentElement),
-                                    "w": $(window).width(),
-                                    "h": $(window).height(),
-                                };    
-                            events.push(loginEvent);
-                            userName.val(email);
-                            loginContent.fadeOut(function () {
-                                getPuzzle(studentId);
-                            });                                
+                        success: function(data){         
+                            if (data.error) {
+                                console.error(data.error);
+                                console.log(data);
+                            } else {
+                                studentId = data.id;
+                                sessionId = data.sessionId;
+                                $("#statsUserName").text(email + ", " + studentId);
+                                $("#statsInstructor").text(instructorEmail || "<not specified>");
+                                var loginEvent =
+                                    {
+                                        "timestamp": (new Date().getTime() - sessionStartTimeStamp),
+                                        //"ip": data.ip,
+                                        "type": "login",
+                                        "touchEvents": ('ontouchstart' in document.documentElement),
+                                        "w": $(window).width(),
+                                        "h": $(window).height(),
+                                    };    
+                                events.push(loginEvent);
+                                userName.val(email);
+                                loginContent.fadeOut(function () {
+                                    getPuzzle(studentId);
+                                });     
+                            }                           
                         }
                     });
                 });
                 $("#giveUpButton").click(function () {
-                    giveUpMsg.show();
-                    msg.fadeIn('slow');
-                    setTimeout(function () {
-                        msg.fadeOut(function () {
-                            giveUpMsg.hide();
-                        });                                           
-                    }, 4000); 
+                    // giveUpMsg.show();
+                    // msg.fadeIn();
+                    // setTimeout(function () {
+                    //     msg.fadeOut(function () {
+                    //         giveUpMsg.hide();
+                    //     });                                           
+                    // }, 4000); 
                     sendEvents("giveUp");       
                     sendEvaluation(studentId, puzzleId, moveCount + hintCount, true);                                                
                 });
@@ -1000,7 +1013,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                     var isWrong = sendEvents("submit");
                     if (isWrong) {
                         wrongMsg.show();
-                        msg.fadeIn('slow');
+                        msg.fadeIn();
                         setTimeout(function () {
                             msg.fadeOut(function () {
                                 wrongMsg.hide();
@@ -1008,7 +1021,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                         }, 4000);
                     } else {
                         correctMsg.show();
-                        msg.fadeIn('slow');
+                        msg.fadeIn();
                         setTimeout(function () {
                             msg.fadeOut(function () {
                                 correctMsg.hide();
@@ -1031,14 +1044,14 @@ I freely give my consent to take part in this study.  I understand that by proce
                             var durationMinutes = Math.round(durationSeconds / 60);
                             $("#statsSessionDuration").text(durationMinutes + " minutes");
                             $("#statsDate").text(new Date().toString());
-                            puzzleContent.fadeOut('slow', function () {
+                            puzzleContent.fadeOut(function () {
                                 statsContent.fadeIn();
                             });                                      
                         }
                     });                                                                                            
                 });
                 $("#backButton").click(function () {
-                    statsContent.fadeOut('slow', function () {
+                    statsContent.fadeOut(function () {
                         puzzleContent.fadeIn();
                     });  
                 });

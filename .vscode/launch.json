@@ -17,7 +17,21 @@
             "args": "-?",
             "preLaunchTask": "startLocalMongo",
             "postDebugTask": "stopLocalMongo"            
-        },       
+        }, 
+        {
+            "type": "java",
+            "name": "Startup PRESET",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/bin",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.broker.Startup",
+            "projectName": "trunk",
+            "vmArgs": "-Dfile=../configs/dev-preset.json",
+            "args": "-?",
+            "preLaunchTask": "startLocalMongo",
+            "postDebugTask": "stopLocalMongo"            
+        },               
         {
             "type": "java",
             "name": "ANTLR GRUN",

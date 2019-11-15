@@ -12,7 +12,7 @@
             "_": "evoparsons.broker.NetworkPolicy+REST",
             "hostname": "127.0.0.1",
             "port": "8240",
-            "www": "file:///C:/Users/dvitel/Documents/University%20of%20South%20Florida/Lessons/Independent%20Study/cereal/EvoParsons/www/student"
+            "www": "file:///C:/Users/dvitel/Documents/USF/ScientificWork/cereal/EvoParsons/www/student"
         },
         "2": {
             "hostname": "127.0.0.1",
@@ -22,7 +22,7 @@
                     "path": "/api/instructor/*"
                 }
             },
-            "www": "file:///C:/Users/dvitel/Documents/University%20of%20South%20Florida/Lessons/Independent%20Study/cereal/EvoParsons/www/instructor",
+            "www": "file:///C:/Users/dvitel/Documents/USF/ScientificWork/cereal/EvoParsons/www/instructor",
             "port": "58240",
             "_": "evoparsons.broker.NetworkPolicy+REST"
         }

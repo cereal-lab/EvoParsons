@@ -1,0 +1,70 @@
+{
+    "dbPort": "27017",
+    "db": "mongodb://localhost:27017/evoDBPre",
+    "net": {
+        "1": {
+            "servlet": {
+                "0": {
+                    "path": "/api/student/* ",
+                    "_": "evoparsons.broker.NetworkPolicy$StudentServlet"
+                }
+            },
+            "_": "evoparsons.broker.NetworkPolicy+REST",
+            "hostname": "127.0.0.1",
+            "port": "8241",
+            "www": "file:///C:/Users/dvitel/Documents/USF/ScientificWork/cereal/EvoParsons/www/student"
+        },
+        "2": {
+            "hostname": "127.0.0.1",
+            "servlet": {
+                "0": {
+                    "_": "evoparsons.broker.NetworkPolicy$InstructorServlet",
+                    "path": "/api/instructor/*"
+                }
+            },
+            "www": "file:///C:/Users/dvitel/Documents/USF/ScientificWork/cereal/EvoParsons/www/instructor",
+            "port": "58241",
+            "_": "evoparsons.broker.NetworkPolicy+REST"
+        }
+    },
+    "programs": "https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Programs/Java-2018?ref=Mark3",
+    "transforms": "https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Transforms/Java-2018?ref=Mark3",
+    "output": "./DATA.out",
+    "repo": {
+        "instructor": {
+            "_": "evoparsons.repo.WatchedJsonFileRepo$InstructorJsonFileRepo",
+            "file": "instructors.json"
+        },
+        "events": {
+            "_": "evoparsons.repo.EventsMongoRepo",
+            "name": "events"
+        },
+        "students": {
+            "_": "evoparsons.repo.MongoPojoRepo$Students",
+            "name": "students"
+        }
+    },
+    "log": {
+        "header": "[PRE]",
+        "_": "evoparsons.broker.Log+console"
+    },    
+    "lib": "evoparsons.broker.ParsonsLibrary",
+    "ea": {
+        "preset": [
+            [
+                "ArraysPalindrom.java",
+                "FN_1-.bro", "RR_1-8.bro", "ARR_1-1.bro", "ARR_3-1.bro", "OO_5-2.bro", "OS_1-1.bro", "FN_6-2.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_5.bro"
+            ]
+        ],
+        "_": "evoparsons.broker.PresetStarter"
+    },
+    "broker": {
+        "distributionPolicy": "evoparsons.broker.SelectionPolicy+cycling",
+        "_": "evoparsons.broker.ParsonsBroker",
+        "name": "PRESET"
+    },
+    "genotypesFile": "preset.genotypes.bro",
+    "genotypeEvolFile": "preset.genotypeEvol.bro",
+    "studentsFile": "preset.students.bro",
+    "studentsStatsFile": "preset.studentsStats.bro"
+}
