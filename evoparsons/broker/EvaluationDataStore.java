@@ -331,7 +331,7 @@ public class EvaluationDataStore
 		log.log("[EvaluationDataStore.getFitness] (%d, %d) is ready%n%10.10s%s%n%10.10s%s%n%10.10s%s", 
 			genotypeEvals.genotype.getIndex(), pairedGenotypeEvals.genotype.getIndex(),
 			"students:",
-			commonEvals.students.stream().map(i -> String.format("%6d", i)).collect(Collectors.joining(" ")),
+			commonEvals.students.stream().map(i -> String.format("%6s", i)).collect(Collectors.joining(" ")),
 			"first:",
 			commonEvals.firstGenotypeEvals.stream().map(d -> String.format("%6.2f", d)).collect(Collectors.joining(" ")),
 			"second:",
