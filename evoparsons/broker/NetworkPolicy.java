@@ -264,11 +264,16 @@ public interface NetworkPolicy {
                 return;                        
             }
             response.setStatus(HttpServletResponse.SC_OK);
-            Auth auth = broker.authenticateStudent(sid, ssig, skey);
+            Student student = broker.authenticateStudent(sid, ssig, skey);
+            Auth auth = student.getAuth();
+            Stats stats = student.getStats();
             Map<String, Object> respJson = new HashMap<>();
             respJson.put("id", auth.getSid());
             //respJson.put("ip", request.getRemoteAddr());
             respJson.put("sessionId", auth.newSession());
+            respJson.put("solved", stats.puzzlesSolved);
+            respJson.put("seen", stats.puzzlesSeen);
+            respJson.put("duration", stats.duration);
             response.getWriter().print(JSON.toString(respJson));
         }
 

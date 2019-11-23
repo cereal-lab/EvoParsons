@@ -116,33 +116,36 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 		return exec(sid, (b, data) -> b.getUIInterface().getParsonsPuzzle(data.localAuth.getSid()));
 	}
 
-	private Auth allocateStudent(String sid, String ssig, String skey) throws RemoteException {
+	private Student allocateStudent(String sid, String ssig, String skey) throws RemoteException {
 		String selectedBrokerName = brokerToSids.entrySet().stream()
 			.min(Comparator.comparing(entry -> entry.getValue().size()))
 			.map(e -> e.getKey()).orElse(null);
 		Broker fullBroker = brokers.get(selectedBrokerName);
 		BrokerUIInterface broker = fullBroker.getUIInterface();
-		Auth auth = broker.authenticateStudent(sid, ssig, skey);		
-		if (auth == null) return null;
+		Student student = broker.authenticateStudent(sid, ssig, skey);				
+		if (student == null) return null;
+		Auth auth = student.getAuth();
 		StudentData data = new StudentData(selectedBrokerName, sidToBroker.size(), auth);
 		//Auth auth = new Auth(sid, ssig, skey);
 		log.log("New student: %s [%s]", auth.getSid(), selectedBrokerName);
 		sidToBroker.put(auth.getSid(), data);
 		brokerToSids.get(selectedBrokerName).add(auth.getSid());
 		save();
-		return auth;
+		return student;
 	}
 
 	@Override
-	public synchronized Auth authenticateStudent(String sid, String ssig, String skey) throws RemoteException {
+	public synchronized Student authenticateStudent(String sid, String ssig, String skey) throws RemoteException {
 		StudentData data = sidToBroker.get(sid);
 		if (data == null) {
 			log.err("[GroupsBroker.getStudent] student with id %s does not have data. Creating", sid);
 			return allocateStudent(sid, ssig, skey);
-		}
+		} 
+		final Broker broker = brokers.get(data.ui);		
 		log.log("Reconnect: %s [%s]", sid, data.ui);
+		Student student = broker.getUIInterface().authenticateStudent(sid, ssig, skey);
 		//data.localAuth.setSkey(skey);
-		return data.localAuth;
+		return student;
 	}
 
 	public synchronized void setParsonsEvaluation(ParsonsEvaluation eval) throws RemoteException {

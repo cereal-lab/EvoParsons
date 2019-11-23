@@ -63,7 +63,7 @@
                 margin-bottom: .5ex;
             }
             .puzzleContent {
-                margin-top: 2ex;
+                margin-top: 0.5ex;
                 display: none;
             }    
             .statsContent {
@@ -242,11 +242,34 @@
                 .fragment {
                     font-size: 80%;
                 }
-            }       
+                .score {
+                    display:none;
+                }
+            }     
+
+            @media only screen and (min-width : 500px)  {
+                .scoreSmall {
+                    display:none;
+                }
+            }                 
+
+            .score.noneD {
+                display:none;
+            }                      
 
             #gridButton {
                 display: none;
             }     
+
+            .score {
+                vertical-align: top; 
+                float: right;
+            }
+            .scoreSmall {
+                padding-right: 15px;
+                text-align: right;
+                font-size: 80%;
+            }
         </style>
     </head>
     <body>
@@ -262,6 +285,10 @@
                         <span>Evoparsons Puzzles</span> <br/>
                         <span><a href="https://youtu.be/CZtKSXCGK8c" target="_blank">1st time using this software? Watch this video</a></span>
                     </div>
+                    <div class="score noneD">
+                        Solved: <span class="scoreHolder">0</span>
+                    </div>
+                    <div style="clear: both"></div>
                 </div>
             </div>
         </nav>
@@ -350,7 +377,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                 </div>
             </div>
         </div>
-        <div class="statsContent container">
+        <!-- <div class="statsContent container">
             <div class="form-group row">
                 <div class="col col-lg-8 offset-lg-2">
                     <span>User name: </span>
@@ -386,8 +413,11 @@ I freely give my consent to take part in this study.  I understand that by proce
                     <button class="btn btn-primary" type="button" id="backButton">Back to puzzles</button>
                 </div>
             </div>
-        </div>            
+        </div>             -->
         <div class="puzzleContent">       
+            <div class="scoreSmall">
+                solved: <span class="scoreHolder">0</span>
+            </div>            
             <div class="container">
                 <div class="row">
                     <div id="puzzleTitle" class='col col-lg-8 offset-lg-2'></div>
@@ -412,7 +442,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                     <div class="col col-lg-8 offset-lg-2 form-group">
                         <button type="button" class="btn btn-primary" id="nextButton">Submit</button>
                         <button type="button" class="btn" id="giveUpButton">GiveUp</button>
-                        <button type="button" class="btn" id="progressButton">My Progress</button>                           
+                        <!-- <button type="button" class="btn" id="progressButton">My Progress</button>                            -->
                         <button type="button" class="btn" id="gridButton">Grid</button>
                     </div>
                 </div>                
@@ -449,6 +479,7 @@ I freely give my consent to take part in this study.  I understand that by proce
             var attemptId = 0;
             var shfl = [];
             var sessionStartTimeStamp = new Date().getTime();
+            var correctlySolved = 0;
 
             $(function () {
                 var windowEvent = null;
@@ -467,7 +498,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                 });
                 var loginContent = $(".loginContent");
                 var puzzleContent = $(".puzzleContent");
-                var statsContent = $(".statsContent");
+                // var statsContent = $(".statsContent");
                 var puzzleTitle = $("#puzzleTitle");
                 var puzzleDesc = $("#puzzleDesc");
                 var taskPane = $("#taskPane");
@@ -924,6 +955,11 @@ I freely give my consent to take part in this study.  I understand that by proce
                                     };    
                                 events.push(loginEvent);
                                 userName.val(email);
+                                correctlySolved = data.solved;
+                                $(".scoreHolder").html(correctlySolved);
+                                $(".noneD").each(function () {
+                                    $(this).removeClass("noneD");
+                                })                                
                                 loginContent.fadeOut(function () {
                                     getPuzzle(studentId);
                                 });     
@@ -1021,6 +1057,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                         }, 4000);
                     } else {
                         correctMsg.show();
+                        correctlySolved++;
+                        $(".scoreHolder").html(correctlySolved);
                         msg.fadeIn();
                         setTimeout(function () {
                             msg.fadeOut(function () {
@@ -1031,25 +1069,25 @@ I freely give my consent to take part in this study.  I understand that by proce
                     }
                 });
 
-                $("#progressButton").click(function () {
-                    $.ajax({
-                        url:service + "/" + studentId + "/stats",
-                        type:"GET",
-                        contentType:"application/json",
-                        dataType:"json",
-                        processData: false,
-                        success: function(stats){
-                            $("#statsPuzzles").text(stats.solved + "/" + stats.seen);
-                            var durationSeconds = Math.round(stats.duration / 1000);
-                            var durationMinutes = Math.round(durationSeconds / 60);
-                            $("#statsSessionDuration").text(durationMinutes + " minutes");
-                            $("#statsDate").text(new Date().toString());
-                            puzzleContent.fadeOut(function () {
-                                statsContent.fadeIn();
-                            });                                      
-                        }
-                    });                                                                                            
-                });
+                // $("#progressButton").click(function () {
+                //     $.ajax({
+                //         url:service + "/" + studentId + "/stats",
+                //         type:"GET",
+                //         contentType:"application/json",
+                //         dataType:"json",
+                //         processData: false,
+                //         success: function(stats){
+                //             $("#statsPuzzles").text(stats.solved + "/" + stats.seen);
+                //             var durationSeconds = Math.round(stats.duration / 1000);
+                //             var durationMinutes = Math.round(durationSeconds / 60);
+                //             $("#statsSessionDuration").text(durationMinutes + " minutes");
+                //             $("#statsDate").text(new Date().toString());
+                //             puzzleContent.fadeOut(function () {
+                //                 statsContent.fadeIn();
+                //             });                                      
+                //         }
+                //     });                                                                                            
+                // });
                 $("#backButton").click(function () {
                     statsContent.fadeOut(function () {
                         puzzleContent.fadeIn();

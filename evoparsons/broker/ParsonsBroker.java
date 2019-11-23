@@ -76,10 +76,10 @@ public class ParsonsBroker implements Broker, BrokerUIInterface, BrokerEAInterfa
 	// 	return evalStore.recordAttempt(sid, puzzleId);
 	// }
 
-	public Auth authenticateStudent(String sid, String ssig, String skey) throws RemoteException {
+	public Student authenticateStudent(String sid, String ssig, String skey) throws RemoteException {
 		try {
 			synchronized (evalStore) {
-				Auth studentAuth = evalStore.addStudent(sid, ssig, skey);
+				Student studentAuth = evalStore.addStudent(sid, ssig, skey);
 				return studentAuth;
 			}
 		} catch (Exception e) {

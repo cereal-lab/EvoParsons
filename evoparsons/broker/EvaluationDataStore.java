@@ -266,7 +266,7 @@ public class EvaluationDataStore
 			log.err("[EvaluationDataStore.addEvaluation] Cannot find genotype for eval %s", eval.toString());		
 	}
 
-	public Auth addStudent(String sid, String ssig, String skey)
+	public Student addStudent(String sid, String ssig, String skey)
 	{
 		Student student = 
 			students.computeIfAbsent(sid, ignorable -> {
@@ -276,7 +276,7 @@ public class EvaluationDataStore
 		saveStudent(student);
 		//student.auth.setSkey(skey);
 		log.log("[EvaluationDataStore.addStudent] continue %s", sid);	
-		return student.getAuth();
+		return student;
 	}
 
 	public ParsonsFitness getFitness(ParsonsEvaluation eval, Library lib)

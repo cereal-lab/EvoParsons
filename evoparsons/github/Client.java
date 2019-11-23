@@ -1,29 +1,18 @@
 package evoparsons.github;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.security.cert.X509Certificate;
+import java.util.Base64;
 import java.util.Map;
-import java.util.Scanner;
-
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-import javax.xml.bind.DatatypeConverter;
 
 import org.eclipse.jetty.util.ajax.JSON;
 
@@ -65,7 +54,7 @@ public class Client {
         if (base64EncContent != null)
         {
             //found file
-            byte[] bytes = DatatypeConverter.parseBase64Binary(base64EncContent);
+            byte[] bytes = Base64.getDecoder().decode(base64EncContent);
             try (FileOutputStream fos = new FileOutputStream(outputPath)) {
                 fos.write(bytes);
                 //fos.close(); There is no more need for this line since you had created the instance of "fos" inside the try. And this will automatically close the OutputStream

@@ -1,0 +1,208 @@
+{
+    "dbPort": "27017",
+    "db": "mongodb://localhost:27017/evoDB",
+    "net": {
+        "1": {
+            "servlet": {
+                "0": {
+                    "path": "/api/student/* ",
+                    "_": "evoparsons.broker.NetworkPolicy$StudentServlet"
+                }
+            },
+            "_": "evoparsons.broker.NetworkPolicy+REST",
+            "hostname": "127.0.0.1",
+            "port": "8240",
+            "www": "file:///home/dvitel/cereal/EvoParsons/www/student"
+        },
+        "2": {
+            "hostname": "127.0.0.1",
+            "servlet": {
+                "0": {
+                    "_": "evoparsons.broker.NetworkPolicy$InstructorServlet",
+                    "path": "/api/instructor/*"
+                }
+            },
+            "www": "file:///home/dvitel/cereal/EvoParsons/www/instructor",
+            "port": "58240",
+            "_": "evoparsons.broker.NetworkPolicy+REST"
+        }
+    },
+    "programs": "https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Programs/Java-2018?ref=Mark3",
+    "transforms": "https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Transforms/Java-2018?ref=Mark3",
+    "output": "./DATA.out",
+    "repo": {
+        "instructor": {
+            "_": "evoparsons.repo.WatchedJsonFileRepo$InstructorJsonFileRepo",
+            "file": "instructors.json"
+        },
+        "events": {
+            "_": "evoparsons.repo.EventsMongoRepo",
+            "name": "events"
+        },
+        "students": {
+            "_": "evoparsons.repo.MongoPojoRepo$Students",
+            "name": "students"
+        }
+    },
+    "log": {
+        "header": "[GROUPS]",
+        "_": "evoparsons.broker.Log+console"
+    },    
+    "lib": "evoparsons.broker.ParsonsLibrary",
+    "broker": {
+        "_": "evoparsons.broker.GroupsBroker",
+        "name": "GR",
+        "child": {
+            "1": {
+                "ea": {
+                    "preset": [
+                        [
+                            "ArraysPalindrom.java",
+                            "FN_1-.bro", "RR_1-8.bro", "ARR_1-1.bro", "ARR_3-1.bro", "OO_5-2.bro", "OS_1-1.bro", "FN_6-2.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_5.bro"
+                        ],
+                        [
+                            "StringsPalindrom.java", 
+                            "OS_2-.bro", "ARR_3-1.bro", "CD1-6.bro", "OS_3-2.bro", "FN_6-3.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_6.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_5.bro", "RR_1-1.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_2.bro"
+                        ],
+                        [
+                            "InteractiveBMI.java", 
+                            "FN_1-.bro", "OS_3-2.bro", "C-CPP-JAVA_Altadmir-2015_SEMICOLON_1.bro", "RR_1-3.bro", "C-CPP-JAVA_FUN_CACEFO18_A5.bro", "FN_4.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_3.bro"
+                        ],
+                        [
+                            "ArraysBubbleSort.java", 
+                            "C-CPP-JAVA_Altadmir-2015_METHOD-CALLS_5.bro", "OS_2-.bro", "CB1-1C.bro", "C-CPP-JAVA_LOOP-CTRL_C-PITFALLS_2.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_6.bro", "IC_1.bro", "RR_1-6.bro", "OO_6-.bro", "FN_7.bro"
+                        ],
+                        [
+                            "ArraysLinearSearch.java", 
+                            "ARR_1-1.bro", "CD1-6.bro", "C-CPP-JAVA_Altadmir-2015_METHOD-CALLS_1.bro", "OO_5-1.bro", "KW_5.bro", "OS_1-1.bro", "OO_1-2.bro", "RE_3-1.bro", "FN_4.bro"
+                        ],
+                        [
+                            "NumbersFibonacciIterative.java", 
+                            "CB1-1B.bro", "OO_5-2.bro", "OS_3-2.bro", "KW_3.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_6.bro", "FN_7.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_5.bro", "RR_1-1.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_2.bro"
+                        ],
+                        [
+                            "StringsTokenizer.java", 
+                            "OO_5-2.bro", "KW_1.bro", "OO_1-1.bro", "FN_6-3.bro", "C-CPP-JAVA_Altadmir-2015_SEMICOLON_1.bro", "RE_1-1.bro", "RR_1-1.bro", "OS_1-1.bro", "OS_3-2.bro"
+                        ],
+                        [
+                            "InteractiveAdditionQuiz.java", 
+                            "FN_1-.bro", "OS_2-.bro", "KW_5.bro", "FN_6-3.bro", "RE_3-1.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_6.bro", "C-CPP-JAVA_FUN_CACEFO18_A5.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_5.bro", "OO_6-.bro"
+                        ],
+                        [
+                            "ArraysInsert.java", 
+                            "FN_1-.bro", "ARR_1-1.bro", "CD1-6.bro", "ARR_4-1.bro", "OS_1-1.bro", "OO_1-1.bro", "FN_6-2.bro", "C-CPP-JAVA_LOOP-CTRL_C-PITFALLS_2.bro", "IC_1.bro"
+                        ],
+                        [
+                            "InteractiveGradesStats.java", 
+                            "C-CPP-JAVA_Altadmir-2015_METHOD-CALLS_5.bro", "OS_2-.bro", "OO_5-1.bro", "KW_4.bro", "C-CPP-JAVA_Altadmir-2015_RELATIONAL-GREATER-LESS-THAN_2.bro", "OS_1-1.bro", "OO_3-2.bro", "KW_2.bro", "C-CPP-JAVA_Altadmir-2015_IMBALANCED-BRACKETS_2.bro"
+                        ]
+                    ],
+                    "_": "evoparsons.broker.PresetStarter"
+                },
+                "broker": {
+                    "distributionPolicy": "evoparsons.broker.SelectionPolicy+cycling",
+                    "_": "evoparsons.broker.ParsonsBroker",
+                    "name": "PRESET"
+                },
+                "repo": {
+                    "students": {
+                        "_": "evoparsons.repo.MongoPojoRepo$Students",
+                        "name": "students"
+                    }
+                },
+                "genotypesFile": "preset.genotypes.bro",
+                "genotypeEvolFile": "preset.genotypeEvol.bro",
+                "output": "./DATA.out/preset.out",
+                "studentsFile": "preset.students.bro",
+                "studentsStatsFile": "preset.studentsStats.bro",
+                "log": {
+                    "header": "[PRESET]"
+                }
+            },
+            "2": {
+                "studentsStatsFile": "ecj.studentsStats.bro",
+                "broker": {
+                    "distributionPolicy": "evoparsons.broker.SelectionPolicy+cycling",
+                    "_": "evoparsons.broker.ParsonsBroker",
+                    "name": "ECJ"
+                },
+                "repo": {
+                    "students": {
+                        "_": "evoparsons.repo.MongoPojoRepo$Students",
+                        "name": "students"
+                    }
+                },
+                "output": "./DATA.out/ecj.out",
+                "ea": { 
+                    "_": "evoparsons.broker.ECJStarter",
+                    "state": "evoparsons.ecj.ParsonsEvolutionState",
+                    "pop": {
+                        "subpop": {
+                            "0": {
+                                "_": "ec.Subpopulation",
+                                "species": {
+                                    "fitness": "ec.simple.SimpleFitness",
+                                    "mutation-prob": "1.0",
+                                    "pipe": {
+                                        "_": "evoparsons.ecj.MutatorEvoParsons",
+                                        "source": {
+                                            "0": "evoparsons.ecj.EverySelection"
+                                        }
+                                    },
+                                    "ind": "ec.vector.IntegerVectorIndividual",
+                                    "genome-size": "10",
+                                    "_": "ec.vector.IntegerVectorSpecies"
+                                },
+                                "duplicate-retries": "1",
+                                "size": "2"
+                            }
+                        },
+                        "_": "ec.Population",
+                        "subpops": "1"
+                    },
+                    "stat": {
+                        "_": "ec.simple.SimpleStatistics",
+                        "num-children": "1",
+                        "child": {
+                            "0": {
+                                "do-subpops": "true",
+                                "file": "$./DATA.out/customEvoParsons.stat",
+                                "_": "evoparsons.ecj.CustomStatistics"
+                            }
+                        },
+                        "file": "$./DATA.out/evoParsons.stat"
+                    },  
+                    "init": "ec.simple.SimpleInitializer",
+                    "checkpoint": "true",
+                    "print-unaccessed-params": "true",
+                    "checkpoint-directory": "$./DATA.out",
+                    "eval": {
+                        "style": "round-robin",
+                        "problem": "evoparsons.ecj.EvoParsonsProblem",
+                        "_": "ec.simple.SimpleEvaluator"
+                    },
+                    "checkpoint-modulo": "1",
+                    "breedthreads": "1",
+                    "evalthreads": "1",
+                    "jobs": "50",
+                    "generations": "500",
+                    "checkpoint-prefix": "ec",
+                    "finish": "ec.simple.SimpleFinisher",
+                    "breed": "ec.simple.SimpleBreeder",
+                    "exch": "ec.simple.SimpleExchanger",
+                    "quit-on-run-complete": "true",
+                    "seed": {
+                        "0": "4359"
+                    }        
+                },
+                "genotypesFile": "ecj.genotypes.bro",
+                "evalTries": "2",
+                "genotypeEvolFile": "ecj.genotypeEvol.bro",
+                "studentsFile": "ecj.students.bro",
+                "log": {
+                    "header": "[ECJ]"
+                }
+            }
+        }
+    }
+}

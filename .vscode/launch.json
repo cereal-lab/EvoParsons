@@ -6,7 +6,7 @@
     "configurations": [
         {
             "type": "java",
-            "name": "Startup",
+            "name": "Startup Windows",
             "request": "launch",
             "cwd": "${workspaceFolder}/bin",
             "console": "integratedTerminal",
@@ -18,6 +18,18 @@
             "preLaunchTask": "startLocalMongo",
             "postDebugTask": "stopLocalMongo"            
         }, 
+        {
+            "type": "java",
+            "name": "Startup Linux with Mongo",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/bin",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.broker.Startup",
+            "projectName": "trunk",
+            "vmArgs": "-Dfile=../configs/dev-linux.json",
+            "args": "-?"
+        },         
         {
             "type": "java",
             "name": "Startup PRESET",
@@ -76,7 +88,18 @@
             "mainClass": "evoparsons.utils.ProgramsByEffectiveDistractors",
             "projectName": "trunk",
             "args": "./ParsonsLibraries/Programs/Java ./ParsonsLibraries/Transforms/Java",
-        },          
+        },         
+        {
+            "type": "java",
+            "name": "LibIndexing",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.utils.LibIndexing",
+            "projectName": "trunk",
+            "args": "${workspaceFolder}/data https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Programs/C-2018?ref=Mark3 https://api.github.com/repos/cereal-lab/EvoParsons/contents/ParsonsLibraries/Transforms/C-2018?ref=Mark3",
+        },         
         {
             "type": "java",
             "name": "AntlrTest",
