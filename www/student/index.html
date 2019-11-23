@@ -1047,15 +1047,19 @@ I freely give my consent to take part in this study.  I understand that by proce
                 }
                 $("#nextButton").click(function () {
                     var isWrong = sendEvents("submit");
-                    if (isWrong) {
+                    if (isWrong) {                        
                         wrongMsg.show();
-                        msg.fadeIn();
-                        setTimeout(function () {
-                            msg.fadeOut(function () {
-                                wrongMsg.hide();
-                            });                            
-                        }, 4000);
-                    } else {
+                        msg.show();
+                        wrongMsg.t_tmt = 
+                            setTimeout(function () {
+                                if (wrongMsg.is(":visible"))
+                                {
+                                    msg.fadeOut(function () {
+                                        wrongMsg.hide();
+                                    });                            
+                                }
+                            }, 4000);
+                    } else {                        
                         correctMsg.show();
                         correctlySolved++;
                         $(".scoreHolder").html(correctlySolved);
@@ -1094,7 +1098,15 @@ I freely give my consent to take part in this study.  I understand that by proce
                     });  
                 });
                 $("#hintButton").click(function () {
+                    $("li.hint").removeClass("hint");
                     hint();
+                    msg.hide();    
+                    wrongMsg.hide();
+                    if (wrongMsg.t_tmt)
+                    {
+                        clearTimeout(wrongMsg.t_tmt);
+                        wrongMsg.t_tmt = null;
+                    }
                 });
                 $("#gridButton").click(function () {
                     taskPane.fadeOut(function () {
