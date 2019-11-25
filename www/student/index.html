@@ -1050,6 +1050,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                     if (isWrong) {                        
                         wrongMsg.show();
                         msg.show();
+                        clearTimeout(wrongMsg.t_tmt);
                         wrongMsg.t_tmt = 
                             setTimeout(function () {
                                 if (wrongMsg.is(":visible"))
