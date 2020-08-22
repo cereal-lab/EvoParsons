@@ -176,7 +176,18 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 		final Map<String, Stats> stats = new HashMap<>();
 		for (String brokerName: brokers.keySet())
 		{
-			stats.putAll(brokers.get(brokerName).getUIInterface().getStudentStats(iid, isig, ssig));
+			var brokerStats = brokers.get(brokerName).getUIInterface().getStudentStats(iid, isig, ssig);
+			brokerStats.entrySet().stream().forEach(s -> {
+				if (stats.containsKey(s.getKey())) {
+					Stats existingStats = stats.get(s.getKey());
+					Stats newStats = s.getValue();
+					existingStats.duration += newStats.duration;
+					existingStats.puzzlesSeen += newStats.puzzlesSeen;
+					existingStats.puzzlesSolved += newStats.puzzlesSolved;
+				} else {
+					stats.put(s.getKey(), s.getValue());
+				}
+			});
 		}
 		return stats;
 	}	

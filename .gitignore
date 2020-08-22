@@ -4,3 +4,4 @@ configs/dev/dev-samples/students.csv
 *.tokens
 .vscode/launch.json
 db
+data/*
