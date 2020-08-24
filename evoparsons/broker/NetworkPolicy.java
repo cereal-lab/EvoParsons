@@ -159,17 +159,21 @@ public interface NetworkPolicy {
             }
             Instructor instructor = this.instructorRepo.get(iid);
             if ((instructor != null) && (instructor.isig != null) && instructor.isig.equals(isig)) {
-                Map<String, Stats> students = this.broker.getStudentStats(iid, isig, ssigs);
+                Map<String, List<Stats>> students = this.broker.getStudentStats(iid, isig, ssigs, null);
                 Map<String, Object> respStudentsJson = new HashMap<>();
                 for (String ssig: students.keySet()) {
-                    Map<String, Object> performance = new HashMap<>();
-                    Stats stat = students.get(ssig);
-                    performance.put("puzzlesSeen", stat.puzzlesSeen);
-                    performance.put("puzzlesSolved", stat.puzzlesSolved);
-                    performance.put("duration", stat.duration);
+                    List<Stats> stats = students.get(ssig);
+                    var performances = 
+                        stats.stream().map(s -> {
+                            Map<String, Object> performance = new HashMap<>();
+                            performance.put("puzzlesSeen", s.puzzlesSeen);
+                            performance.put("puzzlesSolved", s.puzzlesSolved);
+                            performance.put("duration", s.duration);    
+                            return performance;
+                        }).collect(Collectors.toList());                 
                     //performance.put("started", stat.start);
                     //TODO: advanced props
-                    respStudentsJson.put(ssig, performance);
+                    respStudentsJson.put(ssig, performances);
                 }
                 response.setStatus(HttpServletResponse.SC_OK);
                 Map<String, Object> respJson = new HashMap<>();

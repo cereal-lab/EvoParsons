@@ -200,23 +200,18 @@ public class EvaluationDataStore
 	// 	return -1;
 	// }	
 
-	public Map<String, Stats> getStudentStats(String isig, List<String> ssigs) {
+	public Map<String, List<Stats>> getStudentStats(String isig, List<String> ssigs, Set<String> sids) {
 		if (isig == null || isig.isEmpty() || ssigs == null || ssigs.isEmpty()) return Collections.emptyMap();
 		Set<String> ssigsSet = new HashSet<String>(ssigs);
-		return 
+		var stats =  
 			students.entrySet().stream()
-				.filter(s -> ssigsSet.contains(s.getValue().getAuth().getSsig()) && s.getValue().getAuth().getSkey().equals(isig))
+				.filter(s -> (sids == null || sids.contains(s.getKey())) && ssigsSet.contains(s.getValue().getAuth().getSsig()) && s.getValue().getAuth().getSkey().equals(isig))
 				.collect(Collectors.groupingBy(s -> s.getValue().getAuth().getSsig()))
 				.entrySet().stream()
 				.collect(Collectors.toMap(s -> s.getKey(), 
 					s -> s.getValue().stream().map(s3 -> s3.getValue().getStats())
-							.collect(Collectors.reducing(new Stats(0, 0), 
-								(Stats s1, Stats s2) -> {
-									s1.duration += s2.duration;
-									s1.puzzlesSeen += s2.puzzlesSeen;
-									s1.puzzlesSolved += s2.puzzlesSolved;
-									return s1;
-								}))));
+							.collect(Collectors.toList())));
+		return stats;
 	}
 
 	public void addEvaluation(ParsonsEvaluation eval, SelectionPolicy selectionPolicy)

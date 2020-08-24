@@ -4,6 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import evoparsons.broker.Student;
 
@@ -15,5 +16,5 @@ public interface BrokerUIInterface extends Remote
     public void setParsonsEvaluation(ParsonsEvaluation data) throws RemoteException;
     //public int recordAttempt(String sid, String puzzleId) throws RemoteException;
     public Stats getStudentStats(String sid) throws RemoteException;
-    public Map<String, Stats> getStudentStats(String iid, String isig, List<String> ssig) throws RemoteException;
+    public Map<String, List<Stats>> getStudentStats(String iid, String isig, List<String> ssig, Set<String> ssid) throws RemoteException;
 }

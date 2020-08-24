@@ -147,9 +147,9 @@ public class ParsonsBroker implements Broker, BrokerUIInterface, BrokerEAInterfa
 	}
 
 	@Override
-	public Map<String, Stats> getStudentStats(String iid, String isig, List<String> ssig) throws RemoteException {
+	public Map<String, List<Stats>> getStudentStats(String iid, String isig, List<String> ssig, Set<String> sids) throws RemoteException {
 		synchronized (evalStore) {
-			return evalStore.getStudentStats(isig, ssig);
+			return evalStore.getStudentStats(isig, ssig, sids);
 		}
 	}
 

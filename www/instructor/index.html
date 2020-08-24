@@ -128,9 +128,9 @@
                 <div id="students" class="col col-lg-8 offset-lg-2">
                     <div class="st templ row d-none d-sm-flex">
                         <div class="email col-12 col-sm-4"></div>
-                        <div class="puzzles col-auto col-sm-2">solved/seen</div>
+                        <div class="puzzles col-auto col-sm-2">solved</div>
+                        <div class="puzzlesSeen col-auto col-sm-2">seen</div>
                         <div class="duration col-auto col-sm-2">practice</div>
-                        <div class="firstSession col-auto col-sm-4">first session</div>
                     </div>
                 </div>
             </div>
@@ -242,27 +242,30 @@
                                     stHolder.find(".st:not(.templ)").remove();
                                     for (var ssig in ssigsMap) 
                                     {
-                                        var line = stLine.clone();
-                                        line.find(".email").text(ssigsMap[ssig]).attr("ssig", ssig);
-                                        var d = data.stats[ssig];
-                                        if (d && d.puzzlesSeen)
+                                        var stats = data.stats[ssig] || [];
+                                        var first = true;
+                                        for (var i = 0; i < stats.length; i++)
                                         {
-                                            line.find(".puzzles").text("" + d.puzzlesSolved + "/" + d.puzzlesSeen);
-                                            var durationSeconds = Math.round(d.duration / 1000);
-                                            var durationMinutes = Math.round(durationSeconds / 60);
-                                            line.find(".duration").text(durationMinutes == 0 ? "1min" : (durationMinutes + " mins"));
-                                            //var date = new Date(d.started);
-                                            // var df = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + 
-                                            //     ((date.getMinutes() < 10) ? ("0" + date.getMinutes()) : ("" + date.getMinutes()));
-                                            //line.find(".firstSession").text(df);
-                                        } else {
-                                            line.find(".puzzles").text("");
-                                            line.find(".duration").text("");
-                                            line.find(".firstSession").text("");
-                                        }
-                                        line.removeClass("templ").removeClass('d-none').removeClass('d-sm-flex').appendTo(stHolder);
-                                        fileInput.val(null);
+                                            var d = stats[i];
+                                            if (d && d.puzzlesSeen)
+                                            {
+                                                var line = stLine.clone();
+                                                line.find(".email").text(first ? ssigsMap[ssig] : "").attr("ssig", ssig);
+                                                line.find(".puzzles").text("" + d.puzzlesSolved);
+                                                line.find(".puzzlesSeen").text("" + d.puzzlesSeen);
+                                                var durationSeconds = Math.round(d.duration / 1000);
+                                                var durationMinutes = Math.round(durationSeconds / 60);
+                                                line.find(".duration").text(durationMinutes == 0 ? "1min" : (durationMinutes + " mins"));
+                                                //var date = new Date(d.started);
+                                                // var df = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + 
+                                                //     ((date.getMinutes() < 10) ? ("0" + date.getMinutes()) : ("" + date.getMinutes()));
+                                                //line.find(".firstSession").text(df);
+                                                line.removeClass("templ").removeClass('d-none').removeClass('d-sm-flex').appendTo(stHolder);
+                                                first = false;
+                                            }                                                                                   
+                                        }                                        
                                     }
+                                    fileInput.val(null);
                                     stHolder.show();
                                 }
                             }).fail(function (jqXHR, textStatus) {

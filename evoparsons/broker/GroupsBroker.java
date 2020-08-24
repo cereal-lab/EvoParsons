@@ -28,51 +28,51 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 		public final String ui;
 		public final int id;
 		public final Auth localAuth;
-		public StudentData(String ui, int id, Auth localAuth) {
+		public StudentData(final String ui, final int id, final Auth localAuth) {
 			this.ui = ui;
 			this.id = id;
 			this.localAuth = localAuth;
 		}
 	}	
 
-	private Log log;
-	private Library lib;
-	private Map<String, Broker> brokers;
-	private Map<String, HashSet<String>> brokerToSids;
-	private Map<String, StudentData> sidToBroker;
-	private String groupsFile;
-	private String name;
+	private final Log log;
+	private final Library lib;
+	private final Map<String, Broker> brokers;
+	private final Map<String, HashSet<String>> brokerToSids;
+	private final Map<String, StudentData> sidToBroker;
+	private final String groupsFile;
+	private final String name;
 	private static class SerializedData implements Serializable {
 		private static final long serialVersionUID = 1L;
 		public final Map<String, HashSet<String>> brokerToSids;
 		public final Map<String, StudentData> sidToBroker;
-		public SerializedData(Map<String, HashSet<String>> brokerToSids,  Map<String, StudentData> sidToBroker) {
+		public SerializedData(final Map<String, HashSet<String>> brokerToSids,  final Map<String, StudentData> sidToBroker) {
 			this.brokerToSids = brokerToSids;
 			this.sidToBroker = sidToBroker;
 		}
 	}
 
-	public GroupsBroker(Config config, Broker parent) {
+	public GroupsBroker(final Config config, final Broker parent) {
 		this.log = config.getLog();
 		name = config.get("broker.name", "GroupsBroker");
 		groupsFile = 
 			Paths.get(config.getOutputFolder(),
 				config.get("broker.file", DEFAULT_GROUPS_BROKER_FILE))
 				.toString();
-		SerializedData data = Utils.<SerializedData>loadFromFile(log, groupsFile, () -> new SerializedData(new HashMap<>(), new HashMap<>()));
+		final SerializedData data = Utils.<SerializedData>loadFromFile(log, groupsFile, () -> new SerializedData(new HashMap<>(), new HashMap<>()));
 		brokerToSids = data.brokerToSids;
 		sidToBroker = data.sidToBroker;
 		this.lib = config.<Library>getInstanceOpt("lib", config).orElse(null);
-		String childKey = "broker.child.";		
-		Set<String> childBrokerPrefixes = new HashSet<>();
-		List<String> childKeys = config.getKeyList(childKey);
+		final String childKey = "broker.child.";		
+		final Set<String> childBrokerPrefixes = new HashSet<>();
+		final List<String> childKeys = config.getKeyList(childKey);
 		childKeys
 			.stream().forEach(key -> {
-				String[] parts = key.substring(childKey.length()).split("\\.");
+				final String[] parts = key.substring(childKey.length()).split("\\.");
 				if (parts.length > 1)
 					childBrokerPrefixes.add(childKey + parts[0] + ".");
 			});
-		List<Broker> brokers = 
+		final List<Broker> brokers = 
 			(childBrokerPrefixes.size() > 0) ?
 				childBrokerPrefixes.stream()
 					.map(prefix -> config.getSubconfig(prefix).init(this))
@@ -96,7 +96,7 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 		public T e(Broker broker, StudentData data) throws RemoteException;
 	}
 
-	private <T> T exec(String sid, ExecF<T> f) throws RemoteException
+	private <T> T exec(final String sid, final ExecF<T> f) throws RemoteException
 	{
 		final StudentData data = sidToBroker.get(sid);
 		if (data == null) {
@@ -112,20 +112,20 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 	}
 
 	@Override
-	public synchronized ParsonsPuzzle getParsonsPuzzle(String sid) throws RemoteException {
+	public synchronized ParsonsPuzzle getParsonsPuzzle(final String sid) throws RemoteException {
 		return exec(sid, (b, data) -> b.getUIInterface().getParsonsPuzzle(data.localAuth.getSid()));
 	}
 
-	private Student allocateStudent(String sid, String ssig, String skey) throws RemoteException {
-		String selectedBrokerName = brokerToSids.entrySet().stream()
+	private Student allocateStudent(final String sid, final String ssig, final String skey) throws RemoteException {
+		final String selectedBrokerName = brokerToSids.entrySet().stream()
 			.min(Comparator.comparing(entry -> entry.getValue().size()))
 			.map(e -> e.getKey()).orElse(null);
-		Broker fullBroker = brokers.get(selectedBrokerName);
-		BrokerUIInterface broker = fullBroker.getUIInterface();
-		Student student = broker.authenticateStudent(sid, ssig, skey);				
+		final Broker fullBroker = brokers.get(selectedBrokerName);
+		final BrokerUIInterface broker = fullBroker.getUIInterface();
+		final Student student = broker.authenticateStudent(sid, ssig, skey);				
 		if (student == null) return null;
-		Auth auth = student.getAuth();
-		StudentData data = new StudentData(selectedBrokerName, sidToBroker.size(), auth);
+		final Auth auth = student.getAuth();
+		final StudentData data = new StudentData(selectedBrokerName, sidToBroker.size(), auth);
 		//Auth auth = new Auth(sid, ssig, skey);
 		log.log("New student: %s [%s]", auth.getSid(), selectedBrokerName);
 		sidToBroker.put(auth.getSid(), data);
@@ -135,20 +135,20 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 	}
 
 	@Override
-	public synchronized Student authenticateStudent(String sid, String ssig, String skey) throws RemoteException {
-		StudentData data = sidToBroker.get(sid);
+	public synchronized Student authenticateStudent(final String sid, final String ssig, final String skey) throws RemoteException {
+		final StudentData data = sidToBroker.get(sid);
 		if (data == null) {
 			log.err("[GroupsBroker.getStudent] student with id %s does not have data. Creating", sid);
 			return allocateStudent(sid, ssig, skey);
 		} 
 		final Broker broker = brokers.get(data.ui);		
 		log.log("Reconnect: %s [%s]", sid, data.ui);
-		Student student = broker.getUIInterface().authenticateStudent(sid, ssig, skey);
+		final Student student = broker.getUIInterface().authenticateStudent(sid, ssig, skey);
 		//data.localAuth.setSkey(skey);
 		return student;
 	}
 
-	public synchronized void setParsonsEvaluation(ParsonsEvaluation eval) throws RemoteException {
+	public synchronized void setParsonsEvaluation(final ParsonsEvaluation eval) throws RemoteException {
 		exec(eval.sid, (b, data) -> 
 			{
 				b.getUIInterface().setParsonsEvaluation(eval);
@@ -157,7 +157,7 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 	}
 
 	@Override
-	public synchronized Stats getStudentStats(String sid) throws RemoteException {
+	public synchronized Stats getStudentStats(final String sid) throws RemoteException {
 		return exec(sid, (b, data) -> 
 				b.getUIInterface().getStudentStats(data.localAuth.getSid()));
 	}
@@ -172,23 +172,23 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 	// }
 
 	@Override
-	public Map<String, Stats> getStudentStats(String iid, String isig, List<String> ssig) throws RemoteException {
-		final Map<String, Stats> stats = new HashMap<>();
-		for (String brokerName: brokers.keySet())
-		{
-			var brokerStats = brokers.get(brokerName).getUIInterface().getStudentStats(iid, isig, ssig);
-			brokerStats.entrySet().stream().forEach(s -> {
-				if (stats.containsKey(s.getKey())) {
-					Stats existingStats = stats.get(s.getKey());
-					Stats newStats = s.getValue();
-					existingStats.duration += newStats.duration;
-					existingStats.puzzlesSeen += newStats.puzzlesSeen;
-					existingStats.puzzlesSolved += newStats.puzzlesSolved;
-				} else {
-					stats.put(s.getKey(), s.getValue());
+	public Map<String, List<Stats>> getStudentStats(final String iid, final String isig, final List<String> ssig, final Set<String> sid) throws RemoteException {
+		// final Map<String, List<Stats>> stats = new HashMap<>();
+		final Map<String, List<Stats>> stats = brokers.entrySet().stream()
+			.flatMap(b -> {
+				try { 	
+					Set<String> sids = brokerToSids.get(b.getKey());
+					return b.getValue().getUIInterface().getStudentStats(iid, isig, ssig, sids)
+							.entrySet().stream();
+				} catch (Exception e) {
+					//should not be here
+					throw new IllegalArgumentException();
 				}
-			});
-		}
+			})
+			.collect(Collectors.groupingBy(s -> s.getKey()))
+			.entrySet().stream()
+			.collect(Collectors.toMap(g -> g.getKey(), 
+				g -> g.getValue().stream().flatMap(s -> s.getValue().stream()).collect(Collectors.toList())));
 		return stats;
 	}	
 
@@ -213,12 +213,12 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 	}
 
 	@Override
-	public void setGenotypes(List<ParsonsGenotype> genotype, int generation) {
+	public void setGenotypes(final List<ParsonsGenotype> genotype, final int generation) {
 		brokers.entrySet().stream().forEach(kv -> kv.getValue().getEAInterface().setGenotypes(genotype, generation));
 	}
 
 	@Override
-	public void setFitnessConsumer(Consumer<ParsonsFitness> consumer) {
+	public void setFitnessConsumer(final Consumer<ParsonsFitness> consumer) {
 		//TODO - think here
 		//brokers.entrySet().stream().forEach(kv -> kv.getValue().getEAInterface().setFitnessConsumer(consumer));
 	}
@@ -230,7 +230,7 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 
 	private void save()
 	{
-		SerializedData data = new SerializedData(brokerToSids, sidToBroker);
+		final SerializedData data = new SerializedData(brokerToSids, sidToBroker);
 		Utils.saveToFile(log, data, groupsFile);
 	}
 

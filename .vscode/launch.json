@@ -20,6 +20,18 @@
         }, 
         {
             "type": "java",
+            "name": "Startup with Spring2020 data",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/bin",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "mainClass": "evoparsons.broker.Startup",
+            "projectName": "trunk",
+            "vmArgs": "-Dfile=../data/spring2020/java/ev.json",
+            "args": "-?"
+        },
+        {
+            "type": "java",
             "name": "Startup Linux with Mongo",
             "request": "launch",
             "cwd": "${workspaceFolder}/bin",
