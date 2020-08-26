@@ -131,6 +131,7 @@
                         <div class="puzzles col-auto col-sm-2">solved</div>
                         <div class="puzzlesSeen col-auto col-sm-2">seen</div>
                         <div class="duration col-auto col-sm-2">practice</div>
+                        <div class="inactivity col-auto col-sm-2">inactivity</div>
                     </div>
                 </div>
             </div>
@@ -256,6 +257,14 @@
                                                 var durationSeconds = Math.round(d.duration / 1000);
                                                 var durationMinutes = Math.round(durationSeconds / 60);
                                                 line.find(".duration").text(durationMinutes == 0 ? "1min" : (durationMinutes + " mins"));
+                                                if (d.inactivityMs)
+                                                {
+                                                    var inactivitySeconds = Math.round(d.inactivityMs / 1000);
+                                                    var inactivityMinutes = Math.round(inactivitySeconds / 60);
+                                                } else {
+                                                    var inactivityMinutes = "";
+                                                }
+                                                line.find(".inactivity").text(!inactivityMinutes ? "" : (inactivityMinutes + " mins"));
                                                 //var date = new Date(d.started);
                                                 // var df = (date.getMonth() + 1) + "/" + date.getDate() + "/" + date.getFullYear() + " " + date.getHours() + ":" + 
                                                 //     ((date.getMinutes() < 10) ? ("0" + date.getMinutes()) : ("" + date.getMinutes()));

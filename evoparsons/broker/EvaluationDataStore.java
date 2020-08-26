@@ -231,10 +231,11 @@ public class EvaluationDataStore
 				log.log("[EvaluationDataStore.addEvaluation] Cannot find stats for student %s. Ignoring", eval.sid);				
 				return; 
 			}
-			student.getStats().duration += eval.timeInMs;			
+			student.getStats().durationMs += eval.timeInMs;
+			student.getStats().inactivityMs += eval.inactivityMs;
 			if ((existingEval == null) || !eval.gaveUp)
 			{	
-				if (existingEval == null) student.getStats().puzzlesSeen++;
+				student.getStats().puzzlesSeen++;
 				if (!eval.gaveUp)
 				{			
 					final String sid = eval.sid;
@@ -250,7 +251,7 @@ public class EvaluationDataStore
 					eval =
 						studentHasAlreadySeenPuzzle ?
 							new ParsonsEvaluation(eval.sid, eval.puzzleIndex, 
-								eval.moves, eval.timeInMs,
+								eval.moves, eval.timeInMs, eval.inactivityMs,
 								DoubleStream.concat(DoubleStream.of(eval.fitness),
 									puzzleEval.evaluations.entrySet().stream()
 										.filter(entry -> !entry.getValue().gaveUp)

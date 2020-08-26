@@ -492,6 +492,9 @@ I freely give my consent to take part in this study.  I understand that by proce
                     {
                         windowEvent.durationMs = (new Date().getTime() - sessionStartTimeStamp) - windowEvent.timestamp;
                         windowEvent.sessionId = sessionId;
+                        if (windowEvent.type == "inactive") {
+                            puzzleInactivity += windowEvent.durationMs;
+                        }
                         events.push(windowEvent);
                         windowEvent = null;
                     }
@@ -517,6 +520,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                 var hintCount = 0;
                 var attemptCount = 0;
                 var puzzleStartTime;
+                var puzzleInactivity;
                 var dragEvent = null;
                 function createDragEvent(ui, startedIn) {
                     var pos = ui.item.data("data-pos");
@@ -869,6 +873,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                                 puzzleId = puzzle.id;
                                 attemptId = 0;
                                 puzzleStartTime = new Date().getTime();
+                                puzzleInactivity = 0;
                                 puzzleTitle.text(puzzle.title);
                                 puzzleDesc.text(puzzle.description);
                                 buildFragments(puzzle);
@@ -877,7 +882,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                                     timestamp: (puzzleStartTime - sessionStartTimeStamp),
                                     type: "new",
                                     sessionId: sessionId,
-                                    puzzleTitle: puzzleTitle
+                                    puzzleId: puzzle.id,
+                                    puzzleTitle: puzzle.title
                                 });
                             }
                         }
@@ -885,7 +891,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                 }        
                 function sendEvaluation(studentId, puzzleId, moveCount, gaveUp) {
                     var puzzleEndTime = new Date().getTime();
-                    var timeInMs = puzzleEndTime - puzzleStartTime;
+                    var inactivityMs = puzzleInactivity;
+                    var timeInMs = puzzleEndTime - puzzleStartTime - inactivityMs;                    
                     puzzleContent.fadeOut(function () {
                         taskPane.empty();
                         trash.empty();
@@ -898,7 +905,8 @@ I freely give my consent to take part in this study.  I understand that by proce
                                     moves: moveCount, 
                                     design: "OnePane",
                                     shuffling: shfl,
-                                    timeInMs: timeInMs,
+                                    timeInMs: timeInMs >= 0 ? timeInMs : 0,
+                                    inactivityMs: inactivityMs,
                                     gaveUp: gaveUp
                                 }),
                             contentType:"application/json",

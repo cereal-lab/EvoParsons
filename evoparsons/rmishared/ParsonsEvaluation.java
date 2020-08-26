@@ -14,18 +14,20 @@ public class ParsonsEvaluation implements Serializable{
 	public final double fitness;
 	public final int puzzleIndex;
 	public final long timeInMs;
+	public final long inactivityMs;
 	public final boolean gaveUp;	
 	public long timestamp;
 	public void setTimeStamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
 	
-	public ParsonsEvaluation(String sid, int puzzleIndex, int moves, long timeInMs, double fitness, boolean gaveUp, long timestamp) {
+	public ParsonsEvaluation(String sid, int puzzleIndex, int moves, long timeInMs, long inactivityMs, double fitness, boolean gaveUp, long timestamp) {
 		this.sid = sid;
 		this.puzzleIndex = puzzleIndex;
 		this.moves = moves;
 		this.fitness = fitness;//!important - fitness is decided on client - it depends on UI
 		this.timeInMs = timeInMs;
+		this.inactivityMs = inactivityMs;
 		this.gaveUp = gaveUp;
 		this.timestamp = timestamp;
 	}   

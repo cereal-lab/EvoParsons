@@ -168,7 +168,8 @@ public interface NetworkPolicy {
                             Map<String, Object> performance = new HashMap<>();
                             performance.put("puzzlesSeen", s.puzzlesSeen);
                             performance.put("puzzlesSolved", s.puzzlesSolved);
-                            performance.put("duration", s.duration);    
+                            performance.put("duration", s.durationMs);    
+                            performance.put("inactivityMs", s.inactivityMs);   
                             return performance;
                         }).collect(Collectors.toList());                 
                     //performance.put("started", stat.start);
@@ -277,7 +278,8 @@ public interface NetworkPolicy {
             respJson.put("sessionId", auth.newSession());
             respJson.put("solved", stats.puzzlesSolved);
             respJson.put("seen", stats.puzzlesSeen);
-            respJson.put("duration", stats.duration);
+            respJson.put("duration", stats.durationMs);
+            respJson.put("inactivityMs", stats.inactivityMs);
             response.getWriter().print(JSON.toString(respJson));
         }
 
@@ -317,8 +319,9 @@ public interface NetworkPolicy {
                 //     fitness = (double)fitnessObj;
                 // else fitness = (double)fitnessObj;
                 long timeInMs = (long)requestJson.get("timeInMs");
+                long inactivityMs = (long)requestJson.get("inactivityMs");
                 boolean gaveUp = (boolean)requestJson.get("gaveUp");                
-                eval = new ParsonsEvaluation(sid, puzzleId, moves, timeInMs, fitness, gaveUp, System.currentTimeMillis());
+                eval = new ParsonsEvaluation(sid, puzzleId, moves, timeInMs, inactivityMs, fitness, gaveUp, System.currentTimeMillis());
             } catch (Exception e) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);    
                 Map<String, Object> respJson = new HashMap<>();
@@ -409,7 +412,8 @@ public interface NetworkPolicy {
                     Map<String, Object> respJson = new HashMap<>();
                     respJson.put("solved", stats.puzzlesSolved);
                     respJson.put("seen", stats.puzzlesSeen);
-                    respJson.put("duration", stats.duration);
+                    respJson.put("duration", stats.durationMs);
+                    respJson.put("inactivityMs", stats.inactivityMs);
                     //respJson.put("start", stats.start.getTime());
                     response.setStatus(HttpServletResponse.SC_OK);
                     response.getWriter().print(JSON.toString(respJson));                                
