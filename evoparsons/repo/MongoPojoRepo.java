@@ -61,6 +61,7 @@ public class MongoPojoRepo<T> implements IRepo<String, T> {
         {
             MongoDatabase db = client.getDatabase(dbName).withCodecRegistry(this.pojoCodecRegistry);
             MongoCollection<T> collection = db.getCollection(this.collectionName, tClass);
+            // collection.find(Filters.where(""));
             T result = 
                 collection.find(Filters.eq(idKey, id)).first();
                 //collection.find(Filters.eq("auth.sid", id)).first();

@@ -205,8 +205,14 @@ public class EvaluationDataStore
 		Set<String> ssigsSet = new HashSet<String>(ssigs);
 		var stats =  
 			students.entrySet().stream()
-				.filter(s -> (sids == null || sids.contains(s.getKey())) && ssigsSet.contains(s.getValue().getAuth().getSsig()) && s.getValue().getAuth().getSkey().equals(isig))
-				.collect(Collectors.groupingBy(s -> s.getValue().getAuth().getSsig()))
+				.filter(s -> 
+					(s.getValue().getAuth() != null) &&
+					(s.getValue().getAuth().getSsig() != null) &&
+					(sids == null || sids.contains(s.getKey())) 
+						&& ssigsSet.contains(s.getValue().getAuth().getSsig()) 
+						&& isig.equals(s.getValue().getAuth().getSkey()))
+				.collect(Collectors.groupingBy(s -> 
+					s.getValue().getAuth().getSsig()))
 				.entrySet().stream()
 				.collect(Collectors.toMap(s -> s.getKey(), 
 					s -> s.getValue().stream().map(s3 -> s3.getValue().getStats())

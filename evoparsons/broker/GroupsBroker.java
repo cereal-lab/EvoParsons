@@ -182,7 +182,7 @@ public class GroupsBroker implements Broker, BrokerUIInterface, BrokerEAInterfac
 							.entrySet().stream();
 				} catch (Exception e) {
 					//should not be here
-					throw new IllegalArgumentException();
+					throw new IllegalArgumentException(e);
 				}
 			})
 			.collect(Collectors.groupingBy(s -> s.getKey()))

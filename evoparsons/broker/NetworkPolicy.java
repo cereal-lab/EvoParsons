@@ -222,10 +222,15 @@ public interface NetworkPolicy {
             response.getWriter().print(JSON.toString(respJson));  
             } catch(Exception e) 
             {
-                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);    
-                Map<String, Object> respJson = new HashMap<>();
-                respJson.put("error", e.getMessage());
-                response.getWriter().print(JSON.toString(respJson));      
+                try (StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw))
+                {
+                    e.printStackTrace(pw);                
+                    response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);    
+                    Map<String, Object> respJson = new HashMap<>();
+                    respJson.put("error", sw.toString());
+                    response.getWriter().print(JSON.toString(respJson));      
+                }
             }
         }
     }        
@@ -336,6 +341,9 @@ public interface NetworkPolicy {
             response.getWriter().print(JSON.toString(respJson));                  
         }
 
+        // private void getEvents(String iid, String ssig, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //     eventsRepo.get
+        // }
         private void onNewEvents(String sid, int puzzleId, HttpServletRequest request, HttpServletResponse response) throws IOException
         {            
             try {
