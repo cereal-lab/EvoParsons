@@ -203,7 +203,7 @@ public class EvaluationDataStore
 	public Map<String, List<Stats>> getStudentStats(String isig, List<String> ssigs, Set<String> sids) {
 		if (isig == null || isig.isEmpty() || ssigs == null || ssigs.isEmpty()) return Collections.emptyMap();
 		Set<String> ssigsSet = new HashSet<String>(ssigs);
-		var stats =  
+		Map<String, List<Stats>> stats =  
 			students.entrySet().stream()
 				.filter(s -> 
 					(s.getValue().getAuth() != null) &&

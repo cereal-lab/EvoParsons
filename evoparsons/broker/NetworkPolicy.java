@@ -163,7 +163,7 @@ public interface NetworkPolicy {
                 Map<String, Object> respStudentsJson = new HashMap<>();
                 for (String ssig: students.keySet()) {
                     List<Stats> stats = students.get(ssig);
-                    var performances = 
+                    List<Map<String, Object>> performances = 
                         stats.stream().map(s -> {
                             Map<String, Object> performance = new HashMap<>();
                             performance.put("puzzlesSeen", s.puzzlesSeen);
