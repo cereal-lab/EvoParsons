@@ -459,7 +459,7 @@ I freely give my consent to take part in this study.  I understand that by proce
                     </div>                
                 <div class="alert alert-danger col col-lg-8 offset-lg-2" role="alert" id="wrongMsg">
                     <strong>Oh snap!</strong> Change a few things up and try submitting again.
-                    <button type="button" class="btn" id="hintButton">Hint</button>
+                    <!-- <button type="button" class="btn" id="hintButton">Hint</button> -->
                 </div>
                 <div class="alert alert-danger col col-lg-8 offset-lg-2" role="alert" id="hasBug">
                     <strong>Bug!</strong> Code is ordered correctly. Try to find bugged fragment
@@ -1106,17 +1106,17 @@ I freely give my consent to take part in this study.  I understand that by proce
                         puzzleContent.fadeIn();
                     });  
                 });
-                $("#hintButton").click(function () {
-                    $("li.hint").removeClass("hint");
-                    hint();
-                    msg.hide();    
-                    wrongMsg.hide();
-                    if (wrongMsg.t_tmt)
-                    {
-                        clearTimeout(wrongMsg.t_tmt);
-                        wrongMsg.t_tmt = null;
-                    }
-                });
+                // $("#hintButton").click(function () {
+                //     $("li.hint").removeClass("hint");
+                //     hint();
+                //     msg.hide();    
+                //     wrongMsg.hide();
+                //     if (wrongMsg.t_tmt)
+                //     {
+                //         clearTimeout(wrongMsg.t_tmt);
+                //         wrongMsg.t_tmt = null;
+                //     }
+                // });
                 $("#gridButton").click(function () {
                     taskPane.fadeOut(function () {
                         taskPane.toggleClass("noBorder", function () {
