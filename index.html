@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>EvoParsons: A freely available tool to improve novice programmers skills</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<style>
+body {margin: 10px 50px 0px 50px;}
+p.text-justify { padding-left: 3em;}
+ul {padding-left: 6em;}
+.text-justify, ul {font-size: 16pt;}
+h1 {color: darkblue;}
+h2 {
+cursor: pointer;
+color: darkblue;
+}
+.jumbotron {padding: 0px 15px 0px 15px;}
+</style>
+<body>
+  
+  <div class="jumbotron">
+    <h1>EvoParsons: Evolutionary Parsons Puzzle</h1>
+    <p class = "text-justify">
+      <strong>EvoParsons</strong> is a free to use, and open source, educational software.
+      It is meant to help novice programmers improve their skills
+      by practicing solving Parsons puzzles on their own.
+      It allows instructors who are teaching an introductory programming course,
+      to easily assign additional practice exercises to their students
+      (with or without assigning participation credit) and have the software validate their work without the need for manual grading.
+    </p>
+
+    <p class = "text-justify">
+      There are so far two versions of the software;
+      one covering the Java programming language,
+      and another covering the C programming language.
+    </p>
+
+    <p class="text-justify">
+      We provide below responses to frequently asked questions.
+      Simply click on the questions to reveal the answer.
+      Feel free to contact us at <em>alessio - AT - usf.edu</em>
+      if you have more specific inquiries.
+    </p>
+  </div>
+  
+
+
+
+
+  <h2 data-toggle = "collapse" data-target = "#parsons"> What are Parsons puzzles? </h2>
+  <div id = "parsons" class = "collapse">  
+    <p class="text-justify">
+      As the name suggests, <strong>EvoParsons</strong> is based on
+      <strong>Parsons puzzles</strong>.
+      These puzzles have repeatedly shown great potential in supporting novice
+      programmers’ practice.
+      In a nutshell, a Parsons puzzle presents a description, in plain English,
+      of the goals of a program.
+      It then also presents students with an implementation of the solution to that problem.
+      The solution is broken down into code fragments that the students are expected
+      to reassemble in the correct order.
+      In addition, some of the fragments have been duplicated and modified to feature
+      syntactical or logical bugs.
+      These so-called distractors are mixed in with their original counterparts thus
+      forcing students to also learn
+      to spot and avoid erroneous code by dragging these fragments in a trash area of
+      the user interface.
+    </p>
+  </div>
+  
+
+
+  <h2 data-toggle = "collapse" data-target = "#evo"> What does EvoParsons add to Parsons puzzles? </h2>
+  <div id = "evo" class = "collapse">  
+    <p class="text-justify">
+      <strong>EvoParsons</strong> goes beyond presenting students with hand-designed
+      Parsons puzzles.
+      Behind the scenes, the software leverages evolutionary computation techniques
+      to automatically design Parsons Puzzles [2].
+      These puzzles undergo improvement based on the difficulty of the challenge they present to students.
+      Rather than simply attempting to evolve the hardest puzzles,
+      this iterative improvement is guided by a push to find Parsons puzzles that are maximally informative about students’ performance.
+      As a result, the evolved puzzles only retain bugs and problems that capture the difficulties
+      encountered by different categories of learners.
+      The end result is therefore a system that does not adapt to each individual student,
+      as Intelligent Tutoring Systems usually do, but rather exploit learner-puzzles interactions
+      to gain insights regarding the concepts with which students are struggling.
+    </p>
+  </div>
+  
+
+
+  <h2 data-toggle = "collapse" data-target = "#aspects">What programming constructs do exercises cover?</h2>
+  <div id = "aspects" class = "collapse">  
+    <p class="text-justify">
+      Regardless of whether you decide to use the Java or C version of the software,
+      the exercises cover the following topics;
+      <ul>
+	<li>variables (declaration/initialization)</li>
+	<li>selection statements (if / if else / if else if/ switch)</li>
+	<li>loops (for / while /do while)</li>
+	<li>arrays</li>
+	<li>methods (Java) or functions (C)</li>
+	<li>pointers (C only)</li>
+	<li>structs (C only)</li>
+      </ul>
+    </p>
+  </div>
+  
+  
+  
+  <h2 data-toggle = "collapse" data-target = "#students">What students may benefit from using this software?</h2>
+  <div id = "students" class = "collapse">    
+    <p class="text-justify">
+      EvoParsons exercises combine a wide selection of constructs from the targetted programming languages (Java or C).
+      As such, the software is primarily aimed at students who are reviewing in preparation for their final exam in an introductory course. 
+    </p>
+    <p class="text-justify">
+      It is also suitable for students who are just starting a course which pre-requisites require them to already know Java or C,
+      but need a refresher at the beginning of the semester.
+      This is typically the case when undergrad students start courses such as; data structures, object oriented programming, operating systems...
+    </p>
+  </div>
+  
+  
+  
+  <h2 data-toggle = "collapse" data-target = "#test"> How do I test the software to see what it looks like? </h2>
+  <div id = "test" class = "collapse">
+    <p class="text-justify">
+      We keep some sanboxes running so that instructors may get an idea of what the software looks like
+      when their students will be using it.
+    </p>
+    <p>
+      Please note that no data whatsoever is kept and these sandboxes are wiped regularly.
+      As such, do not point your students to those but instead see below on how to assign them practice with
+      a proper URL.
+    </p>
+    <p class="text-justify">
+      When you are ready to check the software out, simply visit the following links.
+      The software will run in any modern web browser;
+      <ul>
+	<li>EvoParsons version to practice Java programming skills <a href="http://evoparsons.csee.usf.edu:5110/" target="_blank">http://evoparsons.csee.usf.edu:5110/</a></li>
+	<li>EvoParsons version to practice C programming skills <a href="http://evoparsons.csee.usf.edu:5210/" target="_blank">http://evoparsons.csee.usf.edu:5210/</a></li>
+      </ul>
+    </p>
+  </div>
+    
+  
+
+  <h2 data-toggle = "collapse" data-target = "#assign"> How do I use this software with my students? </h2>
+  <div id = "assign" class = "collapse">  
+    <p class="text-justify">
+      First, visit the link to the version of the software you want to use
+      and register your free account.
+      <ul>
+	<li> To practice Java programming skills use <a href="http://evoparsons.csee.usf.edu:3110/" target="_blank">http://evoparsons.csee.usf.edu:3110/</a></li>
+	<li> To practice C programming skills use <a href="http://evoparsons.csee.usf.edu:3210" target="_blank">http://evoparsons.csee.usf.edu:3210/</a></li>
+      </ul>
+    </p>
+    <p class="text-justify">
+      Then, drop an email to <em>alessio -AT- usf.edu</em> so that we may
+      upgrade your account to an instructor account.
+      Please provide a link to your official department's web site, and use
+      your official university email address,
+      in order for us to be able to ascertain that you are indeed an instructor.
+    </p>
+    <p class="text-justify">
+      Once you have an account, and we confirmed to you that it has been upgraded to an instructor account,
+      simply share the same above link with your students.
+    </p>
+    <p class="text-justify">
+      If you need to track which students actually used the software,
+      e.g., to assign participation credit,
+      or need a measure of how many puzzles they successfully completed,
+      e.g. to assign a grade, make sure that you 
+      instruct them to use their university email address when registering
+      and provide also their instructor's official email address
+      (the one you used to register) as a way to link them to you.
+      You will then be able to access our (rudimentary for now)
+      instructor webpage and upload a list of your students
+      emails in order to get information about their work.
+      Once again, the link to use will depend on the programming language
+      you assigned them to practice with;
+      <ul>
+	<li> EvoParsons version to practice Java programming skills <a href="http://evoparsons.csee.usf.edu:3120" target="_blank">http://evoparsons.csee.usf.edu:3120</a></li>
+	<li> EvoParsons version to practice C programming skills <a href="http://evoparsons.csee.usf.edu:3220" target="_blank">http://evoparsons.csee.usf.edu:3220</a></li>
+      </ul>
+      </p>
+    <p class="text-justify">
+      As of our latest release, this feature is still a bit rudimentary
+      so please do not hesitate to contact us by email
+      and we will be glad to retrieve this data for you and forward it back upon request.
+      Simply email <em>alessio -AT- usf.edu</em> to get this process started.
+    </p>
+  </div>
+    
+    
+    
+  <h2 data-toggle = "collapse" data-target = "#foss"> Is the source code available?</h2>
+  <div id = "foss" class = "collapse">  
+    <p class="text-justify">
+      Starting with the "Mark III" release of the software, in Fall 2019,
+      we implemented a new front end.
+      This allows us to now have both the browser-side and server-side
+      source code available under an open source license.
+      Please refer to the following repositories for access; 
+      <ul>
+	<li> Source code for the "Mark III" release is hosted on GitHub at 
+	  <a href="https://github.com/cereal-lab/EvoParsons/tree/Mark3" target="_blank">https://github.com/cereal-lab/EvoParsons/tree/Mark3</a>
+	</li>
+	<li> Source code for the server-side components of the previous releases is hosted on SourceForge at
+	  <a href="https://sourceforge.net/projects/evotutoring/" target="_blank">https://sourceforge.net/projects/evotutoring/</a>.
+	  These previous releases used the epplets.org user interface
+	  as front end which is not available under an open source license.
+	</li>
+      </ul>
+    </p>
+  </div>
+    
+  
+
+  <h2 data-toggle = "collapse" data-target = "#releases">What are/were the features of each public release?</h2>
+  <div id = "releases" class = "collapse">  
+    <p class="text-justify">
+      Fall 2019 marked our second major public release of the software as
+      "EvoParsons Mark III".
+      Highlights of the changes are as follows; 
+      <ul>
+	<li>Integration of a MongoDB data base</li>
+	<li>Redesign of the configuration files</li>
+	<li>Total anonymization of the information collected.
+	  Students &amp; instructors self-identify when login to the system but we only
+	  get one-way-hash versions of any such information.
+	</li>
+	<li>Complete redesign of the user interface so as to base it on modern web
+	  technologies and release it alongside the server-side components under
+	  an open source license.
+	</li>
+	<li>Public release of support for the C programming language in addition
+	  to previous support for Java</li>
+	<li>...</li>
+      </ul>
+
+    <p class="text-justify">
+      Spring 2019 was the first nation-wide release of our software, after a year-long
+      use and testing at our own university.
+      This release only focused on the Java programming language and was achieved in
+      partnership with Dr. Amruth Kumar.
+      As a result, EvoParsons used the same user interface than the Epplets Parsons puzzle
+      Intelligent Tutoring System.
+      It was also made available via Dr. Amruth Kumar's Epplet.org website.
+      Our next releases will focus on integrating other languages (e.g. C, but feedback
+      is welcomed!)
+      and provide an alternative user interface that will be made available under
+      an open source license
+      (as is currently our server-side software).
+    </p>
+  </div>
+    
+    
+
+  <h2 data-toggle = "collapse" data-target = "#research">Where can I learn more about underlying research?</h2>
+  <div id = "research" class = "collapse">
+    Yes, please find below the references and, when available, links to PDF files.
+    <div class="container-fluid">
+      <ol class ="text-justify">
+	<li> A.T.M. Golam Bari, Alessio Gaspar, R.Paul Wiegand, Jennifer L. Albert,
+	  Anthony Bucci, Amruth Kumar:
+	  "EvoParsons: Design, Implementation and Preliminary Evaluation of
+	  Evolutionary Parsons Puzzle". 
+	  Genetic Programming and Evolvable Machine, (2019).
+	  <a href="#", target="_blank">Download</a>
+	</li>
+	
+	<li>
+	  Alessio Gaspar, A.T.M. Golam Bari, Amruth N. Kumar, Anthony Bucci,
+	  R. Paul Wiegand, Jennifer L. Albert:
+	  "Evolutionary Practice Problems Generation: Design Guidelines".
+	  28th IEEE International Conference on Tools with Artificial Intelligence (ICTAI),
+	  6-8 November, 2016, San Jose, CA, USA.
+	  <a href="https://ieeexplore.ieee.org/document/7814649" target="_blank">Download</a>
+	</li>
+	<li>
+	  Alessio Gaspar, ATM Golam Bari, Amruth N.Kumar, R. Paul Wiegand,
+	  Anthony Bucci, Jennifer L. Albert:
+	  "Evolving Parsons Puzzles for Novice programmers".
+	  30th International Conference of the Florida Artificial Intelligence
+	  Research Society, FLAIRS, 2017.
+	  <a href="https://aaai.org/ocs/index.php/FLAIRS/FLAIRS17/paper/download/15459/15000" target="_blank">Download</a>
+	</li>
+	
+	<li>
+	  ATM Golam Bari, Alessio Gaspar, R.Paul Wiegand, Anthony Bucci:
+	  "Selection Methods to Relax Strict Acceptance Condition in test-based Coevolution".
+	  IEEE WCCI 2018, July, Rio de Janeiro, Brazil
+	  <a href="https://ieeexplore.ieee.org/abstract/document/8477934" target="_blank">Download</a>
+	</li>
+	<li>
+	  ATM Golam Bari, Alessio Gaspar, R.Paul Wiegand, Anthony Bucci:
+	  "Does Relaxing Strict Acceptance Condition Improve Test Based Pareto Coevolution?".
+	  IEEE Symposium Series on Computational Intelligence 2017,
+	  Nov 27 – Dec 1, 2017, Hawaii, USA.
+	  <a href="https://ieeexplore.ieee.org/abstract/document/8285424" target="_blank">Download</a>
+	</li>
+	<li>
+	  ATM Golam Bari, Alessio Gaspar:
+	  "Investigating Relaxed Selection in Test-based Pareto Coevolution".
+	  21st International Conference on Computer and Information Technology (ICCIT 2018),
+	  December 21-23, 2018, Dhaka, Bangladesh
+	  <a href="#" target="_blank">Download</a>
+	</li>
+	<li>
+	  ATM Golam Bari, Alessio Gaspar, R.Paul. Wiegand, Dymtro Vitel,
+	  Kock Cheng Tong, Stephen Kozakolf:
+	  "On the Potential of Evolved Parsons Puzzles to Contribute
+	  to Concept Inventories in Computer Programming".
+	  126th ASEE Annual Conference and Exposition, Tampa, Florida, June 15-19, 2019.
+	  <a href="#" target="_blank">Download</a>
+	</li>
+	
+	<li>
+	  Alessio Gaspar et.al.,:
+	  "Coevolutionary-Aided Teaching: Leveraging the Links Between
+	  Coevolutionary and Educational Dynamic".
+	  126th ASEE Annual Conference and Exposition, Tampa, Florida, June 15-19, 2019.
+	  <a href="#" target="_blank">Download</a>
+	</li>
+	<li>
+	  Dymtro Vitel, ATM Golam Bari, Alessio Gaspar, Kok Cheng Tan:
+	  "Lesson Learned from Available Parsons Puzzles Software",
+	  126th ASEE Annual Conference and Exposition, Tampa, Florida, June 15-19, 2019.
+	  <a href="#" target="_blank">Download</a>
+	</li>
+	<li>
+	  Parsons, D., Haden, P.:
+	  "Programming Puzzles: A Fun and Effective Learning Tool
+	  for First Programming Courses."
+	  8th Australasian Conference on Computing Education,
+	  Volume 52, ACE '06, pp. 157--163. Australian Computer Society,
+	  Inc., Darlinghurst, Australia, Australia (2006).
+	  <a href="http://dl.acm.org/citation.cfm?id=1151869.1151890" target="_blank">Download</a>
+	</li>
+      </ol>
+    </div>
+  </div>
+  
+  
+  
+  <h2 data-toggle = "collapse" data-target = "#who">Who is working on this project?</h2>
+  <div id = "who" class = "collapse">
+    <p class="text-justify">
+      <abbr title="University of South Florida" class="initialism">USF</abbr> Information Technology
+      students contributed to the software development efforts.
+      <ul>
+	<li><strong>Paul Burton</strong> implemented the original proof of concept software during his IT Senior Project in spring 2015, and refined it under OPS contract during summer 2015.</li>
+	<li><strong>Stephen Kozakoff</strong> extended the prototype and connected it to  Epplets.org as part of his <abbr title="Master of Science in Information Technology" class="initialism">MSIT</abbr> graduate practicum in fall 2015 and spring 2016.
+      </ul>
+    </p>
+    
+    <p class="text-justify">
+      USF Computer Science Graduate students worked on the EvoParsons system as part of their research
+      and also contributed to its code developement;
+      <ul>
+	<li><strong>A.T.M. Golam Bari</strong>
+	  focused on the coevolutionary aspects as part of his Ph.D. dissertation
+	  to be presented in 2019.
+	</li>
+	<li><strong>Dmitry Vitel</strong>
+	  reworked both server-side and user interface components, and is investigating the applicability of
+	  Genetic Programming techniques as part of his Master in Computer Science Thesis.
+	</li>
+	<li><strong>Kok Cheng Tan</strong>
+	  investigated the applicability of sequence data mining algorithms to the comparison of 
+	  students interactions as experienced with Epplets and EvoParsons.
+	</li>
+      </ul>
+    </p>
+    
+    <p class="text-justify">
+      The following faculty also partnered on this project;
+      <ul>
+	<li><strong>Alessio Gaspar</strong> PI of the USF collaborative proposal</li>
+	<li><strong>Paul Wiegand</strong> PI of the UCF collaborative proposal</li>
+	<li><strong>Amruth Kumar</strong> PI of the Ramapo collaborative proposal</li>
+	<li><strong>Jennifer Albert</strong> Learning Sciences consultant</li>
+	<li><strong>Anthony Bucci</strong> collaborated to research on the
+	  coevolutionary computation aspects</li>
+      </ul>
+    </p>
+  </div>
+
+  
+  <h2> Acknowledgments </h2>
+  
+    <p class="text-justify">
+      Our team gratefully acknowledges support from both the NSF and ACM SIGCSE
+      special projects awards.
+    </p>
+    
+    <p class="text-justify">
+      This material is based in part upon work supported by the Association
+      for Computing Machinery's Special Interest Group in Computer Science and Engineering (SIGCSE)
+      Special Projects 2015 award,
+      and the National Science Foundation IUSE awards number 1504634, 1502564, and 1503834.
+      Any opinions, findings, and conclusions or recommendations expressed
+      in this publication are those of the author(s) and do not necessarily
+      reflect the views of the NSF.
+    </p>    
+</body>
+</html>
