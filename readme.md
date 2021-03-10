@@ -1,12 +1,6 @@
-This repository hosts the "mark 2" version of the EvoParsons software. 
+This repository hosts the "mark 2" and "mark 3" versions of the EvoParsons software. 
 
 EvoParsons mark 1 is still available at https://sourceforge.net/projects/evotutoring
-
-# How do I run an instance of the EvoParsons server? #
-
-TODO - come back later :)
-
-
 
 # Repository Content #
 
