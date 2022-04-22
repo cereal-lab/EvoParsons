@@ -22,8 +22,6 @@
 //</fragment>
 //<fragment>
             if(array[i] > array[i+1]){
-//</fragment>
-//<fragment>
                int tmp = array[i];
 //</fragment>
 //<fragment>

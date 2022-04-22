@@ -25,8 +25,7 @@ import java.util.Scanner; \\n public class ArraysBubbleSort { \\n public static 
       System.out.println("Before\t" + asString(myArray)); \\n sort(myArray); \\n System.out.println("After \t" + asString(myArray)); \\n } //end of main method
    public static void sort(int[] array){  \\n boolean didWeSwap; \\n do{  \\n didWeSwap = false;  
       for(int i=0 ; i < array.length - 1 ; i++) {
-            if(array[i] > array[i+1]){
-               int tmp = array[i];
+            if(array[i] > array[i+1]){ \\n int tmp = array[i];
                array[i] = array[i+1];
                array[i+1] = tmp; didWeSwap = true;
              } // end of if statement  \\n } //end of for loop \\n} while(didWeSwap);  \\n} // end of sort method
