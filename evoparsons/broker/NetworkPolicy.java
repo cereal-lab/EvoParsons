@@ -33,12 +33,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.rewrite.handler.Rule;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ajax.JSON;
 import org.eclipse.jetty.util.log.Logger;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 import evoparsons.broker.Log.FileLog;
 import evoparsons.repo.Events;
@@ -521,6 +523,20 @@ public interface NetworkPolicy {
 
 					log.log("[REST] Started on %s:%d", networkConfig.host, networkConfig.port);
                     Server server = new Server(networkConfig.port);
+
+                    if (networkConfig.cert != null && networkConfig.key != null) {
+                        log.log("[REST] setting up SSL cert: %s. key: %s", networkConfig.cert, networkConfig.key);
+                        SslContextFactory sslContextFactory = new SslContextFactory();
+                        sslContextFactory.setTrustStorePath(networkConfig.cert);
+                        sslContextFactory.setKeyStorePath(networkConfig.key);
+                        sslContextFactory.setExcludeProtocols("SSLv3");
+                        
+                        ServerConnector sslConnector = new ServerConnector(server, sslContextFactory);
+                        sslConnector.setPort(networkConfig.port);     
+                        server.addConnector(sslConnector);
+                        log.log("[REST] SSL was configured");
+                    }
+
                     HandlerList handlers = new HandlerList();
                     
                     RewriteHandler redirectHandler = new RewriteHandler();
@@ -585,7 +601,7 @@ public interface NetworkPolicy {
                     //apiHandler.addServlet(new ServletHolder(new StudentServlet(config, broker)), "/api/student/*");
                     //apiHandler.addServlet(new ServletHolder(new InstructorServlet(config, broker)), "/api/instructor/*");
                     handlers.addHandler(apiHandler);                  
-					server.setHandler(handlers);					
+					server.setHandler(handlers);		
 					server.start();
 					//server.join();
 				} catch (Exception e) {

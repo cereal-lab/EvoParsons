@@ -214,8 +214,14 @@ docker_container_run() {
   docker run --name $name ${mappedPorts[@]} \
     --restart=always -e BROKER_CONFIG=${config} \
     --network=$existingMongo --network-alias=$name \
-    -v ${data}:/app/DATA.out -d evoparsons_server
+    -v ${data}:/app/DATA.out \
+    -v /etc/letsencrypt:/certs -d evoparsons_server
 
+  # docker build -t evoparsons_nginx ./nginx
+
+  # docker run --name "nginx-$name" ${mappedPorts[@]} \
+  #   --restart=always --network=$existingMongo -network-alias=$name \
+  #   -v /etc/letsencrypt:/etc/nginx/certs -d evoparsons_nginx
   #--network=container:$existingMongo \
 
 }

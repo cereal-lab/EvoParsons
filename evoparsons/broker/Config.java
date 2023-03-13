@@ -200,6 +200,8 @@ public class Config {
         public String policyPath;
         public String host;
         public int port;
+        public String cert;
+        public String key;
         public List<String> servlets = new ArrayList<>();
         public String www;
 
@@ -288,6 +290,10 @@ public class Config {
                         network.servlets.add(name);
                     else if (name.matches("^net\\..*?\\.www$"))
                         network.www = value;
+                    else if (name.matches("^net\\..*?\\.cert"))
+                        network.cert = value; 
+                    else if (name.matches("^net\\..*?\\.key"))
+                        network.key = value;                         
                     else if (!name.matches("^net\\..*?\\.servlet\\..*?\\.[^.]*$"))
                         log.log("[Config.LoadFromFile] Ignoring unknown property %s=%s", name, value);
                 } catch (Exception e) {
