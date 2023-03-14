@@ -14,6 +14,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -525,11 +526,14 @@ public interface NetworkPolicy {
 					log.log("[REST] Starting on %s:%d", networkConfig.host, networkConfig.port);
                     Server server = new Server();
 
-                    if (networkConfig.cert != null && networkConfig.key != null) {
-                        log.log("[REST] setting up SSL cert: %s. key: %s", networkConfig.cert, networkConfig.key);
+                    if (networkConfig.certKeyStore != null) {
+                        log.log("[REST] setting up SSL cert: %s", networkConfig.certKeyStore);
+                        // KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
                         SslContextFactory sslContextFactory = new SslContextFactory();
-                        sslContextFactory.setTrustStorePath(networkConfig.cert);
-                        sslContextFactory.setKeyStorePath(networkConfig.key);
+                        sslContextFactory.setTrustStorePath(networkConfig.certKeyStore);
+                        sslContextFactory.setTrustStorePassword(networkConfig.certKeyStorePwd);
+                        sslContextFactory.setKeyStorePath(networkConfig.certKeyStore);
+                        sslContextFactory.setKeyStorePassword(networkConfig.certKeyStorePwd);
                         sslContextFactory.setExcludeProtocols("SSLv3");
                         
                         ServerConnector sslConnector = new ServerConnector(server, sslContextFactory);
