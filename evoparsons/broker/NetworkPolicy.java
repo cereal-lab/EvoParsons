@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.rewrite.handler.Rule;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
@@ -533,9 +534,14 @@ public interface NetworkPolicy {
                         
                         ServerConnector sslConnector = new ServerConnector(server, sslContextFactory);
                         sslConnector.setPort(networkConfig.port);     
-                        sslConnector.setHost(networkConfig.host);
+                        // sslConnector.setHost(networkConfig.host);
                         server.addConnector(sslConnector);
                         log.log("[REST] SSL was configured");
+                    } else {
+                        ServerConnector connector = new ServerConnector(server);
+                        connector.setPort(networkConfig.port);
+                        server.setConnectors(new Connector[]{connector}); 
+                        log.log("[REST] Starting without SSL");
                     }
 
                     HandlerList handlers = new HandlerList();
