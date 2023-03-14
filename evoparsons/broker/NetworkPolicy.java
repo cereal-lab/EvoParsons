@@ -42,6 +42,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -531,6 +532,8 @@ public interface NetworkPolicy {
 					log.log("[REST] Starting on %s:%d", networkConfig.host, networkConfig.port);
                     Server server = new Server();
 
+                    HandlerList handlers = new HandlerList();
+
                     if (networkConfig.certKeyStore != null) {
                         log.log("[REST] setting up SSL cert: %s", networkConfig.certKeyStore);
                         // KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -553,18 +556,17 @@ public interface NetworkPolicy {
                         SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString());
                         HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig);
                         ServerConnector sslConnector = new ServerConnector(server, sslConnectionFactory, httpConnectionFactory);
-                        sslConnector.setPort(networkConfig.port);     
+                        sslConnector.setPort(networkConfig.port);                             
                         // sslConnector.setHost(networkConfig.host);
                         server.addConnector(sslConnector);
+                        handlers.addHandler(new SecuredRedirectHandler());
                         log.log("[REST] SSL was configured");
                     } else {
                         ServerConnector connector = new ServerConnector(server);
                         connector.setPort(networkConfig.port);
                         server.setConnectors(new Connector[]{connector}); 
                         log.log("[REST] Starting without SSL");
-                    }
-
-                    HandlerList handlers = new HandlerList();
+                    }                    
                     
                     RewriteHandler redirectHandler = new RewriteHandler();
                     //MovedPermanentlyRule movedRule = new MovedPermanentlyRule();
