@@ -558,7 +558,7 @@ public interface NetworkPolicy {
                         ServerConnector sslConnector = new ServerConnector(server, sslContextFactory);
                         sslConnector.setPort(networkConfig.port);   
                         // sslConnector.setHost(networkConfig.host);
-                        server.addConnector(sslConnector);
+                        server.setConnectors(new Connector[] { sslConnector });
                         // handlers.addHandler(new SecuredRedirectHandler());
                         log.log("[REST] SSL was configured");
                     } else {
