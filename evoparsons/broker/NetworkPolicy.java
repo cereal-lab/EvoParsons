@@ -521,8 +521,8 @@ public interface NetworkPolicy {
 						@Override public void warn(String arg0, Throwable arg1) {fileLog.log(arg0); arg1.printStackTrace(fileLog.out); }
 					});
 
-					log.log("[REST] Started on %s:%d", networkConfig.host, networkConfig.port);
-                    Server server = new Server(networkConfig.port);
+					log.log("[REST] Starting on %s:%d", networkConfig.host, networkConfig.port);
+                    Server server = new Server();
 
                     if (networkConfig.cert != null && networkConfig.key != null) {
                         log.log("[REST] setting up SSL cert: %s. key: %s", networkConfig.cert, networkConfig.key);
@@ -533,6 +533,7 @@ public interface NetworkPolicy {
                         
                         ServerConnector sslConnector = new ServerConnector(server, sslContextFactory);
                         sslConnector.setPort(networkConfig.port);     
+                        sslConnector.setHost(networkConfig.host);
                         server.addConnector(sslConnector);
                         log.log("[REST] SSL was configured");
                     }
