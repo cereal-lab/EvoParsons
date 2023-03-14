@@ -577,7 +577,16 @@ public interface NetworkPolicy {
 						@Override
 						public String matchAndApply(String target, HttpServletRequest request, HttpServletResponse response)
 								throws IOException {
-                            if (target.equals("/"))
+                            if (request.getProtocol().equals("http")) {                                
+                                String secureLocation = String.format("https://%s:%d%s", networkConfig.host, networkConfig.port, target);
+                                log.log("[REST] http request detected. Redirecting to %s", secureLocation);
+                                response.setHeader("Location", secureLocation);
+                                response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                                response.getOutputStream().flush(); // no output / content
+                                response.getOutputStream().close();
+                                return secureLocation;
+                            }
+                            else if (target.equals("/"))
                             {
                                 response.setHeader("Location", "/index.html");
                                 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
