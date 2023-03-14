@@ -544,22 +544,22 @@ public interface NetworkPolicy {
                         sslContextFactory.setKeyStorePassword(networkConfig.certKeyStorePwd);
                         sslContextFactory.setExcludeProtocols("SSLv3");
                         
-                        HttpConfiguration httpConfig = new HttpConfiguration();
-                        httpConfig.setSecureScheme("https");
-                        httpConfig.setSecurePort(networkConfig.port);
-                        httpConfig.setOutputBufferSize(32786);
-                        httpConfig.setRequestHeaderSize(8192);
-                        httpConfig.setResponseHeaderSize(8192);
+                        // HttpConfiguration httpConfig = new HttpConfiguration();
+                        // httpConfig.setSecureScheme("https");
+                        // httpConfig.setSecurePort(networkConfig.port);
+                        // httpConfig.setOutputBufferSize(32786);
+                        // httpConfig.setRequestHeaderSize(8192);
+                        // httpConfig.setResponseHeaderSize(8192);
                         // HttpConfiguration sslConfiguration = new HttpConfiguration(config);
-                        httpConfig.addCustomizer(new SecureRequestCustomizer());
-                            
-                        SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString());
-                        HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig);
-                        ServerConnector sslConnector = new ServerConnector(server, sslConnectionFactory, httpConnectionFactory);
-                        sslConnector.setPort(networkConfig.port);                             
+                        // httpConfig.addCustomizer(new SecureRequestCustomizer());
+                        
+                        // SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString());
+                        // HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig);
+                        ServerConnector sslConnector = new ServerConnector(server, sslContextFactory);
+                        sslConnector.setPort(networkConfig.port);   
                         // sslConnector.setHost(networkConfig.host);
                         server.addConnector(sslConnector);
-                        handlers.addHandler(new SecuredRedirectHandler());
+                        // handlers.addHandler(new SecuredRedirectHandler());
                         log.log("[REST] SSL was configured");
                     } else {
                         ServerConnector connector = new ServerConnector(server);
@@ -577,16 +577,16 @@ public interface NetworkPolicy {
 						@Override
 						public String matchAndApply(String target, HttpServletRequest request, HttpServletResponse response)
 								throws IOException {
-                            if (request.getProtocol().equals("http")) {                                
-                                String secureLocation = String.format("https://%s:%d%s", networkConfig.host, networkConfig.port, target);
-                                log.log("[REST] http request detected. Redirecting to %s", secureLocation);
-                                response.setHeader("Location", secureLocation);
-                                response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-                                response.getOutputStream().flush(); // no output / content
-                                response.getOutputStream().close();
-                                return secureLocation;
-                            }
-                            else if (target.equals("/"))
+                            // if (request.getProtocol().equals("http")) {
+                            //     String secureLocation = String.format("https://%s:%d%s", networkConfig.host, networkConfig.port, target);
+                            //     log.log("[REST] http request detected. Redirecting to %s", secureLocation);
+                            //     response.setHeader("Location", secureLocation);
+                            //     response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                            //     response.getOutputStream().flush(); // no output / content
+                            //     response.getOutputStream().close();
+                            //     return secureLocation;
+                            // }
+                            if (target.equals("/"))
                             {
                                 response.setHeader("Location", "/index.html");
                                 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
