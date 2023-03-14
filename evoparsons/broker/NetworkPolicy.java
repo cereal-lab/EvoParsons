@@ -31,11 +31,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.rewrite.handler.Rule;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -536,7 +541,18 @@ public interface NetworkPolicy {
                         sslContextFactory.setKeyStorePassword(networkConfig.certKeyStorePwd);
                         sslContextFactory.setExcludeProtocols("SSLv3");
                         
-                        ServerConnector sslConnector = new ServerConnector(server, sslContextFactory);
+                        HttpConfiguration httpConfig = new HttpConfiguration();
+                        httpConfig.setSecureScheme("https");
+                        httpConfig.setSecurePort(networkConfig.port);
+                        httpConfig.setOutputBufferSize(32786);
+                        httpConfig.setRequestHeaderSize(8192);
+                        httpConfig.setResponseHeaderSize(8192);
+                        // HttpConfiguration sslConfiguration = new HttpConfiguration(config);
+                        httpConfig.addCustomizer(new SecureRequestCustomizer());
+                            
+                        SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString());
+                        HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig);
+                        ServerConnector sslConnector = new ServerConnector(server, sslConnectionFactory, httpConnectionFactory);
                         sslConnector.setPort(networkConfig.port);     
                         // sslConnector.setHost(networkConfig.host);
                         server.addConnector(sslConnector);
