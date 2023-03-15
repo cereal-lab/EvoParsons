@@ -199,6 +199,7 @@ public class Config {
         public String policyName;
         public String policyPath;
         public String host;
+        public String noncanonical;
         public int port;
         public String certKeyStore; //should be java keytool stores
         public String certKeyStorePwd; //same for cert and key
@@ -294,6 +295,8 @@ public class Config {
                         network.certKeyStorePwd = value; 
                     else if (name.matches("^net\\..*?\\.certKeyStore"))
                         network.certKeyStore = value;
+                    else if (name.matches("^net\\..*?\\.noncanonical"))
+                        network.noncanonical = value;
                     else if (!name.matches("^net\\..*?\\.servlet\\..*?\\.[^.]*$"))
                         log.log("[Config.LoadFromFile] Ignoring unknown property %s=%s", name, value);
                 } catch (Exception e) {

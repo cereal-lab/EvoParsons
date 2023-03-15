@@ -572,6 +572,23 @@ public interface NetworkPolicy {
 						@Override
 						public String matchAndApply(String target, HttpServletRequest request, HttpServletResponse response)
 								throws IOException {
+                            if (networkConfig.noncanonical != null && request.getServerName().equals(networkConfig.noncanonical)) {
+                                String fullUrl = "";
+                                StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
+                                String queryString = request.getQueryString();
+                            
+                                if (queryString == null) {
+                                    fullUrl = requestURL.toString();
+                                } else {
+                                    fullUrl = requestURL.append('?').append(queryString).toString();
+                                }
+                                fullUrl = fullUrl.replace(request.getServerName(), networkConfig.host);
+                                response.setHeader("Location", fullUrl);
+                                response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                                response.getOutputStream().flush(); // no output / content
+                                response.getOutputStream().close();
+                                return fullUrl;
+                            }
                             response.setHeader("Strict-Transport-Security", "max-age=63072000");
                             if (!request.isSecure()) {
 
