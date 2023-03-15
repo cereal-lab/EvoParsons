@@ -22,7 +22,7 @@ find bin ! -path "bin/psi*" -type f -exec rm -f {} +
 
 jar cfm bin/evoparsons.jar ./evoparsons/broker/manifest.mf ./evoparsons/broker/*.class ./evoparsons/ecj/*.class ./evoparsons/github/*.class ./evoparsons/repo/*.class ./evoparsons/utils/*.class ./evoparsons/rmishared/*.class
 cp lib/ecj.24.jar bin
-cp lib/jetty-9.4.10.v20180503.jar bin
+cp lib/jetty-all-9.4.49.v20220914-uber.jar bin
 cp lib/jetty-util-ajax-9.4.11.v20180605.jar bin
 cp lib/mongo-java-driver-3.10.2.jar bin
 

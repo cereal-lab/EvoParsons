@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry excluding=".vscode/|.*|LICENSE|db/|*.md|www/|configs/|DataAnalysis/|ParsonsLibraries/|bin/|docker/|lib/|data/|scripts/|evoparsons/antlr/*.g4|evoparsons/antlr/*.interp|evoparsons/antlr/*.tokens" kind="src" path=""/>
 	<classpathentry exported="true" kind="lib" path="lib/ecj.24.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jetty-9.4.10.v20180503.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jetty-all-9.4.49.v20220914-uber.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jetty-util-ajax-9.4.11.v20180605.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/mongo-java-driver-3.10.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/antlr-4.7.1-complete.jar"/>

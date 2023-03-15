@@ -1,7 +1,5 @@
 package evoparsons.broker;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -14,7 +12,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,10 +28,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.rewrite.handler.RewriteHandler;
 import org.eclipse.jetty.rewrite.handler.Rule;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.DetectorConnectionFactory;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
@@ -42,7 +39,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.server.handler.SecuredRedirectHandler;
 import org.eclipse.jetty.servlet.DefaultServlet;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -537,25 +533,24 @@ public interface NetworkPolicy {
                     if (networkConfig.certKeyStore != null) {
                         log.log("[REST] setting up SSL cert: %s", networkConfig.certKeyStore);
                         // KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
-                        SslContextFactory sslContextFactory = new SslContextFactory();
+                        SslContextFactory sslContextFactory = new SslContextFactory.Server();
+                        // SslContextFactory sslContextFactory = SslContextFactory
                         sslContextFactory.setTrustStorePath(networkConfig.certKeyStore);
                         sslContextFactory.setTrustStorePassword(networkConfig.certKeyStorePwd);
                         sslContextFactory.setKeyStorePath(networkConfig.certKeyStore);
                         sslContextFactory.setKeyStorePassword(networkConfig.certKeyStorePwd);
                         sslContextFactory.setExcludeProtocols("SSLv3");
                         
-                        // HttpConfiguration httpConfig = new HttpConfiguration();
-                        // httpConfig.setSecureScheme("https");
-                        // httpConfig.setSecurePort(networkConfig.port);
-                        // httpConfig.setOutputBufferSize(32786);
-                        // httpConfig.setRequestHeaderSize(8192);
-                        // httpConfig.setResponseHeaderSize(8192);
-                        // HttpConfiguration sslConfiguration = new HttpConfiguration(config);
-                        // httpConfig.addCustomizer(new SecureRequestCustomizer());
+                        HttpConfiguration httpConfig = new HttpConfiguration();
+                        httpConfig.setSecureScheme("https");
+                        httpConfig.setSecurePort(networkConfig.port);
+                        httpConfig.addCustomizer(new SecureRequestCustomizer());
                         
-                        // SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.asString());
-                        // HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig);
-                        ServerConnector sslConnector = new ServerConnector(server, sslContextFactory);
+                        HttpConnectionFactory http = new HttpConnectionFactory(httpConfig);
+                        SslConnectionFactory https = new SslConnectionFactory(sslContextFactory, http.getProtocol());
+                        DetectorConnectionFactory conFactory = new DetectorConnectionFactory(https);
+                        ServerConnector sslConnector = new ServerConnector(server, conFactory, http);
+
                         sslConnector.setPort(networkConfig.port);   
                         // sslConnector.setHost(networkConfig.host);
                         server.setConnectors(new Connector[] { sslConnector });
@@ -586,6 +581,7 @@ public interface NetworkPolicy {
                             //     response.getOutputStream().close();
                             //     return secureLocation;
                             // }
+                            log.log("[REST] Connection: %s. Scheme %s", request.isSecure() ? "secure" : "not secure", request.getScheme());
                             if (target.equals("/"))
                             {
                                 response.setHeader("Location", "/index.html");
