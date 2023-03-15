@@ -572,16 +572,26 @@ public interface NetworkPolicy {
 						@Override
 						public String matchAndApply(String target, HttpServletRequest request, HttpServletResponse response)
 								throws IOException {
-                            // if (request.getProtocol().equals("http")) {
-                            //     String secureLocation = String.format("https://%s:%d%s", networkConfig.host, networkConfig.port, target);
-                            //     log.log("[REST] http request detected. Redirecting to %s", secureLocation);
-                            //     response.setHeader("Location", secureLocation);
-                            //     response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
-                            //     response.getOutputStream().flush(); // no output / content
-                            //     response.getOutputStream().close();
-                            //     return secureLocation;
-                            // }
-                            log.log("[REST] Connection: %s. Scheme %s", request.isSecure() ? "secure" : "not secure", request.getScheme());
+                            if (!request.isSecure()) {
+
+                                String fullUrl = "";
+                                StringBuilder requestURL = new StringBuilder(request.getRequestURL().toString());
+                                String queryString = request.getQueryString();
+                            
+                                if (queryString == null) {
+                                    fullUrl = requestURL.toString();
+                                } else {
+                                    fullUrl = requestURL.append('?').append(queryString).toString();
+                                }                                
+
+                                fullUrl = fullUrl.replace("http://", "https://");
+                                log.log("[REST] http request detected. Redirecting to %s", fullUrl);
+                                response.setHeader("Location", fullUrl);
+                                response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+                                response.getOutputStream().flush(); // no output / content
+                                response.getOutputStream().close();
+                                return fullUrl;
+                            }
                             if (target.equals("/"))
                             {
                                 response.setHeader("Location", "/index.html");
