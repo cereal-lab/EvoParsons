@@ -201,6 +201,7 @@ public class Config {
         public String host;
         public String noncanonical;
         public int port;
+        public int insecurePort = 0;
         public String certKeyStore; //should be java keytool stores
         public String certKeyStorePwd; //same for cert and key
         public List<String> servlets = new ArrayList<>();
@@ -297,6 +298,8 @@ public class Config {
                         network.certKeyStore = value;
                     else if (name.matches("^net\\..*?\\.noncanonical"))
                         network.noncanonical = value;
+                    else if (name.matches("^net\\..*?\\.insecurePort"))
+                        network.insecurePort = portParser.applyAsInt(value);
                     else if (!name.matches("^net\\..*?\\.servlet\\..*?\\.[^.]*$"))
                         log.log("[Config.LoadFromFile] Ignoring unknown property %s=%s", name, value);
                 } catch (Exception e) {

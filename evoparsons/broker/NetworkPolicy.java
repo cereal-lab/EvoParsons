@@ -553,7 +553,13 @@ public interface NetworkPolicy {
 
                         sslConnector.setPort(networkConfig.port);   
                         // sslConnector.setHost(networkConfig.host);
-                        server.setConnectors(new Connector[] { sslConnector });
+                        if (networkConfig.insecurePort == 0) {
+                            server.setConnectors(new Connector[] { sslConnector });                            
+                        } else {
+                            ServerConnector insecureConnector = new ServerConnector(server);
+                            insecureConnector.setPort(networkConfig.insecurePort);
+                            server.setConnectors(new Connector[] { sslConnector, insecureConnector });
+                        }
                         // handlers.addHandler(new SecuredRedirectHandler());
                         log.log("[REST] SSL was configured");
                     } else {
@@ -603,6 +609,7 @@ public interface NetworkPolicy {
                                 }                                
 
                                 fullUrl = fullUrl.replace("http://", "https://");
+                                //TODO: INCOMPLETE CODE add code to redirect to secure port - we assume default insecurePort is 80 and default securePort 443
                                 // log.log("[REST] http request detected. Redirecting to %s", fullUrl);
                                 response.setHeader("Location", fullUrl);
                                 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
