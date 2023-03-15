@@ -572,6 +572,7 @@ public interface NetworkPolicy {
 						@Override
 						public String matchAndApply(String target, HttpServletRequest request, HttpServletResponse response)
 								throws IOException {
+                            response.setHeader("Strict-Transport-Security", "max-age=63072000");
                             if (!request.isSecure()) {
 
                                 String fullUrl = "";
@@ -585,7 +586,7 @@ public interface NetworkPolicy {
                                 }                                
 
                                 fullUrl = fullUrl.replace("http://", "https://");
-                                log.log("[REST] http request detected. Redirecting to %s", fullUrl);
+                                // log.log("[REST] http request detected. Redirecting to %s", fullUrl);
                                 response.setHeader("Location", fullUrl);
                                 response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
                                 response.getOutputStream().flush(); // no output / content
