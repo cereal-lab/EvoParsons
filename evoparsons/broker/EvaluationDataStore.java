@@ -357,7 +357,7 @@ public class EvaluationDataStore
 	{
 		try 
 		{
-			this.studentRepo.update(students.entrySet().stream().map(kv -> kv.getValue()).collect(Collectors.toList()));
+			this.studentRepo.update(List.of(student));
 		} catch (Exception e) {
 			this.log.err("[EvalDataStore] Cannot save student: %s", student.getAuth().getSid());
 			this.log.err(e.getMessage());

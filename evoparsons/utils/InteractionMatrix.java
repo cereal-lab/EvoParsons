@@ -20,70 +20,74 @@ public class InteractionMatrix {
     public static void main(String[] args) {
         Config config = new Config(null) {{
             outputFolder = args[0];
-            this.props.put("programs", args[1]);
-            this.props.put("transforms", args[2]);
+            // this.props.put("programs", args[1]);
+            // this.props.put("transforms", args[2]);
         }};
         Log log = Log.console;
 		Map<Integer, PuzzleEvaluation> genotypes = 
-			Utils.<Map<Integer, PuzzleEvaluation>>loadFromFile(log, Paths.get(config.getOutputFolder(), "genotypes.bro").toString(), 
+			Utils.<Map<Integer, PuzzleEvaluation>>loadFromFile(log, Paths.get(config.getOutputFolder(), "ecj.genotypes.bro").toString(), 
                 HashMap<Integer, PuzzleEvaluation>::new);    
                 
-        HashMap<String, Integer> students = Utils.<HashMap<String, Integer>>loadFromFile(log, Paths.get(config.getOutputFolder(), "students.bro").toString(), HashMap<String, Integer>::new);                
+        // HashMap<String, Integer> students = Utils.<HashMap<String, Integer>>loadFromFile(log, Paths.get(config.getOutputFolder(), "students.bro").toString(), HashMap<String, Integer>::new);                
                 
-        ParsonsLibrary lib = new ParsonsLibrary(config);
+        // ParsonsLibrary lib = new ParsonsLibrary(config);
 
+        int maxGeneration = 
+            genotypes.entrySet().stream()
+                .mapToInt(entry -> entry.getValue().generation).max().orElse(0);
+        log.log("Current generation: %d. NumEvals: %d", maxGeneration, genotypes.size());
 
-		Map<Integer, PuzzleEvaluation> currentGenerationGenotypes = 
-			genotypes.entrySet().stream()
-				.collect(Collectors.groupingBy(entry -> entry.getValue().generation))
-				.entrySet().stream()
-				.max(Comparator.comparing(entry -> entry.getKey()))
-				.map(entry -> entry.getValue())
-				.orElse(new ArrayList<Entry<Integer, PuzzleEvaluation>>())
-				.stream()
-				.collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
+		// Map<Integer, PuzzleEvaluation> currentGenerationGenotypes = 
+		// 	genotypes.entrySet().stream()
+		// 		.collect(Collectors.groupingBy(entry -> entry.getValue().generation))
+		// 		.entrySet().stream()
+		// 		.max(Comparator.comparing(entry -> entry.getKey()))
+		// 		.map(entry -> entry.getValue())
+		// 		.orElse(new ArrayList<Entry<Integer, PuzzleEvaluation>>())
+		// 		.stream()
+		// 		.collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue()));
 
                 
         log.log("--------------------------------------------");
-        String padding = new String(new char[14]).replace('\0', ' ');
-        log.print(padding);
-        genotypes.entrySet().stream()
-            .sorted(Comparator.comparing(entry -> entry.getKey()))
-            .forEach(genotype -> {		
-                ParsonsPuzzle puzzle = genotype.getValue().genotype.getPuzzle(lib);	
-                int programSize = puzzle.program.size();
-                int appliedDistractorsCount = puzzle.distracters.size();	
-                log.print("%10.10s",
-                    String.format(
-                        currentGenerationGenotypes.containsKey(genotype.getKey()) ? "%d,%d,%d*" : "%d,%d,%d", 
-                        genotype.getValue().genotype.getGenome()[0],
-                        programSize,
-                        appliedDistractorsCount));
-            });		
-        log.log("");
-        students.entrySet().stream()
-            .sorted(Comparator.comparing(student -> student.getValue()))
-            .forEach(student -> 
-                {
-                    log.print("%13.13s ", student.getKey());
-                    genotypes.entrySet().stream()
-                        .sorted(Comparator.comparing(entry -> entry.getKey()))
-                        .forEach(genotype -> {	
-                            ParsonsPuzzle puzzle = genotype.getValue().genotype.getPuzzle(lib);
-                            int phenotypeSize = puzzle.program.size() + puzzle.distracters.size();															
-                            if (!genotype.getValue().evaluations.containsKey(student.getKey())) log.print("%10.10s", "");
-                            else 
-                            {
-                                ParsonsEvaluation eval = genotype.getValue().evaluations.get(student.getKey());
-                                if (eval.gaveUp)
-                                    log.print("%10.10s", "gaveUp");
-                                else 
-                                    log.print("%10.10s", String.format("%.1f,%.2f",
-                                        eval.fitness, eval.fitness / phenotypeSize));
-                            }
-                        });
-                    log.log("");
-                });		
+        // String padding = new String(new char[14]).replace('\0', ' ');
+        // log.print(padding);
+        // genotypes.entrySet().stream()
+        //     .sorted(Comparator.comparing(entry -> entry.getKey()))
+        //     .forEach(genotype -> {		
+        //         ParsonsPuzzle puzzle = genotype.getValue().genotype.getPuzzle(lib);	
+        //         int programSize = puzzle.program.size();
+        //         int appliedDistractorsCount = puzzle.distracters.size();	
+        //         log.print("%10.10s",
+        //             String.format(
+        //                 currentGenerationGenotypes.containsKey(genotype.getKey()) ? "%d,%d,%d*" : "%d,%d,%d", 
+        //                 genotype.getValue().genotype.getGenome()[0],
+        //                 programSize,
+        //                 appliedDistractorsCount));
+        //     });		
+        // log.log("");
+        // students.entrySet().stream()
+        //     .sorted(Comparator.comparing(student -> student.getValue()))
+        //     .forEach(student -> 
+        //         {
+        //             log.print("%13.13s ", student.getKey());
+        //             genotypes.entrySet().stream()
+        //                 .sorted(Comparator.comparing(entry -> entry.getKey()))
+        //                 .forEach(genotype -> {	
+        //                     ParsonsPuzzle puzzle = genotype.getValue().genotype.getPuzzle(lib);
+        //                     int phenotypeSize = puzzle.program.size() + puzzle.distracters.size();															
+        //                     if (!genotype.getValue().evaluations.containsKey(student.getKey())) log.print("%10.10s", "");
+        //                     else 
+        //                     {
+        //                         ParsonsEvaluation eval = genotype.getValue().evaluations.get(student.getKey());
+        //                         if (eval.gaveUp)
+        //                             log.print("%10.10s", "gaveUp");
+        //                         else 
+        //                             log.print("%10.10s", String.format("%.1f,%.2f",
+        //                                 eval.fitness, eval.fitness / phenotypeSize));
+        //                     }
+        //                 });
+        //             log.log("");
+        //         });		
         log.log("--------------------------------------------");	                        
 
         //EvaluationDataStore store = new EvaluationDataStore(Log.console, config);        
