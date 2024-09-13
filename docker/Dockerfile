@@ -1,5 +1,5 @@
 # Building Stage
-FROM openjdk:12-alpine as Builder
+FROM openjdk:12-alpine AS builder
 ARG branch
 WORKDIR /app/
 RUN set -xe \
@@ -10,11 +10,11 @@ RUN set -xe \
     && chmod a+x ./scripts/build-server \
     && ./scripts/build-server
 
-FROM openjdk:12-jre-alpine
+FROM openjdk:12-alpine
 WORKDIR /app/
-COPY --from=Builder /app/bin/*.jar /app/
-COPY --from=Builder /app/scripts/evoparsons-server /app/
-#COPY --from=Builder /app/Programs /data/Programs/
-#COPY --from=Builder /app/Transforms /data/Transforms/
+COPY --from=builder /app/bin/*.jar /app/
+COPY --from=builder /app/scripts/evoparsons-server /app/
+#COPY --from=builder /app/Programs /data/Programs/
+#COPY --from=builder /app/Transforms /data/Transforms/
 RUN chmod a+x /app/evoparsons-server
 ENTRYPOINT [ "/app/evoparsons-server" ]
